@@ -2,86 +2,91 @@ import { Users, Music, BookOpen, Heart } from "lucide-react";
 
 export default function MinistriesPage() {
   return (
-    <div className="py-12 bg-gray-50 min-h-screen">
-      <div className="container mx-auto px-4 max-w-5xl">
-        <h1 className="text-4xl font-bold text-center mb-12 text-secondary-900">사역 및 기관</h1>
+    <div className="py-12 sm:py-16 bg-[#FAF9F6] min-h-screen text-stone-800">
+      <div className="container mx-auto px-4 sm:px-6 max-w-5xl">
+        {/* Page Header */}
+        <div className="text-center mb-12">
+          <span className="text-xs font-semibold text-amber-800 uppercase tracking-widest block mb-2">Community & Ministries</span>
+          <h1 className="text-3xl sm:text-4xl font-semibold text-stone-900 tracking-tight">사역 및 기관</h1>
+          <p className="text-sm text-stone-500 mt-2">각자의 은사대로 교회를 세우고 이웃을 섬기는 사역 공동체입니다</p>
+        </div>
         
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
           {/* Sunday School */}
-          <section className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-8 items-start hover:shadow-md transition-shadow">
-            <div className="bg-orange-100 p-5 rounded-2xl text-primary-600 shrink-0">
-              <BookOpen size={40} />
+          <section className="bg-white p-7 sm:p-9 rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80 flex flex-col md:flex-row gap-6 sm:gap-8 items-start hover:border-amber-300/80 transition-colors">
+            <div className="w-12 h-12 rounded-2xl bg-amber-100/70 text-amber-800 flex items-center justify-center shrink-0">
+              <BookOpen size={24} />
             </div>
-            <div>
-              <h2 className="text-2xl font-bold mb-4 text-gray-900">교회학교</h2>
-              <p className="text-gray-600 leading-relaxed mb-6 text-lg">
-                다음 세대를 하나님의 말씀으로 양육하고 영적 리더로 세워가는 부서입니다. 
-                아이들의 눈높이에 맞춘 예배와 공과공부를 통해 신앙의 기초를 다집니다.
+            <div className="flex-1">
+              <h2 className="text-lg sm:text-xl font-semibold mb-2 text-stone-900">교회학교</h2>
+              <p className="text-stone-600 text-sm leading-relaxed mb-5">
+                다음 세대를 하나님의 말씀과 사랑으로 양육하는 부서입니다. 
+                아이들의 눈높이에 맞춘 예배와 성경 공부를 통해 신앙의 뿌리를 바르게 내릴 수 있도록 돕습니다.
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                  <h4 className="font-bold text-secondary-800 mb-1">유·초등부</h4>
-                  <p className="text-sm text-gray-500">주일 오전 11시 / 교육관 1층</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="bg-stone-50/80 p-3.5 rounded-xl border border-stone-100">
+                  <h4 className="text-xs font-semibold text-stone-800 mb-0.5">유·초등부</h4>
+                  <p className="text-xs text-stone-500">주일 오전 11:00 / 교육관 1층</p>
                 </div>
-                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                  <h4 className="font-bold text-secondary-800 mb-1">중·고등부</h4>
-                  <p className="text-sm text-gray-500">주일 오전 11시 / 교육관 2층</p>
+                <div className="bg-stone-50/80 p-3.5 rounded-xl border border-stone-100">
+                  <h4 className="text-xs font-semibold text-stone-800 mb-0.5">중·고등부</h4>
+                  <p className="text-xs text-stone-500">주일 오전 11:00 / 교육관 2층</p>
                 </div>
               </div>
             </div>
           </section>
 
           {/* Choir */}
-          <section className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-8 items-start hover:shadow-md transition-shadow">
-            <div className="bg-blue-100 p-5 rounded-2xl text-blue-600 shrink-0">
-              <Music size={40} />
+          <section className="bg-white p-7 sm:p-9 rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80 flex flex-col md:flex-row gap-6 sm:gap-8 items-start hover:border-amber-300/80 transition-colors">
+            <div className="w-12 h-12 rounded-2xl bg-amber-100/70 text-amber-800 flex items-center justify-center shrink-0">
+              <Music size={24} />
             </div>
-            <div>
-              <h2 className="text-2xl font-bold mb-4 text-gray-900">찬양대 및 찬양단</h2>
-              <p className="text-gray-600 leading-relaxed mb-6 text-lg">
-                아름다운 목소리와 악기로 하나님께 영광을 돌리며, 성도들의 예배를 돕는 은혜로운 사역을 감당합니다.
+            <div className="flex-1">
+              <h2 className="text-lg sm:text-xl font-semibold mb-2 text-stone-900">찬양대 및 찬양팀</h2>
+              <p className="text-stone-600 text-sm leading-relaxed mb-5">
+                정성어린 찬양으로 하나님께 영광을 돌리고, 성도들의 예배를 돕는 은혜의 사역입니다.
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                  <h4 className="font-bold text-secondary-800 mb-1">호산나 찬양대</h4>
-                  <p className="text-sm text-gray-500">주일 대예배 찬양 담당<br/>(연습: 주일 오후 1시 30분)</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="bg-stone-50/80 p-3.5 rounded-xl border border-stone-100">
+                  <h4 className="text-xs font-semibold text-stone-800 mb-0.5">호산나 찬양대</h4>
+                  <p className="text-xs text-stone-500">주일 대예배 찬양 담당 (주일 오후 1:30 연습)</p>
                 </div>
-                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                  <h4 className="font-bold text-secondary-800 mb-1">마라나타 찬양단</h4>
-                  <p className="text-sm text-gray-500">주일 및 수요예배 준비 찬양</p>
+                <div className="bg-stone-50/80 p-3.5 rounded-xl border border-stone-100">
+                  <h4 className="text-xs font-semibold text-stone-800 mb-0.5">마라나타 찬양단</h4>
+                  <p className="text-xs text-stone-500">주일 및 수요예배 찬양 인도</p>
                 </div>
               </div>
             </div>
           </section>
 
           {/* Fellowships */}
-          <section className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-8 items-start hover:shadow-md transition-shadow">
-            <div className="bg-green-100 p-5 rounded-2xl text-green-600 shrink-0">
-              <Users size={40} />
+          <section className="bg-white p-7 sm:p-9 rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80 flex flex-col md:flex-row gap-6 sm:gap-8 items-start hover:border-amber-300/80 transition-colors">
+            <div className="w-12 h-12 rounded-2xl bg-amber-100/70 text-amber-800 flex items-center justify-center shrink-0">
+              <Users size={24} />
             </div>
-            <div>
-              <h2 className="text-2xl font-bold mb-4 text-gray-900">선교회 및 구역모임</h2>
-              <p className="text-gray-600 leading-relaxed mb-6 text-lg">
-                성도 간의 친밀한 교제와 나눔을 통해 그리스도의 사랑을 실천하며, 교회와 지역사회를 섬기는 기관입니다.
+            <div className="flex-1">
+              <h2 className="text-lg sm:text-xl font-semibold mb-2 text-stone-900">선교회 및 구역모임</h2>
+              <p className="text-stone-600 text-sm leading-relaxed mb-5">
+                성도 간의 진실한 교제와 기도를 통해 그리스도의 한 몸을 이루고 사랑을 나누는 기관입니다.
               </p>
-              <div className="flex flex-wrap gap-3">
-                <span className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">남선교회</span>
-                <span className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">여전도회</span>
-                <span className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">청년부</span>
-                <span className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">지역별 구역(목장)</span>
+              <div className="flex flex-wrap gap-2">
+                <span className="px-3 py-1.5 bg-stone-50 border border-stone-200/70 text-stone-700 rounded-lg text-xs font-medium">남선교회</span>
+                <span className="px-3 py-1.5 bg-stone-50 border border-stone-200/70 text-stone-700 rounded-lg text-xs font-medium">여전도회</span>
+                <span className="px-3 py-1.5 bg-stone-50 border border-stone-200/70 text-stone-700 rounded-lg text-xs font-medium">청년부</span>
+                <span className="px-3 py-1.5 bg-stone-50 border border-stone-200/70 text-stone-700 rounded-lg text-xs font-medium">지역별 구역(목장)</span>
               </div>
             </div>
           </section>
 
-          {/* Outreach / Volunteering */}
-          <section className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-8 items-start hover:shadow-md transition-shadow">
-            <div className="bg-rose-100 p-5 rounded-2xl text-rose-600 shrink-0">
-              <Heart size={40} />
+          {/* Volunteering */}
+          <section className="bg-white p-7 sm:p-9 rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80 flex flex-col md:flex-row gap-6 sm:gap-8 items-start hover:border-amber-300/80 transition-colors">
+            <div className="w-12 h-12 rounded-2xl bg-amber-100/70 text-amber-800 flex items-center justify-center shrink-0">
+              <Heart size={24} />
             </div>
-            <div>
-              <h2 className="text-2xl font-bold mb-4 text-gray-900">봉사 및 구제 사역</h2>
-              <p className="text-gray-600 leading-relaxed text-lg">
-                예수님의 손과 발이 되어 지역 사회의 소외된 이웃을 돌보고, 국내외 선교지를 후원하며 하나님 나라를 확장해 나갑니다.
+            <div className="flex-1">
+              <h2 className="text-lg sm:text-xl font-semibold mb-2 text-stone-900">봉사 및 구제 사역</h2>
+              <p className="text-stone-600 text-sm leading-relaxed">
+                그리스도의 따뜻한 손길이 되어 지역사회의 이웃을 돌보고, 국내외 선교지를 후원하며 하나님 나라를 확장해 갑니다.
               </p>
             </div>
           </section>
