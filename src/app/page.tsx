@@ -8,53 +8,53 @@ import { Calendar, MapPin, Video } from "lucide-react";
 export default function Home() {
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-secondary-900">
-        {/* Background Image */}
-        <div className="absolute inset-0 z-0">
+      {/* Hero Section - Split Layout */}
+      <section className="relative min-h-[600px] lg:h-[calc(100vh-4rem)] flex flex-col lg:flex-row bg-white">
+        {/* Left: Church Image */}
+        <div className="w-full lg:w-1/2 relative bg-secondary-900 min-h-[40vh] lg:min-h-full">
           <Image
             src="/images/church-exterior.jpg"
             alt="주님품교회 전경"
             fill
-            className="object-contain object-center"
+            className="object-contain lg:object-cover object-center"
             priority
           />
-          {/* Overlay for readability */}
-          <div className="absolute inset-0 bg-secondary-900/60"></div>
         </div>
 
-        <div className="relative z-10 container mx-auto px-4 flex flex-col items-center text-center text-white">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-4xl md:text-6xl font-bold mb-4 tracking-tight"
-          >
-            믿음 소망 사랑으로<br />
-            <span className="text-primary-yellow">세워가는 공동체</span>
-          </motion.h1>
-          
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl"
-          >
-            대한예수교장로회(통합) 주님품교회에 오신 여러분을 진심으로 환영합니다.
-          </motion.p>
-          
+        {/* Right: Text and Navigation Bar */}
+        <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 lg:px-20 py-16 bg-gray-50 text-secondary-900">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex flex-col sm:flex-row gap-4"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
           >
-            <Link href="/about" className="px-8 py-3 bg-primary-600 hover:bg-primary-500 text-white rounded-full font-medium transition-colors shadow-lg">
-              새가족 안내
-            </Link>
-            <Link href="/sermons" className="px-8 py-3 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white rounded-full font-medium transition-colors border border-white/30">
-              최신 설교 보기
-            </Link>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight leading-tight">
+              믿음 소망 사랑으로<br />
+              <span className="text-primary-600">세워가는 공동체</span>
+            </h1>
+            <p className="text-lg md:text-xl text-gray-600 mb-12 max-w-lg">
+              대한예수교장로회(통합) 주님품교회에 오신 여러분을 진심으로 환영합니다.
+            </p>
+
+            {/* Navigation Menu (Right side) */}
+            <nav className="flex flex-col space-y-4 max-w-md">
+              <Link href="/about" className="flex items-center justify-between p-5 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-primary-300 hover:shadow-md transition-all group">
+                <span className="font-bold text-lg group-hover:text-primary-600 transition-colors">교회 소개 및 새가족 안내</span>
+                <span className="text-primary-500 text-xl font-light">&rarr;</span>
+              </Link>
+              <Link href="/sermons" className="flex items-center justify-between p-5 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-primary-300 hover:shadow-md transition-all group">
+                <span className="font-bold text-lg group-hover:text-primary-600 transition-colors">예배 및 최신 설교 말씀</span>
+                <span className="text-primary-500 text-xl font-light">&rarr;</span>
+              </Link>
+              <Link href="/ministries" className="flex items-center justify-between p-5 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-primary-300 hover:shadow-md transition-all group">
+                <span className="font-bold text-lg group-hover:text-primary-600 transition-colors">사역 및 기관 안내</span>
+                <span className="text-primary-500 text-xl font-light">&rarr;</span>
+              </Link>
+              <Link href="/news" className="flex items-center justify-between p-5 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-primary-300 hover:shadow-md transition-all group">
+                <span className="font-bold text-lg group-hover:text-primary-600 transition-colors">교회 소식 및 나눔</span>
+                <span className="text-primary-500 text-xl font-light">&rarr;</span>
+              </Link>
+            </nav>
           </motion.div>
         </div>
       </section>
