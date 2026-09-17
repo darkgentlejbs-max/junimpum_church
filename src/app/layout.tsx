@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Link from "next/link";
+import Image from "next/image";
 import { Menu } from "lucide-react";
 
 export const viewport: Viewport = {
@@ -44,13 +45,17 @@ export default function RootLayout({
         {/* Header */}
         <header className="sticky top-0 z-50 w-full border-b border-stone-200/80 bg-white/90 backdrop-blur-md">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
-            <Link href="/" className="flex flex-col">
-              <span className="text-lg sm:text-xl font-semibold tracking-tight text-stone-900 hover:text-amber-700 transition-colors">
-                주님품교회
-              </span>
-              <span className="text-[10px] text-stone-400 font-normal tracking-wide">
-                대한예수교장로회(통합)
-              </span>
+            <Link href="/" className="flex items-center group py-2">
+              <div className="relative h-10 w-36 sm:h-12 sm:w-44 transition-transform group-hover:scale-[1.02]">
+                <Image
+                  src="/images/church-logo-header.png"
+                  alt="믿음 소망 사랑으로 세워가는 주님품교회"
+                  fill
+                  sizes="(max-width: 640px) 144px, 176px"
+                  className="object-contain object-left"
+                  priority
+                />
+              </div>
             </Link>
             
             {/* Desktop Nav */}
