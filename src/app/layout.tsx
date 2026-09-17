@@ -95,14 +95,30 @@ export default function RootLayout({
               </ul>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-stone-200 mb-4 tracking-wide">교회 안내</h4>
-              <p className="text-xs text-stone-400 leading-relaxed">
-                성도 여러분과 처음 방문하시는 모든 분들을 진심으로 축복하고 환영합니다.
+              <h4 className="text-sm font-medium text-stone-200 mb-4 tracking-wide">교회 위치</h4>
+              <p className="text-xs text-stone-300 font-medium mb-1">
+                전남 여수시 여서동 7길 28
               </p>
-              <div className="mt-4">
-                <Link href="/about#location" className="text-xs text-amber-500 hover:text-amber-400 transition-colors inline-flex items-center gap-1">
-                  오시는 길 안내 &rarr;
-                </Link>
+              <p className="text-xs text-stone-400 leading-relaxed mb-3">
+                대한예수교장로회(통합) 주님품교회
+              </p>
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <a
+                  href="https://map.kakao.com/link/search/%EC%A0%84%EB%82%A8%20%EC%97%AC%EC%88%98%EC%8B%9C%20%EC%97%AC%EC%84%9C%EB%8F%99%207%EA%B8%B8%2028"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2.5 py-1 rounded-md bg-[#FEE500] text-[#191919] text-[11px] font-semibold hover:opacity-90 transition-opacity"
+                >
+                  카카오맵
+                </a>
+                <a
+                  href="https://map.naver.com/v5/search/%EC%A0%84%EB%82%A8%20%EC%97%AC%EC%88%98%EC%8B%9C%20%EC%97%AC%EC%84%9C%EB%8F%99%207%EA%B8%B8%2028"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2.5 py-1 rounded-md bg-[#03C75A] text-white text-[11px] font-semibold hover:opacity-90 transition-opacity"
+                >
+                  네이버지도
+                </a>
               </div>
             </div>
           </div>

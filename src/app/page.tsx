@@ -159,17 +159,42 @@ export default function Home() {
             </div>
 
             {/* Card 3: Location */}
-            <div className="p-6 rounded-2xl bg-[#FAF9F6] border border-stone-200/70 hover:border-amber-300/80 transition-all">
-              <div className="w-9 h-9 rounded-xl bg-amber-100/70 text-amber-800 flex items-center justify-center mb-4">
-                <MapPin size={18} />
+            <div className="p-6 rounded-2xl bg-[#FAF9F6] border border-stone-200/70 hover:border-amber-300/80 transition-all flex flex-col justify-between">
+              <div>
+                <div className="w-9 h-9 rounded-xl bg-amber-100/70 text-amber-800 flex items-center justify-center mb-4">
+                  <MapPin size={18} />
+                </div>
+                <h3 className="text-sm font-semibold text-stone-900 mb-1.5">오시는 길</h3>
+                <p className="text-xs text-stone-700 font-medium mb-1">
+                  전남 여수시 여서동 7길 28
+                </p>
+                <p className="text-xs text-stone-400 mb-4 leading-relaxed">
+                  대한예수교장로회(통합) 주님품교회
+                </p>
               </div>
-              <h3 className="text-sm font-semibold text-stone-900 mb-1.5">오시는 길</h3>
-              <p className="text-xs text-stone-500 mb-4 leading-relaxed">
-                대한예수교장로회(통합) 주님품교회 찾아오시는 길 안내입니다.
-              </p>
-              <Link href="/about#location" className="text-xs font-medium text-amber-800 hover:text-amber-900 inline-flex items-center gap-1">
-                위치 안내 보기 &rarr;
-              </Link>
+              <div className="flex items-center justify-between pt-3 border-t border-stone-200/60 text-xs">
+                <Link href="/about#location" className="font-medium text-amber-800 hover:text-amber-900 inline-flex items-center gap-1">
+                  지도 및 길찾기 &rarr;
+                </Link>
+                <div className="flex gap-1.5">
+                  <a
+                    href="https://map.kakao.com/link/search/%EC%A0%84%EB%82%A8%20%EC%97%AC%EC%88%98%EC%8B%9C%20%EC%97%AC%EC%84%9C%EB%8F%99%207%EA%B8%B8%2028"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2 py-0.5 rounded bg-[#FEE500] text-[#191919] font-semibold text-[10px]"
+                  >
+                    카카오
+                  </a>
+                  <a
+                    href="https://map.naver.com/v5/search/%EC%A0%84%EB%82%A8%20%EC%97%AC%EC%88%98%EC%8B%9C%20%EC%97%AC%EC%84%9C%EB%8F%99%207%EA%B8%B8%2028"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2 py-0.5 rounded bg-[#03C75A] text-white font-semibold text-[10px]"
+                  >
+                    네이버
+                  </a>
+                </div>
+              </div>
             </div>
 
           </div>
