@@ -1,11 +1,33 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Link from "next/link";
 import { Menu } from "lucide-react";
 
+export const viewport: Viewport = {
+  themeColor: "#f97316",
+  width: "device-width",
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
   title: "주님품교회",
-  description: "믿음 소망 사랑으로 세워가는 주님품교회",
+  description: "대한예수교장로회(통합) 주님품교회입니다. 믿음, 소망, 사랑으로 세워가는 공동체.",
+  keywords: ["주님품교회", "대한예수교장로회", "통합", "교회", "예배", "말씀", "기독교"],
+  openGraph: {
+    title: "주님품교회",
+    description: "믿음 소망 사랑으로 세워가는 주님품교회",
+    url: "https://junimpum.example.com",
+    siteName: "주님품교회",
+    images: [
+      {
+        url: "/images/church-exterior.jpg",
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: "ko_KR",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
