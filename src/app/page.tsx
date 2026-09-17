@@ -9,37 +9,21 @@ export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden">
+      <section className="relative h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-secondary-900">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
             src="/images/church-exterior.jpg"
             alt="주님품교회 전경"
             fill
-            className="object-cover object-center"
+            className="object-contain object-center"
             priority
           />
-          {/* Overlay gradient for readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-secondary-900/80 to-secondary-900/40"></div>
+          {/* Overlay for readability */}
+          <div className="absolute inset-0 bg-secondary-900/60"></div>
         </div>
 
         <div className="relative z-10 container mx-auto px-4 flex flex-col items-center text-center text-white">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="bg-white/90 p-4 rounded-2xl mb-8 shadow-xl"
-          >
-            {/* Logo Image */}
-            <Image 
-              src="/images/church-logo.jpg" 
-              alt="주님품교회 로고" 
-              width={240} 
-              height={80}
-              className="object-contain mix-blend-multiply"
-            />
-          </motion.div>
-          
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
