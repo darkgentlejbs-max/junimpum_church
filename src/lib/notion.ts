@@ -81,18 +81,28 @@ export async function getGallery() {
       database_id: GALLERY_DATABASE_ID,
       sorts: [{ property: '날짜', direction: 'descending' }],
     });
-    return response.results.map((page: any) => {
+    
+    const allPhotos: any[] = [];
+    
+    response.results.forEach((page: any) => {
       const titleProp = page.properties['이름']?.title?.[0]?.plain_text || '제목 없음';
       const dateVal = page.properties['날짜']?.date?.start || '날짜 없음';
-      const fileProp = page.properties['사진']?.files?.[0];
-      const imageUrl = fileProp?.file?.url || fileProp?.external?.url || '';
-      return {
-        id: page.id,
-        title: titleProp,
-        date: dateVal,
-        imageUrl: imageUrl,
-      };
+      const files = page.properties['사진']?.files || [];
+      
+      files.forEach((fileProp: any, index: number) => {
+        const imageUrl = fileProp?.file?.url || fileProp?.external?.url || '';
+        if (imageUrl) {
+          allPhotos.push({
+            id: `${page.id}-${index}`,
+            title: files.length > 1 ? `${titleProp} (${index + 1})` : titleProp,
+            date: dateVal,
+            imageUrl: imageUrl,
+          });
+        }
+      });
     });
+    
+    return allPhotos;
   } catch (error) {
     console.error('Error fetching gallery:', error);
     return [];
