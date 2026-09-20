@@ -61,7 +61,7 @@ export default function RootLayout({
               <h3 className="text-lg font-semibold text-stone-100 mb-2">주님품교회</h3>
               <p className="text-xs text-stone-400 mb-3">대한예수교장로회(통합)</p>
               <p className="text-xs text-stone-400 leading-relaxed max-w-xs">
-                믿음, 소망, 사랑으로 세워지며 주님의 품처럼 따뜻한 쉼과 회복이 있는 공동체입니다.
+                믿음, 소망, 사랑으로 세워지며 주님품처럼 따뜻한 쉼과 회복이 있는 공동체입니다.
               </p>
             </div>
             <div>
