@@ -28,12 +28,11 @@ export default async function GalleryPage() {
               <div key={photo.id} className="group bg-white rounded-3xl overflow-hidden border border-stone-200/80 hover:border-amber-300/80 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:shadow-md transition-all">
                 <div className="aspect-[4/3] bg-stone-100 relative overflow-hidden flex items-center justify-center">
                   {photo.imageUrl ? (
-                    <Image 
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img 
                       src={photo.imageUrl} 
                       alt={photo.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      unoptimized // Notion AWS URLs are temporary and don't play perfectly with Next.js built-in optimization without explicit domain configs, so unoptimized is safer.
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
                     <ImageIcon className="text-stone-300" size={32} />
