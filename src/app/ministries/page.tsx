@@ -13,7 +13,7 @@ export default function MinistriesPage() {
         
         <div className="space-y-6 sm:space-y-8">
           {/* Sunday School */}
-          <section className="bg-white p-7 sm:p-9 rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80 flex flex-col md:flex-row gap-6 sm:gap-8 items-start hover:border-amber-300/80 transition-colors">
+          <section id="school" className="scroll-mt-24 bg-white p-7 sm:p-9 rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80 flex flex-col md:flex-row gap-6 sm:gap-8 items-start hover:border-amber-300/80 transition-colors">
             <div className="w-12 h-12 rounded-2xl bg-amber-100/70 text-amber-800 flex items-center justify-center shrink-0">
               <BookOpen size={24} />
             </div>
@@ -37,7 +37,7 @@ export default function MinistriesPage() {
           </section>
 
           {/* Choir */}
-          <section className="bg-white p-7 sm:p-9 rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80 flex flex-col md:flex-row gap-6 sm:gap-8 items-start hover:border-amber-300/80 transition-colors">
+          <section id="worship" className="scroll-mt-24 bg-white p-7 sm:p-9 rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80 flex flex-col md:flex-row gap-6 sm:gap-8 items-start hover:border-amber-300/80 transition-colors">
             <div className="w-12 h-12 rounded-2xl bg-amber-100/70 text-amber-800 flex items-center justify-center shrink-0">
               <Music size={24} />
             </div>
@@ -60,7 +60,7 @@ export default function MinistriesPage() {
           </section>
 
           {/* Fellowships */}
-          <section className="bg-white p-7 sm:p-9 rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80 flex flex-col md:flex-row gap-6 sm:gap-8 items-start hover:border-amber-300/80 transition-colors">
+          <section id="fellowships" className="scroll-mt-24 bg-white p-7 sm:p-9 rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80 flex flex-col md:flex-row gap-6 sm:gap-8 items-start hover:border-amber-300/80 transition-colors">
             <div className="w-12 h-12 rounded-2xl bg-amber-100/70 text-amber-800 flex items-center justify-center shrink-0">
               <Users size={24} />
             </div>

@@ -8,6 +8,7 @@ import { Menu, X, ChevronDown } from "lucide-react";
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [ministryDropdownOpen, setMinistryDropdownOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-stone-200/80 bg-white/95 backdrop-blur-md">
@@ -79,9 +80,61 @@ export default function Header() {
           <Link href="/sermons" className="hover:text-amber-700 transition-colors">
             예배/말씀
           </Link>
-          <Link href="/ministries" className="hover:text-amber-700 transition-colors">
-            사역/기관
-          </Link>
+
+          {/* Dropdown Menu for 사역/기관 */}
+          <div
+            className="relative"
+            onMouseEnter={() => setMinistryDropdownOpen(true)}
+            onMouseLeave={() => setMinistryDropdownOpen(false)}
+          >
+            <Link
+              href="/ministries"
+              className="inline-flex items-center gap-1.5 hover:text-amber-700 transition-colors py-4"
+            >
+              <span>사역/기관</span>
+              <ChevronDown
+                size={14}
+                className={`transition-transform duration-200 text-stone-400 ${
+                  ministryDropdownOpen ? "rotate-180 text-amber-700" : ""
+                }`}
+              />
+            </Link>
+
+            {/* Dropdown Menu Box */}
+            {ministryDropdownOpen && (
+              <div className="absolute left-0 top-full -mt-1 w-44 rounded-2xl bg-white p-2 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-stone-200/80 py-2.5 transition-all">
+                <Link
+                  href="/ministries#school"
+                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  onClick={() => setMinistryDropdownOpen(false)}
+                >
+                  교회학교
+                </Link>
+                <Link
+                  href="/ministries#worship"
+                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  onClick={() => setMinistryDropdownOpen(false)}
+                >
+                  찬양팀
+                </Link>
+                <div className="my-1 border-t border-stone-100"></div>
+                <Link
+                  href="/ministries#fellowships"
+                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  onClick={() => setMinistryDropdownOpen(false)}
+                >
+                  남선교회
+                </Link>
+                <Link
+                  href="/ministries#fellowships"
+                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  onClick={() => setMinistryDropdownOpen(false)}
+                >
+                  여전도회
+                </Link>
+              </div>
+            )}
+          </div>
           <Link href="/news" className="hover:text-amber-700 transition-colors">
             소식/나눔
           </Link>
@@ -140,13 +193,41 @@ export default function Header() {
             >
               예배/말씀
             </Link>
-            <Link
-              href="/ministries"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block hover:text-amber-700"
-            >
-              사역/기관
-            </Link>
+            <div className="pt-2">
+              <div className="text-xs font-semibold text-amber-800 uppercase tracking-wider mb-2">
+                사역/기관
+              </div>
+              <div className="pl-3 space-y-2.5 border-l-2 border-amber-300">
+                <Link
+                  href="/ministries#school"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                >
+                  교회학교
+                </Link>
+                <Link
+                  href="/ministries#worship"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                >
+                  찬양팀
+                </Link>
+                <Link
+                  href="/ministries#fellowships"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                >
+                  남선교회
+                </Link>
+                <Link
+                  href="/ministries#fellowships"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                >
+                  여전도회
+                </Link>
+              </div>
+            </div>
             <Link
               href="/news"
               onClick={() => setMobileMenuOpen(false)}
