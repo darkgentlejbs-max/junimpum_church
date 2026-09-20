@@ -148,6 +148,16 @@ export default function Header() {
           <Link href="/gallery" className="hover:text-amber-700 transition-colors">
             갤러리
           </Link>
+
+          {/* Auth Links (Desktop) */}
+          <div className="pl-4 ml-2 border-l border-stone-200 flex items-center space-x-4">
+            <Link href="/login" className="text-xs font-medium text-stone-500 hover:text-amber-700 transition-colors">
+              로그인
+            </Link>
+            <Link href="/signup" className="text-xs font-medium px-4 py-1.5 rounded-full bg-stone-100 text-stone-600 hover:bg-amber-100 hover:text-amber-800 transition-colors">
+              회원가입
+            </Link>
+          </div>
         </nav>
 
         {/* Mobile Nav Toggle */}
@@ -256,6 +266,24 @@ export default function Header() {
             >
               갤러리
             </Link>
+
+            {/* Auth Links (Mobile) */}
+            <div className="pt-4 mt-2 border-t border-stone-100 flex items-center gap-3">
+              <Link
+                href="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex-1 text-center py-2.5 text-sm font-medium text-stone-600 bg-stone-50 rounded-xl hover:bg-stone-100 transition-colors"
+              >
+                로그인
+              </Link>
+              <Link
+                href="/signup"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex-1 text-center py-2.5 text-sm font-medium text-amber-800 bg-amber-100/70 rounded-xl hover:bg-amber-200/70 transition-colors"
+              >
+                회원가입
+              </Link>
+            </div>
           </div>
         </div>
       )}
