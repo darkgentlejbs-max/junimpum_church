@@ -48,7 +48,7 @@ export default function Home() {
               className="relative w-full max-w-md lg:max-w-none bg-white p-3 sm:p-4 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.05)] border border-stone-200/80"
             >
               {/* Image Container: Aspect ratio adjusted so 100% of the building & cross are completely visible */}
-              <div className="relative w-full h-[380px] sm:h-[460px] lg:h-[540px] rounded-2xl overflow-hidden bg-stone-50/80 flex items-center justify-center">
+              <div className="relative w-full h-[280px] sm:h-[380px] lg:h-[540px] rounded-2xl overflow-hidden bg-stone-50/80 flex items-center justify-center">
                 <Image
                   src="/images/church-exterior.jpg"
                   alt="주님품교회 전경"

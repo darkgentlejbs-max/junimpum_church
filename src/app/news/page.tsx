@@ -1,13 +1,19 @@
 import { CreditCard, Bell, FileText, Image as ImageIcon } from "lucide-react";
+import { getNews } from "@/lib/notion";
 
-export default function NewsPage() {
-  const notices = [
-    { id: 1, title: "추수감사주일 예배 및 성찬식 안내", date: "2026-09-17", isNew: true },
-    { id: 2, title: "하반기 구역장/권찰 교육 일정 안내", date: "2026-09-10", isNew: false },
-    { id: 3, title: "주님품교회 홈페이지 새단장 오픈 안내", date: "2026-09-01", isNew: false },
-    { id: 4, title: "가을맞이 전교인 친교 모임 안내", date: "2026-08-25", isNew: false },
-    { id: 5, title: "금요 심야 기도회 시간 변경 안내", date: "2026-08-15", isNew: false },
-  ];
+export const revalidate = 60; // 60초마다 데이터 새로고침
+
+export default async function NewsPage() {
+  const notices = await getNews();
+
+  if (notices.length === 0) {
+    notices.push({
+      id: "empty",
+      type: "공지",
+      title: "등록된 소식이 없습니다.",
+      date: "-"
+    });
+  }
 
   return (
     <div className="py-12 sm:py-16 bg-[#FAF9F6] min-h-screen text-stone-800">
@@ -36,9 +42,9 @@ export default function NewsPage() {
                 {notices.map((notice) => (
                   <li key={notice.id} className="group flex items-start sm:items-center flex-col sm:flex-row justify-between py-3.5 hover:bg-stone-50/60 rounded-xl px-2.5 -mx-2.5 transition-colors cursor-pointer">
                     <div className="flex items-center gap-2.5 mb-1.5 sm:mb-0">
-                      {notice.isNew && (
-                        <span className="bg-amber-600 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0">
-                          NEW
+                      {notice.type && (
+                        <span className="bg-amber-100 text-amber-800 border border-amber-200/60 text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0">
+                          {notice.type}
                         </span>
                       )}
                       <span className="text-sm text-stone-700 font-medium group-hover:text-amber-800 transition-colors line-clamp-1">

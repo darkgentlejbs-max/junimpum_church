@@ -1,14 +1,23 @@
 import { PlayCircle, Calendar, User } from "lucide-react";
 
-export default function SermonsPage() {
-  const sermons = [
-    { id: 1, title: "믿음으로 세워지는 삶", date: "2026-09-13", preacher: "담임목사", passage: "히브리서 11:1-3" },
-    { id: 2, title: "소망 중에 즐거워하며", date: "2026-09-06", preacher: "담임목사", passage: "로마서 12:12" },
-    { id: 3, title: "사랑은 언제나 오래참고", date: "2026-08-30", preacher: "담임목사", passage: "고린도전서 13:4-7" },
-    { id: 4, title: "주님의 품안에서", date: "2026-08-23", preacher: "담임목사", passage: "시편 91:1-4" },
-    { id: 5, title: "성령의 열매", date: "2026-08-16", preacher: "담임목사", passage: "갈라디아서 5:22-23" },
-    { id: 6, title: "반석 위에 지은 집", date: "2026-08-09", preacher: "담임목사", passage: "마태복음 7:24-27" },
-  ];
+import { getSermons } from "@/lib/notion";
+
+export const revalidate = 60; // 60초마다 데이터 새로고침
+
+export default async function SermonsPage() {
+  const sermons = await getSermons();
+
+  // 노션에 데이터가 하나도 없을 경우의 기본값
+  if (sermons.length === 0) {
+    sermons.push({
+      id: "empty",
+      title: "등록된 말씀이 없습니다",
+      date: "-",
+      preacher: "-",
+      passage: "-",
+      videoUrl: ""
+    });
+  }
 
   return (
     <div className="py-12 sm:py-16 bg-[#FAF9F6] min-h-screen text-stone-800">

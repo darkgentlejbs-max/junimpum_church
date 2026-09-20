@@ -3,13 +3,21 @@ import "./globals.css";
 import Header from "@/components/Header";
 
 export const viewport: Viewport = {
-  themeColor: "#f59e0b",
+  themeColor: "#FAF9F6",
   width: "device-width",
   initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export const metadata: Metadata = {
   title: "주님품교회",
+  applicationName: "주님품교회",
+  appleWebApp: {
+    capable: true,
+    title: "주님품교회",
+    statusBarStyle: "default",
+  },
   description: "대한예수교장로회(통합) 주님품교회입니다. 믿음, 소망, 사랑으로 세워가는 공동체.",
   keywords: ["주님품교회", "대한예수교장로회", "통합", "교회", "예배", "말씀", "기독교"],
   openGraph: {
