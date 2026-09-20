@@ -124,7 +124,7 @@ export default function AboutPage() {
                 </tr>
                 <tr className="hover:bg-stone-50/50 transition-colors">
                   <td className="py-4 px-5 font-medium text-stone-900">새벽 기도회</td>
-                  <td className="py-4 px-5 text-stone-600">월-금 오전 5:00</td>
+                  <td className="py-4 px-5 text-stone-600">월-금 오전 5:30</td>
                   <td className="py-4 px-5 text-stone-500">본당</td>
                 </tr>
                 <tr className="hover:bg-stone-50/50 transition-colors">
