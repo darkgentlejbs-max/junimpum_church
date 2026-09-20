@@ -39,7 +39,7 @@ export default function AboutPage() {
           <p className="text-stone-600 leading-relaxed text-base sm:text-lg mb-6">
             대한예수교장로회(통합) 주님품교회에 오신 여러분을 주님의 이름으로 진심으로 환영합니다.<br/><br/>
             우리는 <strong className="text-amber-800 font-semibold">믿음, 소망, 사랑</strong>으로 함께 지어져 가는 거룩하고 따뜻한 신앙 공동체입니다.<br/>
-            복잡하고 지친 세상의 삶 속에서 주님의 품 안에서 참된 평안과 안식을 얻고, 말씀의 능력과 기도를 통해 날마다 새 힘을 공급받는 은혜의 자리가 되기를 소망합니다.<br/><br/>
+            복잡하고 지친 세상의 삶 속에서 주님품 안에서 참된 평안과 안식을 얻고, 말씀의 능력과 기도를 통해 날마다 새 힘을 공급받는 은혜의 자리가 되기를 소망합니다.<br/><br/>
             성도 한 사람 한 사람을 귀하게 여기며 세상을 향해 그리스도의 사랑의 빛을 발하는 복된 교회로 여러분을 기쁨으로 초대합니다.
           </p>
           <div className="pt-4 border-t border-stone-100 text-right">
