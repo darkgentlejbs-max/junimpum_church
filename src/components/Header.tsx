@@ -67,11 +67,18 @@ export default function Header() {
                 </Link>
                 <div className="my-1 border-t border-stone-100"></div>
                 <Link
-                  href="/about#location"
-                  className="block px-3.5 py-2 text-[11px] text-stone-400 hover:text-stone-700 hover:bg-stone-50 rounded-xl transition-colors"
+                  href="/about#worship-times"
+                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
                   onClick={() => setDropdownOpen(false)}
                 >
-                  예배안내 · 오시는 길
+                  예배안내
+                </Link>
+                <Link
+                  href="/about#location"
+                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  오시는 길
                 </Link>
               </div>
             )}
@@ -176,11 +183,18 @@ export default function Header() {
                 교회연혁
               </Link>
               <Link
+                href="/about#worship-times"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+              >
+                예배안내
+              </Link>
+              <Link
                 href="/about#location"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block text-xs text-stone-400 hover:text-stone-700"
+                className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
               >
-                예배안내 · 오시는 길
+                오시는 길
               </Link>
             </div>
           </div>

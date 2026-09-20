@@ -67,10 +67,10 @@ export default function RootLayout({
             <div>
               <h4 className="text-sm font-medium text-stone-200 mb-4 tracking-wide">예배 시간 안내</h4>
               <ul className="text-xs space-y-2.5 text-stone-400">
-                <li className="flex justify-between max-w-[200px]"><span>주일 대예배</span><span className="text-stone-300">오전 11:00</span></li>
-                <li className="flex justify-between max-w-[200px]"><span>수요예배</span><span className="text-stone-300">오후 7:30</span></li>
-                <li className="flex justify-between max-w-[230px]"><span>금요 다함께 기도회</span><span className="text-stone-300">오후 8:30</span></li>
-                <li className="flex justify-between max-w-[200px]"><span>새벽 기도회</span><span className="text-stone-300">오전 5:30</span></li>
+                <li className="grid grid-cols-[120px_1fr] gap-2"><span>주일 대예배</span><span className="text-stone-300">오전 11:00</span></li>
+                <li className="grid grid-cols-[120px_1fr] gap-2"><span>수요예배</span><span className="text-stone-300">오후 7:30</span></li>
+                <li className="grid grid-cols-[120px_1fr] gap-2"><span>금요 다함께 기도회</span><span className="text-stone-300">오후 8:30</span></li>
+                <li className="grid grid-cols-[120px_1fr] gap-2"><span>새벽 기도회</span><span className="text-stone-300">오전 5:30</span></li>
               </ul>
             </div>
             <div>
