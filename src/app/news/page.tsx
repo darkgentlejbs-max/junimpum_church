@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { CreditCard, Bell, FileText, Image as ImageIcon } from "lucide-react";
 import { getNews } from "@/lib/notion";
 import NoticeItem from "@/components/NoticeItem";
@@ -57,7 +58,7 @@ export default async function NewsPage() {
                   <p className="text-xs text-stone-400 mt-0.5">매주 발행되는 주보 PDF 확인</p>
                 </div>
               </div>
-              <div className="bg-white p-5 rounded-2xl border border-stone-200/80 hover:border-amber-300/80 transition-all flex items-center gap-4 cursor-pointer group">
+              <Link href="/gallery" className="bg-white p-5 rounded-2xl border border-stone-200/80 hover:border-amber-300/80 transition-all flex items-center gap-4 cursor-pointer group block">
                 <div className="w-11 h-11 rounded-xl bg-stone-100 flex items-center justify-center text-stone-600 group-hover:bg-amber-50 group-hover:text-amber-700 transition-colors shrink-0">
                   <ImageIcon size={20} />
                 </div>
@@ -65,7 +66,7 @@ export default async function NewsPage() {
                   <h3 className="text-sm font-semibold text-stone-900 group-hover:text-amber-800 transition-colors">교회 갤러리</h3>
                   <p className="text-xs text-stone-400 mt-0.5">교회 행사 및 활동 사진 모음</p>
                 </div>
-              </div>
+              </Link>
             </div>
           </div>
 
