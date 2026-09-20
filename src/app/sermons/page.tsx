@@ -68,7 +68,7 @@ export default async function SermonsPage() {
         {/* Sermon Grid */}
         <div className="mb-6 flex items-center justify-between">
           <h3 className="text-xl font-semibold text-stone-900">지난 설교 목록</h3>
-          <span className="text-xs text-stone-400">총 6개의 말씀</span>
+          <span className="text-xs text-stone-400">총 {sermons[0]?.id === 'empty' ? 0 : sermons.length}개의 말씀</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
