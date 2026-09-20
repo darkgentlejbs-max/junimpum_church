@@ -36,8 +36,7 @@ export default function SermonsPage() {
                   {sermons[0].title}
                 </h2>
                 <p className="text-sm text-amber-900/80 font-serif mb-5 italic">
-                  "{sermons[0].passage}"
-                </p>
+                  &ldquo;{sermons[0].passage}&rdquo;</p>
                 <div className="space-y-1.5 text-xs text-stone-500">
                   <p className="flex items-center gap-2">
                     <Calendar size={14} className="text-stone-400"/> {sermons[0].date}

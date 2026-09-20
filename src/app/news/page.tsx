@@ -1,5 +1,4 @@
 import { CreditCard, Bell, FileText, Image as ImageIcon } from "lucide-react";
-import Link from "next/link";
 
 export default function NewsPage() {
   const notices = [

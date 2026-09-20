@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Calendar, MapPin, Video, Clock } from "lucide-react";
+import { ArrowUpRight, MapPin, Video, Clock } from "lucide-react";
 
 export default function Home() {
   const navItems = [

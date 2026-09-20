@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import Link from "next/link";
 import Header from "@/components/Header";
 
 export const viewport: Viewport = {
