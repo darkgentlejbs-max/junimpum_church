@@ -41,7 +41,7 @@ export default async function SermonsPage() {
                 <span className="inline-block px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-200/60 rounded-full text-xs font-medium mb-4">
                   최근 주일 설교
                 </span>
-                <h2 className="text-2xl sm:text-3xl font-semibold text-stone-900 mb-2 group-hover:text-amber-800 transition-colors">
+                <h2 className="text-xl sm:text-2xl font-semibold text-stone-900 mb-2 group-hover:text-amber-800 transition-colors">
                   {sermons[0].title}
                 </h2>
                 <p className="text-base sm:text-lg text-stone-700 font-medium mb-6">
@@ -79,7 +79,7 @@ export default async function SermonsPage() {
               </div>
               <div className="p-5 flex-1 flex flex-col justify-between">
                 <div>
-                  <h4 className="text-base sm:text-lg font-semibold text-stone-800 group-hover:text-amber-800 transition-colors mb-1.5 line-clamp-1">
+                  <h4 className="text-base font-semibold text-stone-800 group-hover:text-amber-800 transition-colors mb-1.5 line-clamp-1">
                     {sermon.title}
                   </h4>
                   <p className="text-sm text-stone-600 font-medium mb-4 line-clamp-1">
