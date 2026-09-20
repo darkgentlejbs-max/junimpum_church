@@ -41,17 +41,18 @@ export default async function SermonsPage() {
                 <span className="inline-block px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-200/60 rounded-full text-xs font-medium mb-4">
                   최근 주일 설교
                 </span>
-                <h2 className="text-2xl font-semibold text-stone-900 mb-3 group-hover:text-amber-800 transition-colors">
+                <h2 className="text-2xl sm:text-3xl font-semibold text-stone-900 mb-2 group-hover:text-amber-800 transition-colors">
                   {sermons[0].title}
                 </h2>
-                <p className="text-sm text-amber-900/80 font-serif mb-5 italic">
-                  &ldquo;{sermons[0].passage}&rdquo;</p>
-                <div className="space-y-1.5 text-xs text-stone-500">
+                <p className="text-base sm:text-lg text-stone-700 font-medium mb-6">
+                  {sermons[0].passage}
+                </p>
+                <div className="space-y-2 text-sm sm:text-base text-stone-600">
                   <p className="flex items-center gap-2">
-                    <Calendar size={14} className="text-stone-400"/> {sermons[0].date}
+                    <Calendar size={18} className="text-stone-400"/> {sermons[0].date}
                   </p>
                   <p className="flex items-center gap-2">
-                    <User size={14} className="text-stone-400"/> {sermons[0].preacher}
+                    <User size={18} className="text-stone-400"/> {sermons[0].preacher}
                   </p>
                 </div>
               </div>
@@ -78,16 +79,16 @@ export default async function SermonsPage() {
               </div>
               <div className="p-5 flex-1 flex flex-col justify-between">
                 <div>
-                  <h4 className="text-base font-semibold text-stone-800 group-hover:text-amber-800 transition-colors mb-1.5 line-clamp-1">
+                  <h4 className="text-base sm:text-lg font-semibold text-stone-800 group-hover:text-amber-800 transition-colors mb-1.5 line-clamp-1">
                     {sermon.title}
                   </h4>
-                  <p className="text-xs text-stone-500 font-serif mb-4 italic line-clamp-1">
+                  <p className="text-sm text-stone-600 font-medium mb-4 line-clamp-1">
                     {sermon.passage}
                   </p>
                 </div>
-                <div className="flex items-center justify-between text-[11px] text-stone-400 pt-3 border-t border-stone-100">
-                  <span className="flex items-center gap-1">
-                    <Calendar size={12} /> {sermon.date}
+                <div className="flex items-center justify-between text-xs text-stone-500 pt-3 border-t border-stone-100">
+                  <span className="flex items-center gap-1.5">
+                    <Calendar size={14} /> {sermon.date}
                   </span>
                   <span>{sermon.preacher}</span>
                 </div>
