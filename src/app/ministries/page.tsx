@@ -42,18 +42,14 @@ export default function MinistriesPage() {
               <Music size={24} />
             </div>
             <div className="flex-1">
-              <h2 className="text-lg sm:text-xl font-semibold mb-2 text-stone-900">찬양대 및 찬양팀</h2>
+              <h2 className="text-lg sm:text-xl font-semibold mb-2 text-stone-900">찬양팀</h2>
               <p className="text-stone-600 text-sm leading-relaxed mb-5">
                 정성어린 찬양으로 하나님께 영광을 돌리고, 성도들의 예배를 돕는 은혜의 사역입니다.
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="bg-stone-50/80 p-3.5 rounded-xl border border-stone-100">
-                  <h4 className="text-xs font-semibold text-stone-800 mb-0.5">호산나 찬양대</h4>
-                  <p className="text-xs text-stone-500">주일 대예배 찬양 담당 (주일 오후 1:30 연습)</p>
-                </div>
-                <div className="bg-stone-50/80 p-3.5 rounded-xl border border-stone-100">
-                  <h4 className="text-xs font-semibold text-stone-800 mb-0.5">마라나타 찬양단</h4>
-                  <p className="text-xs text-stone-500">주일 및 수요예배 찬양 인도</p>
+              <div className="grid grid-cols-1 gap-3">
+                <div className="bg-stone-50/80 p-4 rounded-xl border border-stone-100">
+                  <h4 className="text-sm font-semibold text-stone-800 mb-1">부따겸 찬양단</h4>
+                  <p className="text-xs text-stone-500">주일 예배 및 각종 예배 찬양 인도</p>
                 </div>
               </div>
             </div>
