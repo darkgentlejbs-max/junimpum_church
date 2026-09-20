@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Link from "next/link";
-import Image from "next/image";
-import { Menu } from "lucide-react";
+import Header from "@/components/Header";
 
 export const viewport: Viewport = {
   themeColor: "#f59e0b",
@@ -42,36 +41,8 @@ export default function RootLayout({
         <link rel="stylesheet" as="style" crossOrigin="anonymous" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css" />
       </head>
       <body className="min-h-full flex flex-col bg-[#FAF9F6] text-stone-800">
-        {/* Header */}
-        <header className="sticky top-0 z-50 w-full border-b border-stone-200/80 bg-white/90 backdrop-blur-md">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
-            <Link href="/" className="flex items-center group py-2">
-              <div className="relative h-10 w-36 sm:h-12 sm:w-44 transition-transform group-hover:scale-[1.02]">
-                <Image
-                  src="/images/church-logo-header.png"
-                  alt="믿음 소망 사랑으로 세워가는 주님품교회"
-                  fill
-                  sizes="(max-width: 640px) 144px, 176px"
-                  className="object-contain object-left"
-                  priority
-                />
-              </div>
-            </Link>
-            
-            {/* Desktop Nav */}
-            <nav className="hidden md:flex items-center space-x-9 text-sm font-medium text-stone-600">
-              <Link href="/about" className="hover:text-amber-700 transition-colors">교회소개</Link>
-              <Link href="/sermons" className="hover:text-amber-700 transition-colors">예배/말씀</Link>
-              <Link href="/ministries" className="hover:text-amber-700 transition-colors">사역/기관</Link>
-              <Link href="/news" className="hover:text-amber-700 transition-colors">소식/나눔</Link>
-            </nav>
-
-            {/* Mobile Nav Toggle */}
-            <button className="md:hidden p-2 text-stone-600 hover:text-amber-700 transition-colors" aria-label="메뉴 열기">
-              <Menu size={22} />
-            </button>
-          </div>
-        </header>
+        {/* Header with Dropdown Navigation */}
+        <Header />
 
         {/* Main Content */}
         <main className="flex-1 flex flex-col">{children}</main>
