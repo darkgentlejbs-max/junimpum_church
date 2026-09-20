@@ -1,5 +1,6 @@
 import { CreditCard, Bell, FileText, Image as ImageIcon } from "lucide-react";
 import { getNews } from "@/lib/notion";
+import NoticeItem from "@/components/NoticeItem";
 
 export const revalidate = 60; // 60초마다 데이터 새로고침
 
@@ -40,26 +41,7 @@ export default async function NewsPage() {
               </div>
               <ul className="divide-y divide-stone-100">
                 {notices.map((notice: any) => (
-                  <li key={notice.id} className="group flex items-start flex-col sm:flex-row justify-between py-4 hover:bg-stone-50/60 rounded-xl px-3 -mx-3 transition-colors cursor-pointer">
-                    <div className="flex flex-col mb-1.5 sm:mb-0 w-full sm:w-auto">
-                      <div className="flex items-center gap-2.5 mb-1">
-                        {notice.type && (
-                          <span className="bg-amber-100 text-amber-800 border border-amber-200/60 text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0">
-                            {notice.type}
-                          </span>
-                        )}
-                        <span className="text-sm text-stone-700 font-medium group-hover:text-amber-800 transition-colors line-clamp-1">
-                          {notice.title}
-                        </span>
-                      </div>
-                      {notice.content && (
-                        <p className="text-xs text-stone-500 line-clamp-2 mt-0.5 pl-[42px] max-w-xl">
-                          {notice.content}
-                        </p>
-                      )}
-                    </div>
-                    <span className="text-xs text-stone-400 shrink-0 font-mono sm:mt-1">{notice.date}</span>
-                  </li>
+                  <NoticeItem key={notice.id} notice={notice} />
                 ))}
               </ul>
             </section>

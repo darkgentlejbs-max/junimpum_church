@@ -55,7 +55,9 @@ export async function getNews() {
       let typeVal = page.properties['분류']?.select?.name || '공지';
       
       // 내용(Text): 추가적인 세부 설명
-      const contentVal = page.properties['내용']?.rich_text?.[0]?.plain_text || '';
+      const contentVal = page.properties['내용']?.rich_text?.[0]?.plain_text 
+                      || page.properties['텍스트']?.rich_text?.[0]?.plain_text 
+                      || '';
 
       return {
         id: page.id,
