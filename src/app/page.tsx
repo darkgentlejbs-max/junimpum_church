@@ -137,7 +137,7 @@ export default function Home() {
               </div>
               <h3 className="text-sm font-semibold text-stone-900 mb-1.5">예배 시간 안내</h3>
               <p className="text-xs text-stone-500 mb-4 leading-relaxed">
-                주일 대예배(오전 11시) 및 수요기도회, 새벽기도회 안내입니다.
+                주일 대예배(오전 11시), 수요예배, 금요 다함께 기도회, 새벽기도회 안내입니다.
               </p>
               <Link href="/about#worship-times" className="text-xs font-medium text-amber-800 hover:text-amber-900 inline-flex items-center gap-1">
                 시간표 보기 &rarr;

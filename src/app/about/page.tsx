@@ -113,8 +113,13 @@ export default function AboutPage() {
                   <td className="py-4 px-5 text-stone-500">본당</td>
                 </tr>
                 <tr className="hover:bg-stone-50/50 transition-colors">
-                  <td className="py-4 px-5 font-medium text-stone-900">수요 기도회</td>
+                  <td className="py-4 px-5 font-medium text-stone-900">수요예배</td>
                   <td className="py-4 px-5 text-stone-600">수요일 오후 7:30</td>
+                  <td className="py-4 px-5 text-stone-500">본당</td>
+                </tr>
+                <tr className="hover:bg-stone-50/50 transition-colors">
+                  <td className="py-4 px-5 font-medium text-stone-900">금요 다함께 기도회</td>
+                  <td className="py-4 px-5 text-stone-600">금요일 오후 8:30</td>
                   <td className="py-4 px-5 text-stone-500">본당</td>
                 </tr>
                 <tr className="hover:bg-stone-50/50 transition-colors">
@@ -125,7 +130,7 @@ export default function AboutPage() {
                 <tr className="hover:bg-stone-50/50 transition-colors">
                   <td className="py-4 px-5 font-medium text-stone-900">교회학교 예배</td>
                   <td className="py-4 px-5 text-stone-600">주일 오전 11:00</td>
-                  <td className="py-4 px-5 text-stone-500">교육관</td>
+                  <td className="py-4 px-5 text-stone-500">본관 1층</td>
                 </tr>
               </tbody>
             </table>

@@ -26,11 +26,11 @@ export default function MinistriesPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="bg-stone-50/80 p-3.5 rounded-xl border border-stone-100">
                   <h4 className="text-xs font-semibold text-stone-800 mb-0.5">유·초등부</h4>
-                  <p className="text-xs text-stone-500">주일 오전 11:00 / 교육관 1층</p>
+                  <p className="text-xs text-stone-500">주일 오전 11:00 / 본관 1층</p>
                 </div>
                 <div className="bg-stone-50/80 p-3.5 rounded-xl border border-stone-100">
                   <h4 className="text-xs font-semibold text-stone-800 mb-0.5">중·고등부</h4>
-                  <p className="text-xs text-stone-500">주일 오전 11:00 / 교육관 2층</p>
+                  <p className="text-xs text-stone-500">주일 오전 11:00 / 본관 1층</p>
                 </div>
               </div>
             </div>
