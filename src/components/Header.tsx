@@ -85,6 +85,9 @@ export default function Header() {
           <Link href="/news" className="hover:text-amber-700 transition-colors">
             소식/나눔
           </Link>
+          <Link href="/gallery" className="hover:text-amber-700 transition-colors">
+            갤러리
+          </Link>
         </nav>
 
         {/* Mobile Nav Toggle */}
@@ -150,6 +153,13 @@ export default function Header() {
               className="block hover:text-amber-700"
             >
               소식/나눔
+            </Link>
+            <Link
+              href="/gallery"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block hover:text-amber-700"
+            >
+              갤러리
             </Link>
           </div>
         </div>

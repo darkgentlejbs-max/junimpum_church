@@ -6,6 +6,7 @@ export const notion = new Client({
 
 export const SERMONS_DATABASE_ID = process.env.NOTION_SERMONS_DB_ID || '';
 export const NEWS_DATABASE_ID = process.env.NOTION_NEWS_DB_ID || '';
+export const GALLERY_DATABASE_ID = process.env.NOTION_GALLERY_DB_ID || '';
 
 export async function getSermons() {
   if (!SERMONS_DATABASE_ID) return [];
@@ -69,6 +70,31 @@ export async function getNews() {
     });
   } catch (error) {
     console.error('Error fetching news from Notion:', error);
+    return [];
+  }
+}
+
+export async function getGallery() {
+  if (!GALLERY_DATABASE_ID) return [];
+  try {
+    const response = await (notion.databases as any).query({
+      database_id: GALLERY_DATABASE_ID,
+      sorts: [{ property: '날짜', direction: 'descending' }],
+    });
+    return response.results.map((page: any) => {
+      const titleProp = page.properties['이름']?.title?.[0]?.plain_text || '제목 없음';
+      const dateVal = page.properties['날짜']?.date?.start || '날짜 없음';
+      const fileProp = page.properties['사진']?.files?.[0];
+      const imageUrl = fileProp?.file?.url || fileProp?.external?.url || '';
+      return {
+        id: page.id,
+        title: titleProp,
+        date: dateVal,
+        imageUrl: imageUrl,
+      };
+    });
+  } catch (error) {
+    console.error('Error fetching gallery:', error);
     return [];
   }
 }
