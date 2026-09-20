@@ -84,23 +84,50 @@ export async function getGallery() {
     
     const allPhotos: any[] = [];
     
-    response.results.forEach((page: any) => {
+    await Promise.all(response.results.map(async (page: any) => {
       const titleProp = page.properties['이름']?.title?.[0]?.plain_text || '제목 없음';
       const dateVal = page.properties['날짜']?.date?.start || '날짜 없음';
+      let imageIndex = 0;
+
+      // 1. '사진' 속성(칸)에 들어있는 이미지들 가져오기
       const files = page.properties['사진']?.files || [];
-      
-      files.forEach((fileProp: any, index: number) => {
+      files.forEach((fileProp: any) => {
         const imageUrl = fileProp?.file?.url || fileProp?.external?.url || '';
         if (imageUrl) {
           allPhotos.push({
-            id: `${page.id}-${index}`,
-            title: files.length > 1 ? `${titleProp} (${index + 1})` : titleProp,
+            id: `${page.id}-prop-${imageIndex++}`,
+            title: titleProp,
             date: dateVal,
             imageUrl: imageUrl,
           });
         }
       });
-    });
+
+      // 2. 노션 페이지 '본문'에 드래그해서 넣은 이미지 블록들 가져오기
+      try {
+        const blocksResponse = await (notion.blocks.children as any).list({
+          block_id: page.id,
+        });
+        blocksResponse.results.forEach((block: any) => {
+          if (block.type === 'image') {
+            const imageUrl = block.image?.file?.url || block.image?.external?.url || '';
+            if (imageUrl) {
+              allPhotos.push({
+                id: `${block.id}`,
+                title: titleProp,
+                date: dateVal,
+                imageUrl: imageUrl,
+              });
+            }
+          }
+        });
+      } catch (blockErr) {
+        console.error('Error fetching blocks for page:', page.id, blockErr);
+      }
+    }));
+    
+    // 날짜 최신순으로 다시 정렬 (Promise.all 비동기 처리로 인해 순서가 섞일 수 있음)
+    allPhotos.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     
     return allPhotos;
   } catch (error) {
