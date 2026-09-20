@@ -44,36 +44,25 @@ export async function getNews() {
       sorts: [{ property: '날짜', direction: 'descending' }],
     });
     return response.results.map((page: any) => {
-      // 제목 찾기: '제목'(텍스트), '이름'(타이틀), '새소식 게시판'(타이틀) 중 있는 것 사용
-      const titleProp = page.properties['제목']?.rich_text?.[0]?.plain_text 
-                     || page.properties['이름']?.title?.[0]?.plain_text 
+      // 제목(Title): 노션의 기본 '이름(Aa)' 속성 또는 '제목' 텍스트
+      const titleProp = page.properties['이름']?.title?.[0]?.plain_text 
+                     || page.properties['제목']?.title?.[0]?.plain_text
                      || page.properties['새소식 게시판']?.title?.[0]?.plain_text 
+                     || page.properties['제목']?.rich_text?.[0]?.plain_text
                      || '제목 없음';
 
-      // 분류에 내용 전체를 넣은 경우를 대비한 처리
+      // 분류(Select): 짧은 태그 (공지, 모임 등)
       let typeVal = page.properties['분류']?.select?.name || '공지';
-      let displayTitle = titleProp;
-
-      // 분류(배지)에 긴 글을 적으신 경우 위치를 바꿔주거나 합쳐줍니다.
-      if (typeVal.length > 8) {
-        const split = typeVal.split('-');
-        if(split.length > 1) {
-           // '공지 - 수요예배는...' 이면 -> 배지는 '공지', 제목은 '수요예배 안내 - 수요예배는...'
-           typeVal = split[0].trim();
-           displayTitle = `${displayTitle !== '제목 없음' ? displayTitle + ' - ' : ''}${split.slice(1).join('-').trim()}`;
-        } else {
-           // 구분이 없으면 아예 통째로 제목과 위치를 바꿈
-           const temp = displayTitle;
-           displayTitle = typeVal;
-           typeVal = temp !== '제목 없음' ? temp : '공지';
-        }
-      }
+      
+      // 내용(Text): 추가적인 세부 설명
+      const contentVal = page.properties['내용']?.rich_text?.[0]?.plain_text || '';
 
       return {
         id: page.id,
-        title: displayTitle,
+        title: titleProp,
         date: page.properties['날짜']?.date?.start || '날짜 없음',
         type: typeVal,
+        content: contentVal,
       };
     });
   } catch (error) {
