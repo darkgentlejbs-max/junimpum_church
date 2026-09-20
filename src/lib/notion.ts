@@ -54,15 +54,18 @@ export async function getNews() {
       let typeVal = page.properties['분류']?.select?.name || '공지';
       let displayTitle = titleProp;
 
-      // 만약 분류 이름이 너무 길면(내용을 분류에 적으신 경우) 
-      if (typeVal.length > 10 && titleProp === '제목 없음') {
+      // 분류(배지)에 긴 글을 적으신 경우 위치를 바꿔주거나 합쳐줍니다.
+      if (typeVal.length > 8) {
         const split = typeVal.split('-');
         if(split.length > 1) {
+           // '공지 - 수요예배는...' 이면 -> 배지는 '공지', 제목은 '수요예배 안내 - 수요예배는...'
            typeVal = split[0].trim();
-           displayTitle = split.slice(1).join('-').trim();
+           displayTitle = `${displayTitle !== '제목 없음' ? displayTitle + ' - ' : ''}${split.slice(1).join('-').trim()}`;
         } else {
+           // 구분이 없으면 아예 통째로 제목과 위치를 바꿈
+           const temp = displayTitle;
            displayTitle = typeVal;
-           typeVal = '공지';
+           typeVal = temp !== '제목 없음' ? temp : '공지';
         }
       }
 
