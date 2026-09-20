@@ -10,7 +10,7 @@ export const NEWS_DATABASE_ID = process.env.NOTION_NEWS_DB_ID || '';
 export async function getSermons() {
   if (!SERMONS_DATABASE_ID) return [];
   try {
-    const response = await notion.databases.query({
+    const response = await (notion.databases as any).query({
       database_id: SERMONS_DATABASE_ID,
       sorts: [{ property: '날짜', direction: 'descending' }],
     });
@@ -31,7 +31,7 @@ export async function getSermons() {
 export async function getNews() {
   if (!NEWS_DATABASE_ID) return [];
   try {
-    const response = await notion.databases.query({
+    const response = await (notion.databases as any).query({
       database_id: NEWS_DATABASE_ID,
       sorts: [{ property: '날짜', direction: 'descending' }],
     });

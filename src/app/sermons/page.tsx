@@ -71,7 +71,7 @@ export default async function SermonsPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sermons.slice(1).map((sermon) => (
+          {sermons.slice(1).map((sermon: any) => (
             <div key={sermon.id} className="bg-white rounded-2xl overflow-hidden border border-stone-200/80 hover:border-amber-300/80 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:shadow-md transition-all group cursor-pointer flex flex-col">
               <div className="aspect-video bg-stone-100 relative flex items-center justify-center group-hover:bg-stone-200/70 transition-colors">
                 <PlayCircle className="text-amber-700/70 group-hover:text-amber-800 group-hover:scale-105 transition-all" size={40} />

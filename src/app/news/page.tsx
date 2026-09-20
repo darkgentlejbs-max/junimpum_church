@@ -39,7 +39,7 @@ export default async function NewsPage() {
                 </div>
               </div>
               <ul className="divide-y divide-stone-100">
-                {notices.map((notice) => (
+                {notices.map((notice: any) => (
                   <li key={notice.id} className="group flex items-start sm:items-center flex-col sm:flex-row justify-between py-3.5 hover:bg-stone-50/60 rounded-xl px-2.5 -mx-2.5 transition-colors cursor-pointer">
                     <div className="flex items-center gap-2.5 mb-1.5 sm:mb-0">
                       {notice.type && (
