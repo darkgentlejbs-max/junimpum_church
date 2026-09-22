@@ -83,7 +83,7 @@ export default function AboutPage() {
               <div className="font-mono text-xs font-semibold text-stone-500 mb-1">성전 입당</div>
               <h3 className="text-base font-semibold text-stone-900 mb-1">여서동 성전 입당 및 헌당</h3>
               <p className="text-xs sm:text-sm text-stone-500 leading-relaxed">
-                전남 여수시 여서동 7길 28로 입당하여 주님의 품 안에서 거룩한 예배 공동체로 서다.
+                전남 여수시 여서동 7길 28로 입당하여 주님품 안에서 거룩한 예배 공동체로 서다.
               </p>
             </div>
           </div>

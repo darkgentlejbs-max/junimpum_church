@@ -88,7 +88,7 @@ export default function Home() {
 
               {/* Soft Subtitle */}
               <p className="text-stone-500 text-sm font-normal leading-relaxed mb-8 max-w-lg">
-                하나님의 은혜와 사랑이 머무는 곳, 주님의 품처럼 따뜻한 안식과 회복이 있는 주님품교회에 오신 것을 진심으로 환영합니다.
+                하나님의 은혜와 사랑이 머무는 곳, 주님품처럼 따뜻한 안식과 회복이 있는 주님품교회에 오신 것을 진심으로 환영합니다.
               </p>
 
               {/* Right Navigation Bar (Refined & Minimalist List) */}
