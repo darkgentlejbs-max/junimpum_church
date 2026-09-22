@@ -56,7 +56,7 @@ export default function RootLayout({
 
         {/* Footer */}
         <footer className="bg-stone-900 text-stone-400 py-14 mt-auto border-t border-stone-800">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
             <div>
               <h3 className="text-lg font-semibold text-stone-100 mb-2">주님품교회</h3>
               <p className="text-xs text-stone-400 mb-3">대한예수교장로회(통합)</p>
@@ -71,6 +71,20 @@ export default function RootLayout({
                 <li className="grid grid-cols-[120px_1fr] gap-2"><span>수요예배</span><span className="text-stone-300">오후 7:30</span></li>
                 <li className="grid grid-cols-[120px_1fr] gap-2"><span>금요 다함께 기도회</span><span className="text-stone-300">오후 8:30</span></li>
                 <li className="grid grid-cols-[120px_1fr] gap-2"><span>새벽 기도회</span><span className="text-stone-300">오전 5:30</span></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-stone-200 mb-4 tracking-wide">온라인 헌금 안내</h4>
+              <ul className="text-xs space-y-3 text-stone-400">
+                <li className="flex flex-col gap-1">
+                  <span>십일조 / 감사 / 주일 헌금</span>
+                  <span className="text-stone-300">농협 000-0000-0000</span>
+                </li>
+                <li className="flex flex-col gap-1">
+                  <span>건축 / 선교 / 구제 헌금</span>
+                  <span className="text-stone-300">농협 111-1111-1111</span>
+                </li>
+                <li className="pt-0.5">예금주: 주님품교회</li>
               </ul>
             </div>
             <div>
