@@ -22,9 +22,9 @@ export default async function NewsPage() {
       <div className="container mx-auto px-4 sm:px-6 max-w-5xl">
         {/* Page Header */}
         <div className="text-center mb-12">
-          <span className="text-xs font-semibold text-amber-800 uppercase tracking-widest block mb-2">News & Offering</span>
-          <h1 className="text-3xl sm:text-4xl font-semibold text-stone-900 tracking-tight">소식 · 나눔</h1>
-          <p className="text-sm text-stone-500 mt-2">교회의 새로운 소식과 온라인 헌금 안내입니다</p>
+          <span className="text-xs font-semibold text-amber-800 uppercase tracking-widest block mb-2">News & Schedule</span>
+          <h1 className="text-3xl sm:text-4xl font-semibold text-stone-900 tracking-tight">소식 · 일정</h1>
+          <p className="text-sm text-stone-500 mt-2">교회의 새로운 소식과 일정 안내입니다</p>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

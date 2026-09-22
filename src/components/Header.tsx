@@ -9,6 +9,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [ministryDropdownOpen, setMinistryDropdownOpen] = useState(false);
+  const [newsDropdownOpen, setNewsDropdownOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-stone-200/80 bg-white/95 backdrop-blur-md">
@@ -142,9 +143,45 @@ export default function Header() {
               </div>
             )}
           </div>
-          <Link href="/news" className="hover:text-amber-700 transition-colors">
-            소식/나눔
-          </Link>
+          {/* Dropdown Menu for 소식/일정 */}
+          <div
+            className="relative"
+            onMouseEnter={() => setNewsDropdownOpen(true)}
+            onMouseLeave={() => setNewsDropdownOpen(false)}
+          >
+            <Link
+              href="/news"
+              className="inline-flex items-center gap-1.5 hover:text-amber-700 transition-colors py-4"
+            >
+              <span>소식/일정</span>
+              <ChevronDown
+                size={14}
+                className={`transition-transform duration-200 text-stone-400 ${
+                  newsDropdownOpen ? "rotate-180 text-amber-700" : ""
+                }`}
+              />
+            </Link>
+
+            {/* Dropdown Menu Box */}
+            {newsDropdownOpen && (
+              <div className="absolute left-0 top-full -mt-1 w-44 rounded-2xl bg-white p-2 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-stone-200/80 py-2.5 transition-all">
+                <Link
+                  href="/news"
+                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  onClick={() => setNewsDropdownOpen(false)}
+                >
+                  교회 소식
+                </Link>
+                <Link
+                  href="/news"
+                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  onClick={() => setNewsDropdownOpen(false)}
+                >
+                  교회 일정
+                </Link>
+              </div>
+            )}
+          </div>
           <Link href="/gallery" className="hover:text-amber-700 transition-colors">
             갤러리
           </Link>
@@ -252,13 +289,27 @@ export default function Header() {
                 </Link>
               </div>
             </div>
-            <Link
-              href="/news"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block hover:text-amber-700"
-            >
-              소식/나눔
-            </Link>
+            <div className="pt-2">
+              <div className="text-xs font-semibold text-amber-800 uppercase tracking-wider mb-2">
+                소식/일정
+              </div>
+              <div className="pl-3 space-y-2.5 border-l-2 border-amber-300">
+                <Link
+                  href="/news"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                >
+                  교회 소식
+                </Link>
+                <Link
+                  href="/news"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                >
+                  교회 일정
+                </Link>
+              </div>
+            </div>
             <Link
               href="/gallery"
               onClick={() => setMobileMenuOpen(false)}
