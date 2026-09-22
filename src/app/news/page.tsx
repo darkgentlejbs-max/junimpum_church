@@ -1,12 +1,13 @@
 import Link from "next/link";
-import { CreditCard, Bell, FileText, Image as ImageIcon } from "lucide-react";
-import { getNews } from "@/lib/notion";
+import { CreditCard, Bell, FileText, Image as ImageIcon, Calendar } from "lucide-react";
+import { getNews, getSchedule } from "@/lib/notion";
 import NoticeItem from "@/components/NoticeItem";
 
 export const dynamic = 'force-dynamic';
 
 export default async function NewsPage() {
   const notices = await getNews();
+  const schedules = await getSchedule();
 
   if (notices.length === 0) {
     notices.push({
@@ -31,7 +32,7 @@ export default async function NewsPage() {
           
           {/* Main Content Area (Notices) */}
           <div className="lg:col-span-2 space-y-6">
-            <section className="bg-white p-7 sm:p-9 rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80">
+            <section id="notices" className="bg-white p-7 sm:p-9 rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80">
               <div className="mb-6 pb-4 border-b border-stone-100">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-3">
@@ -48,6 +49,53 @@ export default async function NewsPage() {
                   <NoticeItem key={notice.id} notice={notice} />
                 ))}
               </ul>
+            </section>
+
+            {/* Schedule Section */}
+            <section id="schedule" className="bg-white p-7 sm:p-9 rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80">
+              <div className="mb-6 pb-4 border-b border-stone-100">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-8 h-8 rounded-lg bg-amber-100/70 text-amber-800 flex items-center justify-center">
+                    <Calendar size={16} />
+                  </div>
+                  <h2 className="text-xl font-semibold text-stone-900">교회 일정</h2>
+                </div>
+                <p className="text-sm text-stone-500 pl-[44px]">주님품교회의 다가오는 주요 일정입니다.</p>
+              </div>
+              
+              <div className="space-y-4">
+                {schedules.map((item: any) => {
+                  const dateObj = new Date(item.date);
+                  const isInvalidDate = isNaN(dateObj.getTime());
+                  const month = isInvalidDate ? '-' : dateObj.getMonth() + 1;
+                  const day = isInvalidDate ? '-' : dateObj.getDate();
+                  const days = ['일', '월', '화', '수', '목', '금', '토'];
+                  const dayName = isInvalidDate ? '' : days[dateObj.getDay()];
+
+                  return (
+                    <div key={item.id} className="flex items-center gap-5 p-4 rounded-2xl border border-stone-100 bg-stone-50/50 hover:bg-stone-50 hover:border-amber-200/60 transition-colors group">
+                      <div className="flex flex-col items-center justify-center w-14 h-14 shrink-0 bg-white rounded-xl shadow-sm border border-stone-200/60 group-hover:border-amber-300 transition-colors">
+                        <span className="text-[10px] font-bold text-red-500 uppercase tracking-wider">{month}월</span>
+                        <span className="text-xl font-bold text-stone-800 leading-none mt-0.5">{day}</span>
+                      </div>
+                      <div className="flex flex-col flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="bg-stone-200/70 text-stone-600 text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                            {item.type}
+                          </span>
+                          <span className="text-xs text-stone-400 font-medium">{item.location}</span>
+                        </div>
+                        <h3 className="text-base font-semibold text-stone-900 group-hover:text-amber-800 transition-colors">
+                          {item.title}
+                        </h3>
+                      </div>
+                      <div className="hidden sm:flex text-sm text-stone-400 font-medium w-12 justify-end">
+                        {dayName ? `${dayName}요일` : ''}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </section>
 
             {/* Quick Cards */}

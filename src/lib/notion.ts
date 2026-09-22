@@ -7,6 +7,43 @@ export const notion = new Client({
 export const SERMONS_DATABASE_ID = process.env.NOTION_SERMONS_DB_ID || '';
 export const NEWS_DATABASE_ID = process.env.NOTION_NEWS_DB_ID || '';
 export const GALLERY_DATABASE_ID = process.env.NOTION_GALLERY_DB_ID || '';
+export const SCHEDULE_DATABASE_ID = process.env.NOTION_SCHEDULE_DB_ID || '';
+
+export async function getSchedule() {
+  if (!SCHEDULE_DATABASE_ID) {
+    return [
+      { id: 'dummy-1', title: '가을 부흥사경회', date: '2026-10-20', location: '본관 2층 대예배실', type: '집회' },
+      { id: 'dummy-2', title: '여전도회 헌신예배', date: '2026-10-27', location: '본관 2층 대예배실', type: '예배' },
+      { id: 'dummy-3', title: '추수감사주일 및 성찬식', date: '2026-11-15', location: '본관 2층 대예배실', type: '예배' },
+      { id: 'dummy-4', title: '교회학교 겨울성경학교', date: '2026-12-10', location: '본관 1층', type: '행사' },
+    ];
+  }
+  
+  try {
+    const response = await (notion.databases as any).query({
+      database_id: SCHEDULE_DATABASE_ID,
+      sorts: [{ property: '날짜', direction: 'ascending' }],
+    });
+    
+    return response.results.map((page: any) => {
+      const titleProp = page.properties['이름']?.title?.[0]?.plain_text || page.properties['행사명']?.title?.[0]?.plain_text || '일정 없음';
+      const dateProp = page.properties['날짜']?.date?.start || '날짜 미정';
+      const typeProp = page.properties['분류']?.select?.name || '일반';
+      const locationProp = page.properties['장소']?.rich_text?.[0]?.plain_text || page.properties['장소']?.select?.name || '';
+      
+      return {
+        id: page.id,
+        title: titleProp,
+        date: dateProp,
+        type: typeProp,
+        location: locationProp,
+      };
+    });
+  } catch (error) {
+    console.error('Error fetching schedule from Notion:', error);
+    return [];
+  }
+}
 
 export async function getSermons() {
   if (!SERMONS_DATABASE_ID) return [];
