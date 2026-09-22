@@ -115,8 +115,16 @@ export default function RootLayout({
               </div>
             </div>
           </div>
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 mt-10 pt-8 border-t border-stone-800/80 text-[11px] text-stone-400 text-center">
-            © {new Date().getFullYear()} 주님품교회. All rights reserved.
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-stone-800/80">
+            <div className="flex flex-col lg:flex-row justify-between items-center lg:items-end gap-5">
+              <div className="text-[11px] text-stone-400 leading-relaxed text-center lg:text-left">
+                <span className="font-semibold text-stone-300 text-xs">주님품교회</span>는 대한예수교장로회(통합)에 소속된 교회로서<br className="hidden sm:block" />
+                신천지를 비롯한 모든 사이비, 이단의 출입을 금합니다.
+              </div>
+              <div className="text-[11px] text-stone-500 text-center lg:text-right">
+                © {new Date().getFullYear()} 주님품교회. All rights reserved.
+              </div>
+            </div>
           </div>
         </footer>
       </body>
