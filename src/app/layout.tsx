@@ -117,10 +117,10 @@ export default function RootLayout({
           </div>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-stone-800/80">
             <div className="flex flex-col lg:flex-row justify-between items-center lg:items-end gap-5">
-              <div className="flex items-center gap-3 text-[13px] text-stone-400 leading-relaxed text-center lg:text-left">
-                <img src="/images/pck-logo.png" alt="대한예수교장로회(통합)" className="h-7 w-auto object-contain hidden sm:block" />
+              <div className="flex items-start gap-2.5 text-[13px] text-stone-400 leading-relaxed text-center lg:text-left">
+                <img src="/images/pck-logo.png" alt="대한예수교장로회(통합)" className="h-[22px] w-auto object-contain hidden sm:block mt-[1px]" />
                 <div>
-                  <span className="font-semibold text-stone-300 text-[14px]">주님품교회</span>는 대한예수교장로회(통합)에 소속된 교회로서<br className="hidden sm:block" />
+                  <span className="font-semibold text-stone-300 text-[15px] tracking-wide">주님품교회</span>는 대한예수교장로회(통합)에 소속된 교회로서<br className="hidden sm:block" />
                   신천지를 비롯한 모든 사이비, 이단의 출입을 금합니다.
                 </div>
               </div>
