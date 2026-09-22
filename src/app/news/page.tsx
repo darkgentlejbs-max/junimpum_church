@@ -18,6 +18,16 @@ export default async function NewsPage() {
     });
   }
 
+  if (schedules.length === 0) {
+    schedules.push({
+      id: "empty",
+      type: "안내",
+      title: "등록된 일정이 없습니다.",
+      date: "-",
+      location: "-"
+    });
+  }
+
   return (
     <div className="py-12 sm:py-16 bg-[#FAF9F6] min-h-screen text-stone-800">
       <div className="container mx-auto px-4 sm:px-6 max-w-5xl">
