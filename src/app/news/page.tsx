@@ -78,7 +78,7 @@ export default async function NewsPage() {
                 const isInvalidDate = isNaN(dateObj.getTime());
                 const month = isInvalidDate ? '-' : dateObj.getMonth() + 1;
                 const day = isInvalidDate ? '-' : dateObj.getDate();
-                const days = ['일', '월', '화', '수', '목', '금', '토'];
+                const days = ['주일(일요일)', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
                 const dayName = isInvalidDate ? '' : days[dateObj.getDay()];
 
                 return (
@@ -98,8 +98,8 @@ export default async function NewsPage() {
                         {item.title}
                       </h3>
                     </div>
-                    <div className="hidden sm:flex text-sm text-stone-400 font-medium w-12 justify-end">
-                      {dayName ? `${dayName}요일` : ''}
+                    <div className="hidden sm:flex text-sm text-stone-400 font-medium w-auto min-w-[3rem] justify-end whitespace-nowrap">
+                      {dayName}
                     </div>
                   </div>
                 );
