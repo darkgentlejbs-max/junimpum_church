@@ -32,13 +32,16 @@ export default async function NewsPage() {
           {/* Main Content Area (Notices) */}
           <div className="lg:col-span-2 space-y-6">
             <section className="bg-white p-7 sm:p-9 rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80">
-              <div className="flex items-center justify-between mb-6 pb-4 border-b border-stone-100">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-amber-100/70 text-amber-800 flex items-center justify-center">
-                    <Bell size={16} />
+              <div className="mb-6 pb-4 border-b border-stone-100">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-amber-100/70 text-amber-800 flex items-center justify-center">
+                      <Bell size={16} />
+                    </div>
+                    <h2 className="text-xl font-semibold text-stone-900">교회 소식</h2>
                   </div>
-                  <h2 className="text-xl font-semibold text-stone-900">교회 소식</h2>
                 </div>
+                <p className="text-sm text-stone-500 pl-[44px]">우리는 부드럽고, 따뜻하고, 겸손한 주님품교회의 성도입니다.</p>
               </div>
               <ul className="divide-y divide-stone-100">
                 {notices.map((notice: any) => (
