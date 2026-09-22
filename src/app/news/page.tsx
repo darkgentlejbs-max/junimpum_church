@@ -37,7 +37,7 @@ export default async function NewsPage() {
                   <div className="w-8 h-8 rounded-lg bg-amber-100/70 text-amber-800 flex items-center justify-center">
                     <Bell size={16} />
                   </div>
-                  <h2 className="text-xl font-semibold text-stone-900">교회 공지사항</h2>
+                  <h2 className="text-xl font-semibold text-stone-900">교회 소식</h2>
                 </div>
               </div>
               <ul className="divide-y divide-stone-100">
