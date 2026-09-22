@@ -28,7 +28,7 @@ export default function Home() {
     {
       no: "04",
       title: "소식 · 일정",
-      desc: "주보 다운로드, 교회 소식, 온라인 헌금",
+      desc: "교회 소식, 교회 일정, 주보 다운로드",
       href: "/news",
     },
   ];
