@@ -3,7 +3,7 @@ import { CreditCard, Bell, FileText, Image as ImageIcon } from "lucide-react";
 import { getNews } from "@/lib/notion";
 import NoticeItem from "@/components/NoticeItem";
 
-export const revalidate = 60; // 60초마다 데이터 새로고침
+export const dynamic = 'force-dynamic';
 
 export default async function NewsPage() {
   const notices = await getNews();

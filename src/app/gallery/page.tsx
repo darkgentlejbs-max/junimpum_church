@@ -2,7 +2,7 @@ import Image from "next/image";
 import { getGallery } from "@/lib/notion";
 import { ImageIcon } from "lucide-react";
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export default async function GalleryPage() {
   const photos = await getGallery();

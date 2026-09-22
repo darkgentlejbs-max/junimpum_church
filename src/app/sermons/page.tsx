@@ -2,7 +2,7 @@ import { PlayCircle, Calendar, User } from "lucide-react";
 
 import { getSermons } from "@/lib/notion";
 
-export const revalidate = 60; // 60초마다 데이터 새로고침
+export const dynamic = 'force-dynamic';
 
 export default async function SermonsPage() {
   const sermons = await getSermons();
