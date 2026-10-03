@@ -7,7 +7,7 @@ export const notion = new Client({
 export const SERMONS_DATABASE_ID = process.env.NOTION_SERMONS_DB_ID || '';
 export const NEWS_DATABASE_ID = process.env.NOTION_NEWS_DB_ID || '';
 export const GALLERY_DATABASE_ID = process.env.NOTION_GALLERY_DB_ID || '';
-export const BULLETIN_DATABASE_ID = process.env.NOTION_BULLETIN_DB_ID || '';
+export const BULLETIN_DATABASE_ID = process.env.NOTION_BULLETIN_DB_ID || '3ee243467c5a80d4b7d4e832bd6f3322';
 export const SCHEDULE_DATABASE_ID = process.env.NOTION_SCHEDULE_DB_ID || '3e3243467c5a8059af31dd5aad35473b';
 
 export async function getSchedule() {
