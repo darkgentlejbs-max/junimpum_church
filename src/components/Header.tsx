@@ -179,6 +179,14 @@ export default function Header() {
                 >
                   교회 일정
                 </Link>
+                <div className="my-1 border-t border-stone-100"></div>
+                <Link
+                  href="/bulletins"
+                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  onClick={() => setNewsDropdownOpen(false)}
+                >
+                  주보
+                </Link>
               </div>
             )}
           </div>
@@ -307,6 +315,13 @@ export default function Header() {
                   className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
                 >
                   교회 일정
+                </Link>
+                <Link
+                  href="/bulletins"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                >
+                  주보
                 </Link>
               </div>
             </div>
