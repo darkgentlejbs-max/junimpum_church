@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Bell, FileText, Image as ImageIcon, Calendar } from "lucide-react";
 import { getNews, getSchedule } from "@/lib/notion";
 import NoticeItem from "@/components/NoticeItem";
+import ScheduleItem from "@/components/ScheduleItem";
 
 export const dynamic = 'force-dynamic';
 
@@ -73,37 +74,9 @@ export default async function NewsPage() {
             </div>
             
             <div className="space-y-4">
-              {schedules.map((item: any) => {
-                const dateObj = new Date(item.date);
-                const isInvalidDate = isNaN(dateObj.getTime());
-                const month = isInvalidDate ? '-' : dateObj.getMonth() + 1;
-                const day = isInvalidDate ? '-' : dateObj.getDate();
-                const days = ['주일(일요일)', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-                const dayName = isInvalidDate ? '' : days[dateObj.getDay()];
-
-                return (
-                  <div key={item.id} className="flex items-center gap-5 p-4 rounded-2xl border border-stone-100 bg-stone-50/50 hover:bg-stone-50 hover:border-amber-200/60 transition-colors group">
-                    <div className="flex flex-col items-center justify-center w-14 h-14 shrink-0 bg-white rounded-xl shadow-sm border border-stone-200/60 group-hover:border-amber-300 transition-colors">
-                      <span className="text-[10px] font-bold text-red-500 uppercase tracking-wider">{month}월</span>
-                      <span className="text-xl font-bold text-stone-800 leading-none mt-0.5">{day}</span>
-                    </div>
-                    <div className="flex flex-col flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="bg-stone-200/70 text-stone-600 text-[10px] font-semibold px-2 py-0.5 rounded-full">
-                          {item.type}
-                        </span>
-                        <span className="text-xs text-stone-400 font-medium">{item.location}</span>
-                      </div>
-                      <h3 className="text-base font-semibold text-stone-900 group-hover:text-amber-800 transition-colors">
-                        {item.title}
-                      </h3>
-                    </div>
-                    <div className="hidden sm:flex text-sm text-stone-400 font-medium w-auto min-w-[3rem] justify-end whitespace-nowrap">
-                      {dayName}
-                    </div>
-                  </div>
-                );
-              })}
+              {schedules.map((item: any) => (
+                <ScheduleItem key={item.id} item={item} />
+              ))}
             </div>
           </section>
 

@@ -38,6 +38,7 @@ export async function getSchedule() {
         date: dateProp,
         type: typeProp,
         location: locationProp,
+        content: page.properties['텍스트']?.rich_text?.[0]?.plain_text || '',
       };
     });
   } catch (error) {
