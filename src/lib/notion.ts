@@ -8,6 +8,7 @@ export const SERMONS_DATABASE_ID = process.env.NOTION_SERMONS_DB_ID || '';
 export const NEWS_DATABASE_ID = process.env.NOTION_NEWS_DB_ID || '';
 export const GALLERY_DATABASE_ID = process.env.NOTION_GALLERY_DB_ID || '';
 export const BULLETIN_DATABASE_ID = process.env.NOTION_BULLETIN_DB_ID || '3ee243467c5a80d4b7d4e832bd6f3322';
+export const DALDAL_DATABASE_ID = process.env.NOTION_DALDAL_DB_ID || '3f0243467c5a80ff824eff221d7e7919';
 export const SCHEDULE_DATABASE_ID = process.env.NOTION_SCHEDULE_DB_ID || '3e3243467c5a8059af31dd5aad35473b';
 
 export async function getSchedule() {
@@ -211,6 +212,41 @@ export async function getBulletins() {
     });
   } catch (error) {
     console.error('Error fetching bulletins:', error);
+    return [];
+  }
+}
+
+export async function getDalDal() {
+  if (!DALDAL_DATABASE_ID) return [];
+
+  try {
+    const response = await notion.databases.query({
+      database_id: DALDAL_DATABASE_ID,
+      sorts: [
+        {
+          property: '날짜',
+          direction: 'descending',
+        },
+      ],
+    });
+
+    return response.results.map((page: any) => {
+      let imageUrl = '';
+      const fileProp = page.properties['이미지'];
+      if (fileProp && fileProp.files && fileProp.files.length > 0) {
+        const fileObj = fileProp.files[0];
+        imageUrl = fileObj.file ? fileObj.file.url : (fileObj.external ? fileObj.external.url : '');
+      }
+
+      return {
+        id: page.id,
+        title: page.properties['이름']?.title[0]?.plain_text || '제목 없음',
+        date: page.properties['날짜']?.date?.start || '날짜 없음',
+        imageUrl: imageUrl,
+      };
+    });
+  } catch (error) {
+    console.error('Error fetching DalDal from Notion:', error);
     return [];
   }
 }

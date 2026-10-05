@@ -8,6 +8,7 @@ import { Menu, X, ChevronDown } from "lucide-react";
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [worshipDropdownOpen, setWorshipDropdownOpen] = useState(false);
   const [ministryDropdownOpen, setMinistryDropdownOpen] = useState(false);
   const [newsDropdownOpen, setNewsDropdownOpen] = useState(false);
 
@@ -85,9 +86,45 @@ export default function Header() {
             )}
           </div>
 
-          <Link href="/sermons" className="hover:text-amber-700 transition-colors">
-            예배/말씀
-          </Link>
+          {/* Dropdown Menu for 예배/말씀 */}
+          <div
+            className="relative"
+            onMouseEnter={() => setWorshipDropdownOpen(true)}
+            onMouseLeave={() => setWorshipDropdownOpen(false)}
+          >
+            <Link
+              href="/sermons"
+              className="inline-flex items-center gap-1.5 hover:text-amber-700 transition-colors py-4"
+            >
+              <span>예배/말씀</span>
+              <ChevronDown
+                size={14}
+                className={`transition-transform duration-200 text-stone-400 ${
+                  worshipDropdownOpen ? "rotate-180 text-amber-700" : ""
+                }`}
+              />
+            </Link>
+
+            {/* Dropdown Menu Box */}
+            {worshipDropdownOpen && (
+              <div className="absolute left-0 top-full -mt-1 w-44 rounded-2xl bg-white p-2 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-stone-200/80 py-2.5 transition-all">
+                <Link
+                  href="/sermons"
+                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  onClick={() => setWorshipDropdownOpen(false)}
+                >
+                  주일 설교
+                </Link>
+                <Link
+                  href="/daldal"
+                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  onClick={() => setWorshipDropdownOpen(false)}
+                >
+                  달달바이블
+                </Link>
+              </div>
+            )}
+          </div>
 
           {/* Dropdown Menu for 사역/기관 */}
           <div
@@ -254,14 +291,28 @@ export default function Header() {
             </div>
           </div>
 
-          <div className="pt-2 border-t border-stone-100 space-y-3 text-sm font-medium text-stone-700">
-            <Link
-              href="/sermons"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block hover:text-amber-700"
-            >
-              예배/말씀
-            </Link>
+          <div className="pt-2 border-t border-stone-100 space-y-3">
+            <div className="pt-2">
+              <div className="text-xs font-semibold text-amber-800 uppercase tracking-wider mb-2">
+                예배/말씀
+              </div>
+              <div className="pl-3 space-y-2.5 border-l-2 border-amber-300">
+                <Link
+                  href="/sermons"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                >
+                  주일 설교
+                </Link>
+                <Link
+                  href="/daldal"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                >
+                  달달바이블
+                </Link>
+              </div>
+            </div>
             <div className="pt-2">
               <div className="text-xs font-semibold text-amber-800 uppercase tracking-wider mb-2">
                 사역/기관
