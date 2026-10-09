@@ -55,7 +55,7 @@ export default function RootLayout({
         <main className="flex-1 flex flex-col">{children}</main>
 
         {/* Footer */}
-        <footer className="bg-stone-900 text-stone-400 py-14 mt-auto border-t border-stone-800">
+        <footer className="bg-stone-900 text-stone-400 py-8 mt-auto border-t border-stone-800">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
             <div className="lg:col-span-4 lg:pr-8">
               <h3 className="text-lg font-semibold text-stone-100 mb-2">주님품교회</h3>
@@ -115,7 +115,7 @@ export default function RootLayout({
               </div>
             </div>
           </div>
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-stone-800/80">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-5 border-t border-stone-800/80">
             <div className="flex flex-col lg:flex-row justify-between items-center lg:items-end gap-5">
               <div className="flex items-start gap-1.5 text-[13px] text-stone-400 leading-relaxed text-center lg:text-left">
                 <img src="/images/pck-logo.png" alt="대한예수교장로회(통합)" className="h-[22px] w-auto object-contain hidden sm:block mt-[1px]" />
