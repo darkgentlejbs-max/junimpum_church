@@ -31,6 +31,7 @@ export default function LoginPage() {
         return;
       }
 
+      sessionStorage.setItem("welcome_user", JSON.stringify(data.user));
       window.dispatchEvent(new Event("auth-change"));
       router.push("/");
       router.refresh();

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Menu, X, ChevronDown, User as UserIcon, LogOut } from "lucide-react";
+import { Menu, X, ChevronDown, User as UserIcon, LogOut, Sparkles } from "lucide-react";
 
 export default function Header() {
   const router = useRouter();
@@ -14,10 +14,18 @@ export default function Header() {
   const [ministryDropdownOpen, setMinistryDropdownOpen] = useState(false);
   const [newsDropdownOpen, setNewsDropdownOpen] = useState(false);
   const [user, setUser] = useState<{ name: string; email: string; role: string } | null>(null);
+  const [welcomeUser, setWelcomeUser] = useState<{ name: string; role: string } | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        const storedWelcome = sessionStorage.getItem("welcome_user");
+        if (storedWelcome) {
+          sessionStorage.removeItem("welcome_user");
+          const parsed = JSON.parse(storedWelcome);
+          setWelcomeUser(parsed);
+        }
+
         const res = await fetch("/api/auth/me", { cache: "no-store" });
         if (res.ok) {
           const data = await res.json();
@@ -35,6 +43,7 @@ export default function Header() {
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     setUser(null);
+    setWelcomeUser(null);
     setMobileMenuOpen(false);
     router.refresh();
   };
@@ -262,13 +271,17 @@ export default function Header() {
           <div className="pl-4 ml-2 border-l border-stone-200 flex items-center space-x-3">
             {user ? (
               <>
-                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-stone-700 bg-amber-50/80 border border-amber-200/60 px-3 py-1.5 rounded-full">
+                <button
+                  type="button"
+                  onClick={() => setWelcomeUser({ name: user.name, role: user.role })}
+                  className="inline-flex items-center gap-1.5 text-xs font-medium text-stone-700 bg-amber-50/80 border border-amber-200/60 px-3 py-1.5 rounded-full hover:bg-amber-100/80 transition-colors cursor-pointer"
+                >
                   <UserIcon size={13} className="text-amber-700" />
                   <span>
-                    <strong className="font-semibold text-stone-900">{user.name}</strong>{" "}
-                    <span className="text-amber-800">{user.role}</span>님
+                    <strong className="font-semibold text-stone-900">{user.name}</strong>
+                    <span className="text-amber-800 font-semibold">{user.role}</span>님
                   </span>
-                </span>
+                </button>
                 <button
                   onClick={handleLogout}
                   className="inline-flex items-center gap-1 text-xs font-medium text-stone-400 hover:text-red-600 transition-colors cursor-pointer"
@@ -436,21 +449,26 @@ export default function Header() {
             {/* Auth Links (Mobile) */}
             <div className="pt-4 mt-2 border-t border-stone-100 flex items-center gap-3">
               {user ? (
-                <div className="w-full flex items-center justify-between bg-amber-50/70 border border-amber-200/60 px-4 py-3 rounded-xl">
-                  <div className="flex items-center gap-2 text-sm text-stone-700">
-                    <UserIcon size={16} className="text-amber-700" />
-                    <span>
-                      <strong className="font-semibold text-stone-900">{user.name}</strong>{" "}
-                      <span className="text-amber-800">{user.role}</span>님
-                    </span>
+                <div className="w-full bg-amber-50/70 border border-amber-200/60 px-4 py-3.5 rounded-xl space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-sm text-stone-700">
+                      <UserIcon size={16} className="text-amber-700" />
+                      <span>
+                        <strong className="font-semibold text-stone-900">{user.name}</strong>
+                        <span className="text-amber-800 font-semibold">{user.role}</span>님
+                      </span>
+                    </div>
+                    <button
+                      onClick={handleLogout}
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-stone-500 hover:text-red-600 transition-colors cursor-pointer"
+                    >
+                      <LogOut size={14} />
+                      <span>로그아웃</span>
+                    </button>
                   </div>
-                  <button
-                    onClick={handleLogout}
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-stone-500 hover:text-red-600 transition-colors cursor-pointer"
-                  >
-                    <LogOut size={14} />
-                    <span>로그아웃</span>
-                  </button>
+                  <p className="text-xs text-amber-900/80 leading-relaxed pl-6">
+                    주님품교회 홈페이지 방문을 주님의 이름으로 환영하고 축복합니다
+                  </p>
                 </div>
               ) : (
                 <>
@@ -471,6 +489,39 @@ export default function Header() {
                 </>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Welcome Blessing Modal on Login / Signup */}
+      {welcomeUser && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-xs p-4"
+          onClick={() => setWelcomeUser(null)}
+        >
+          <div
+            className="w-full max-w-md bg-white rounded-3xl p-8 text-center shadow-2xl border border-amber-200/80 animate-in fade-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-amber-50 border border-amber-200/70 flex items-center justify-center text-amber-700">
+              <Sparkles size={26} />
+            </div>
+            <h3 className="text-xl sm:text-2xl font-bold text-stone-900 mb-3">
+              <span className="text-amber-800">
+                {welcomeUser.name}
+                {welcomeUser.role}님
+              </span>
+            </h3>
+            <p className="text-base sm:text-lg font-medium text-stone-700 leading-relaxed mb-7 break-keep">
+              &ldquo;주님품교회 홈페이지 방문을 주님의 이름으로 환영하고 축복합니다&rdquo;
+            </p>
+            <button
+              type="button"
+              onClick={() => setWelcomeUser(null)}
+              className="w-full py-3.5 rounded-xl bg-amber-800 text-white text-sm font-semibold hover:bg-amber-900 transition-colors cursor-pointer"
+            >
+              감사합니다 (확인)
+            </button>
           </div>
         </div>
       )}

@@ -48,6 +48,7 @@ export default function SignupPage() {
         return;
       }
 
+      sessionStorage.setItem("welcome_user", JSON.stringify(data.user));
       window.dispatchEvent(new Event("auth-change"));
       router.push("/");
       router.refresh();
