@@ -250,3 +250,208 @@ export async function getDalDal() {
     return [];
   }
 }
+
+export const MEMBERS_DATABASE_ID = process.env.NOTION_MEMBERS_DB_ID || '';
+let cachedMembersDbId = MEMBERS_DATABASE_ID;
+let schemaVerified = false;
+
+async function ensureMembersSchema(databaseId: string) {
+  if (schemaVerified) return;
+  try {
+    const db: any = await notion.databases.retrieve({ database_id: databaseId });
+    const props = db.properties || {};
+    const updates: Record<string, any> = {};
+
+    if (!props['이메일']) {
+      updates['이메일'] = { rich_text: {} };
+    }
+    if (!props['비밀번호']) {
+      updates['비밀번호'] = { rich_text: {} };
+    }
+    if (!props['연락처']) {
+      updates['연락처'] = { rich_text: {} };
+    }
+    if (!props['직분']) {
+      updates['직분'] = {
+        select: {
+          options: [
+            { name: '성도', color: 'default' },
+            { name: '새가족', color: 'green' },
+            { name: '집사', color: 'blue' },
+            { name: '권사', color: 'purple' },
+            { name: '장로', color: 'orange' },
+            { name: '교역자', color: 'yellow' },
+          ],
+        },
+      };
+    }
+    if (!props['가입일']) {
+      updates['가입일'] = { date: {} };
+    }
+
+    if (Object.keys(updates).length > 0) {
+      await notion.databases.update({
+        database_id: databaseId,
+        properties: updates,
+      });
+    }
+    schemaVerified = true;
+  } catch (error) {
+    console.error('Error ensuring members database schema:', error);
+  }
+}
+
+export async function resolveMembersDatabaseId(): Promise<string> {
+  if (cachedMembersDbId) {
+    await ensureMembersSchema(cachedMembersDbId);
+    return cachedMembersDbId;
+  }
+
+  try {
+    const searchRes = await notion.search({
+      filter: { property: 'object', value: 'database' },
+    });
+
+    for (const item of searchRes.results as any[]) {
+      const title = item.title?.[0]?.plain_text || '';
+      if (title.includes('회원') || title.includes('교인') || title.includes('성도')) {
+        cachedMembersDbId = item.id;
+        await ensureMembersSchema(cachedMembersDbId);
+        return cachedMembersDbId;
+      }
+    }
+
+    // 자동 생성 폴백: 기존에 권한이 부여된 상위 페이지 하위에 '교인 명부 (회원관리)' 데이터베이스 생성
+    const createdDb: any = await notion.databases.create({
+      parent: {
+        type: 'page_id',
+        page_id: '3e3243467c5a805eaeedff2822e3ac31',
+      },
+      title: [
+        {
+          type: 'text',
+          text: { content: '교인 명부 (회원관리)' },
+        },
+      ],
+      properties: {
+        이름: { title: {} },
+        이메일: { rich_text: {} },
+        비밀번호: { rich_text: {} },
+        연락처: { rich_text: {} },
+        직분: {
+          select: {
+            options: [
+              { name: '성도', color: 'default' },
+              { name: '새가족', color: 'green' },
+              { name: '집사', color: 'blue' },
+              { name: '권사', color: 'purple' },
+              { name: '장로', color: 'orange' },
+              { name: '교역자', color: 'yellow' },
+            ],
+          },
+        },
+        가입일: { date: {} },
+      },
+    });
+
+    cachedMembersDbId = createdDb.id;
+    schemaVerified = true;
+    return cachedMembersDbId;
+  } catch (error) {
+    console.error('Error resolving members database:', error);
+    throw new Error('노션 회원 데이터베이스에 접근할 수 없습니다.');
+  }
+}
+
+export async function findMemberByEmail(email: string) {
+  const dbId = await resolveMembersDatabaseId();
+  const normalizedEmail = email.trim().toLowerCase();
+
+  const response = await notion.databases.query({
+    database_id: dbId,
+    filter: {
+      property: '이메일',
+      rich_text: {
+        equals: normalizedEmail,
+      },
+    },
+  });
+
+  if (response.results.length === 0) return null;
+
+  const page: any = response.results[0];
+  const props = page.properties;
+
+  // 타이틀 속성 이름 찾기 ('이름' 또는 기본 title 속성)
+  let name = '성도';
+  for (const key of Object.keys(props)) {
+    if (props[key]?.type === 'title') {
+      name = props[key]?.title?.[0]?.plain_text || '성도';
+      break;
+    }
+  }
+
+  return {
+    id: page.id,
+    name,
+    email: props['이메일']?.rich_text?.[0]?.plain_text || normalizedEmail,
+    passwordHash: props['비밀번호']?.rich_text?.[0]?.plain_text || '',
+    phone: props['연락처']?.rich_text?.[0]?.plain_text || '',
+    role: props['직분']?.select?.name || '성도',
+  };
+}
+
+export async function createMember(data: {
+  name: string;
+  email: string;
+  passwordHash: string;
+  phone: string;
+  role: string;
+}) {
+  const dbId = await resolveMembersDatabaseId();
+  const normalizedEmail = data.email.trim().toLowerCase();
+  const today = new Date().toISOString().split('T')[0];
+
+  // 데이터베이스의 기본 title 컬럼명 확인
+  const db: any = await notion.databases.retrieve({ database_id: dbId });
+  let titlePropName = '이름';
+  for (const [key, val] of Object.entries(db.properties || {}) as any[]) {
+    if (val.type === 'title') {
+      titlePropName = key;
+      break;
+    }
+  }
+
+  const page: any = await notion.pages.create({
+    parent: { database_id: dbId },
+    properties: {
+      [titlePropName]: {
+        title: [{ text: { content: data.name.trim() } }],
+      },
+      이메일: {
+        rich_text: [{ text: { content: normalizedEmail } }],
+      },
+      비밀번호: {
+        rich_text: [{ text: { content: data.passwordHash } }],
+      },
+      연락처: {
+        rich_text: [{ text: { content: data.phone.trim() } }],
+      },
+      직분: {
+        select: { name: data.role || '성도' },
+      },
+      가입일: {
+        date: { start: today },
+      },
+    },
+  });
+
+  return {
+    id: page.id,
+    name: data.name.trim(),
+    email: normalizedEmail,
+    phone: data.phone.trim(),
+    role: data.role || '성도',
+  };
+}
+

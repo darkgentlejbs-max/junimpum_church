@@ -1,16 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Menu, X, ChevronDown, User as UserIcon, LogOut } from "lucide-react";
 
 export default function Header() {
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [worshipDropdownOpen, setWorshipDropdownOpen] = useState(false);
   const [ministryDropdownOpen, setMinistryDropdownOpen] = useState(false);
   const [newsDropdownOpen, setNewsDropdownOpen] = useState(false);
+  const [user, setUser] = useState<{ name: string; email: string; role: string } | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch("/api/auth/me", { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data.user || null);
+        }
+      } catch {
+        // ignore
+      }
+    };
+    fetchUser();
+    window.addEventListener("auth-change", fetchUser);
+    return () => window.removeEventListener("auth-change", fetchUser);
+  }, []);
+
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    setUser(null);
+    setMobileMenuOpen(false);
+    router.refresh();
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-stone-200/80 bg-white/95 backdrop-blur-md">
@@ -232,13 +259,35 @@ export default function Header() {
           </Link>
 
           {/* Auth Links (Desktop) */}
-          <div className="pl-4 ml-2 border-l border-stone-200 flex items-center space-x-4">
-            <Link href="/login" className="text-xs font-medium text-stone-500 hover:text-amber-700 transition-colors">
-              로그인
-            </Link>
-            <Link href="/signup" className="text-xs font-medium px-4 py-1.5 rounded-full bg-stone-100 text-stone-600 hover:bg-amber-100 hover:text-amber-800 transition-colors">
-              회원가입
-            </Link>
+          <div className="pl-4 ml-2 border-l border-stone-200 flex items-center space-x-3">
+            {user ? (
+              <>
+                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-stone-700 bg-amber-50/80 border border-amber-200/60 px-3 py-1.5 rounded-full">
+                  <UserIcon size={13} className="text-amber-700" />
+                  <span>
+                    <strong className="font-semibold text-stone-900">{user.name}</strong>{" "}
+                    <span className="text-amber-800">{user.role}</span>님
+                  </span>
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="inline-flex items-center gap-1 text-xs font-medium text-stone-400 hover:text-red-600 transition-colors cursor-pointer"
+                  title="로그아웃"
+                >
+                  <LogOut size={13} />
+                  <span>로그아웃</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="text-xs font-medium text-stone-500 hover:text-amber-700 transition-colors">
+                  로그인
+                </Link>
+                <Link href="/signup" className="text-xs font-medium px-4 py-1.5 rounded-full bg-stone-100 text-stone-600 hover:bg-amber-100 hover:text-amber-800 transition-colors">
+                  회원가입
+                </Link>
+              </>
+            )}
           </div>
         </nav>
 
@@ -386,20 +435,41 @@ export default function Header() {
 
             {/* Auth Links (Mobile) */}
             <div className="pt-4 mt-2 border-t border-stone-100 flex items-center gap-3">
-              <Link
-                href="/login"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex-1 text-center py-2.5 text-sm font-medium text-stone-600 bg-stone-50 rounded-xl hover:bg-stone-100 transition-colors"
-              >
-                로그인
-              </Link>
-              <Link
-                href="/signup"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex-1 text-center py-2.5 text-sm font-medium text-amber-800 bg-amber-100/70 rounded-xl hover:bg-amber-200/70 transition-colors"
-              >
-                회원가입
-              </Link>
+              {user ? (
+                <div className="w-full flex items-center justify-between bg-amber-50/70 border border-amber-200/60 px-4 py-3 rounded-xl">
+                  <div className="flex items-center gap-2 text-sm text-stone-700">
+                    <UserIcon size={16} className="text-amber-700" />
+                    <span>
+                      <strong className="font-semibold text-stone-900">{user.name}</strong>{" "}
+                      <span className="text-amber-800">{user.role}</span>님
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-stone-500 hover:text-red-600 transition-colors cursor-pointer"
+                  >
+                    <LogOut size={14} />
+                    <span>로그아웃</span>
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex-1 text-center py-2.5 text-sm font-medium text-stone-600 bg-stone-50 rounded-xl hover:bg-stone-100 transition-colors"
+                  >
+                    로그인
+                  </Link>
+                  <Link
+                    href="/signup"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex-1 text-center py-2.5 text-sm font-medium text-amber-800 bg-amber-100/70 rounded-xl hover:bg-amber-200/70 transition-colors"
+                  >
+                    회원가입
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
