@@ -48,6 +48,43 @@ export default function Header() {
     router.refresh();
   };
 
+  const getTimeGreeting = (name: string, role: string) => {
+    const now = new Date();
+    const day = now.getDay();
+    const hour = now.getHours();
+    const fullTitle = `${name}${role}님`;
+
+    if (day === 0) {
+      return {
+        headline: `${fullTitle}, 복된 주일입니다!`,
+        message:
+          "따뜻한 주님품교회 홈페이지 방문을 환영합니다. 오늘도 예배를 통해 하나님의 크신 은혜와 사랑을 깊이 경험하는 복된 하루 되시길 축복합니다.",
+      };
+    }
+
+    if (hour >= 5 && hour < 11) {
+      return {
+        headline: `${fullTitle}, 좋은 아침입니다!`,
+        message:
+          "따뜻한 주님품교회에 오신 것을 환영합니다. 오늘 하루도 주님의 말씀과 은혜로 힘차게 시작하시길 주님의 이름으로 축복합니다.",
+      };
+    }
+
+    if (hour >= 11 && hour < 18) {
+      return {
+        headline: `${fullTitle}, 반갑습니다!`,
+        message:
+          "주님품교회 홈페이지 방문을 진심으로 환영합니다. 분주한 일상 속에서도 주님이 주시는 평안과 새 힘이 가득하시길 축복합니다.",
+      };
+    }
+
+    return {
+      headline: `${fullTitle}, 참 잘 오셨습니다!`,
+      message:
+        "오늘 하루도 참 수고 많으셨습니다. 주님의 따뜻한 품 안에서 평안한 쉼과 회복을 누리시길 주님의 이름으로 축복합니다.",
+    };
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-stone-200/80 bg-white/95 backdrop-blur-md">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
@@ -467,7 +504,7 @@ export default function Header() {
                     </button>
                   </div>
                   <p className="text-xs text-amber-900/80 leading-relaxed pl-6">
-                    주님품교회 홈페이지 방문을 주님의 이름으로 환영하고 축복합니다
+                    {getTimeGreeting(user.name, user.role).message}
                   </p>
                 </div>
               ) : (
@@ -494,37 +531,37 @@ export default function Header() {
       )}
 
       {/* Welcome Blessing Modal on Login / Signup */}
-      {welcomeUser && (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-xs p-4"
-          onClick={() => setWelcomeUser(null)}
-        >
+      {welcomeUser && (() => {
+        const greeting = getTimeGreeting(welcomeUser.name, welcomeUser.role);
+        return (
           <div
-            className="w-full max-w-md bg-white rounded-3xl p-8 text-center shadow-2xl border border-amber-200/80 animate-in fade-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-xs p-4"
+            onClick={() => setWelcomeUser(null)}
           >
-            <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-amber-50 border border-amber-200/70 flex items-center justify-center text-amber-700">
-              <Sparkles size={26} />
-            </div>
-            <h3 className="text-xl sm:text-2xl font-bold text-stone-900 mb-3">
-              <span className="text-amber-800">
-                {welcomeUser.name}
-                {welcomeUser.role}님
-              </span>
-            </h3>
-            <p className="text-base sm:text-lg font-medium text-stone-700 leading-relaxed mb-7 break-keep">
-              &ldquo;주님품교회 홈페이지 방문을 주님의 이름으로 환영하고 축복합니다&rdquo;
-            </p>
-            <button
-              type="button"
-              onClick={() => setWelcomeUser(null)}
-              className="w-full py-3.5 rounded-xl bg-amber-800 text-white text-sm font-semibold hover:bg-amber-900 transition-colors cursor-pointer"
+            <div
+              className="w-full max-w-md bg-white rounded-3xl p-8 text-center shadow-2xl border border-amber-200/80 animate-in fade-in zoom-in-95 duration-200"
+              onClick={(e) => e.stopPropagation()}
             >
-              감사합니다 (확인)
-            </button>
+              <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-amber-50 border border-amber-200/70 flex items-center justify-center text-amber-700">
+                <Sparkles size={26} />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-stone-900 mb-3 break-keep">
+                <span className="text-amber-800">{greeting.headline}</span>
+              </h3>
+              <p className="text-sm sm:text-base font-medium text-stone-600 leading-relaxed mb-7 break-keep">
+                &ldquo;{greeting.message}&rdquo;
+              </p>
+              <button
+                type="button"
+                onClick={() => setWelcomeUser(null)}
+                className="w-full py-3.5 rounded-xl bg-amber-800 text-white text-sm font-semibold hover:bg-amber-900 transition-colors cursor-pointer"
+              >
+                아멘, 감사합니다
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </header>
   );
 }
