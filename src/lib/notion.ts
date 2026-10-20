@@ -68,7 +68,12 @@ export async function getSermons() {
         date: page.properties['날짜']?.date?.start || '날짜 없음',
         preacher: page.properties['설교자']?.select?.name || page.properties['설교자']?.rich_text?.[0]?.plain_text || '설교자 없음',
         passage: page.properties['성경구절']?.rich_text?.[0]?.plain_text || '',
-        videoUrl: page.properties['영상링크']?.url || '',
+        videoUrl:
+          page.properties['영상링크']?.url ||
+          page.properties['영상링크']?.rich_text?.[0]?.plain_text ||
+          page.properties['링크']?.url ||
+          page.properties['링크']?.rich_text?.[0]?.plain_text ||
+          '',
       };
     });
   } catch (error) {
