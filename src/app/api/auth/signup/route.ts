@@ -9,14 +9,14 @@ export async function POST(request: Request) {
 
     if (!name || !email || !password) {
       return NextResponse.json(
-        { error: '이름, 이메일, 비밀번호를 모두 입력해 주세요.' },
+        { error: '이름, 아이디(또는 이메일), 비밀번호를 모두 입력해 주세요.' },
         { status: 400 }
       );
     }
 
-    if (password.length < 6) {
+    if (password.length < 4) {
       return NextResponse.json(
-        { error: '비밀번호는 최소 6자 이상이어야 합니다.' },
+        { error: '비밀번호는 최소 4자 이상이어야 합니다.' },
         { status: 400 }
       );
     }
@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     const existing = await findMemberByEmail(email);
     if (existing) {
       return NextResponse.json(
-        { error: '이미 가입된 이메일 주소입니다.' },
+        { error: '이미 사용 중인 아이디(또는 이메일)입니다.' },
         { status: 409 }
       );
     }

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, UserPlus, User, Mail, Lock, Phone, Award, Loader2 } from "lucide-react";
+import { ArrowLeft, UserPlus, User, KeyRound, Lock, Phone, Award, Loader2 } from "lucide-react";
 
 const ROLES = ["성도", "새가족", "집사", "권사", "장로", "교역자"];
 
@@ -22,8 +22,8 @@ export default function SignupPage() {
     e.preventDefault();
     setError("");
 
-    if (password.length < 6) {
-      setError("비밀번호는 최소 6자 이상 입력해 주세요.");
+    if (password.length < 4) {
+      setError("비밀번호는 최소 4자 이상 입력해 주세요.");
       return;
     }
 
@@ -101,19 +101,19 @@ export default function SignupPage() {
 
           <div>
             <label className="block text-xs font-semibold text-stone-700 mb-1.5">
-              이메일 <span className="text-red-500">*</span>
+              아이디 (또는 이메일) <span className="text-red-500">*</span>
             </label>
             <div className="relative">
-              <Mail
+              <KeyRound
                 size={16}
                 className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400"
               />
               <input
-                type="email"
+                type="text"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="example@email.com"
+                placeholder="쉬운 아이디(예: hong123) 또는 이메일"
                 className="w-full pl-10 pr-4 py-3 text-sm rounded-xl border border-stone-200 bg-stone-50/50 focus:bg-white focus:outline-none focus:border-amber-600 transition-colors"
               />
             </div>
@@ -134,7 +134,7 @@ export default function SignupPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="6자 이상"
+                  placeholder="4자 이상"
                   className="w-full pl-10 pr-3 py-3 text-sm rounded-xl border border-stone-200 bg-stone-50/50 focus:bg-white focus:outline-none focus:border-amber-600 transition-colors"
                 />
               </div>

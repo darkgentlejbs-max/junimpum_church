@@ -262,6 +262,9 @@ async function ensureMembersSchema(databaseId: string) {
     const props = db.properties || {};
     const updates: Record<string, any> = {};
 
+    if (!props['아이디']) {
+      updates['아이디'] = { rich_text: {} };
+    }
     if (!props['이메일']) {
       updates['이메일'] = { rich_text: {} };
     }
@@ -335,6 +338,7 @@ export async function resolveMembersDatabaseId(): Promise<string> {
       ],
       properties: {
         이름: { title: {} },
+        아이디: { rich_text: {} },
         이메일: { rich_text: {} },
         비밀번호: { rich_text: {} },
         연락처: { rich_text: {} },
@@ -363,17 +367,27 @@ export async function resolveMembersDatabaseId(): Promise<string> {
   }
 }
 
-export async function findMemberByEmail(email: string) {
+export async function findMemberByEmail(identifier: string) {
   const dbId = await resolveMembersDatabaseId();
-  const normalizedEmail = email.trim().toLowerCase();
+  const normalizedId = identifier.trim().toLowerCase();
 
   const response = await notion.databases.query({
     database_id: dbId,
     filter: {
-      property: '이메일',
-      rich_text: {
-        equals: normalizedEmail,
-      },
+      or: [
+        {
+          property: '아이디',
+          rich_text: {
+            equals: normalizedId,
+          },
+        },
+        {
+          property: '이메일',
+          rich_text: {
+            equals: normalizedId,
+          },
+        },
+      ],
     },
   });
 
@@ -394,7 +408,10 @@ export async function findMemberByEmail(email: string) {
   return {
     id: page.id,
     name,
-    email: props['이메일']?.rich_text?.[0]?.plain_text || normalizedEmail,
+    email:
+      props['아이디']?.rich_text?.[0]?.plain_text ||
+      props['이메일']?.rich_text?.[0]?.plain_text ||
+      normalizedId,
     passwordHash: props['비밀번호']?.rich_text?.[0]?.plain_text || '',
     phone: props['연락처']?.rich_text?.[0]?.plain_text || '',
     role: props['직분']?.select?.name || '성도',
@@ -409,7 +426,7 @@ export async function createMember(data: {
   role: string;
 }) {
   const dbId = await resolveMembersDatabaseId();
-  const normalizedEmail = data.email.trim().toLowerCase();
+  const normalizedId = data.email.trim().toLowerCase();
   const today = new Date().toISOString().split('T')[0];
 
   // 데이터베이스의 기본 title 컬럼명 확인
@@ -428,8 +445,11 @@ export async function createMember(data: {
       [titlePropName]: {
         title: [{ text: { content: data.name.trim() } }],
       },
+      아이디: {
+        rich_text: [{ text: { content: normalizedId } }],
+      },
       이메일: {
-        rich_text: [{ text: { content: normalizedEmail } }],
+        rich_text: [{ text: { content: normalizedId.includes('@') ? normalizedId : '' } }],
       },
       비밀번호: {
         rich_text: [{ text: { content: data.passwordHash } }],
@@ -449,9 +469,10 @@ export async function createMember(data: {
   return {
     id: page.id,
     name: data.name.trim(),
-    email: normalizedEmail,
+    email: normalizedId,
     phone: data.phone.trim(),
     role: data.role || '성도',
   };
 }
+
 

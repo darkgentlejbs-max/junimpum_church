@@ -9,7 +9,7 @@ export async function POST(request: Request) {
 
     if (!email || !password) {
       return NextResponse.json(
-        { error: '이메일과 비밀번호를 입력해 주세요.' },
+        { error: '아이디(또는 이메일)와 비밀번호를 입력해 주세요.' },
         { status: 400 }
       );
     }
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     const member = await findMemberByEmail(email);
     if (!member || !verifyPassword(password, member.passwordHash)) {
       return NextResponse.json(
-        { error: '이메일 또는 비밀번호가 일치하지 않습니다.' },
+        { error: '아이디(또는 이메일) 또는 비밀번호가 일치하지 않습니다.' },
         { status: 401 }
       );
     }

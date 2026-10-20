@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, LogIn, Mail, Lock, Loader2 } from "lucide-react";
+import { ArrowLeft, LogIn, User, Lock, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -64,19 +64,19 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-semibold text-stone-700 mb-1.5">
-              이메일
+              아이디 (또는 이메일)
             </label>
             <div className="relative">
-              <Mail
+              <User
                 size={16}
                 className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400"
               />
               <input
-                type="email"
+                type="text"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="example@email.com"
+                placeholder="아이디 또는 이메일을 입력하세요"
                 className="w-full pl-10 pr-4 py-3 text-sm rounded-xl border border-stone-200 bg-stone-50/50 focus:bg-white focus:outline-none focus:border-amber-600 transition-colors"
               />
             </div>
