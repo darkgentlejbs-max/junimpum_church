@@ -56,15 +56,15 @@ export default function RootLayout({
 
         {/* Footer */}
         <footer className="bg-stone-900 text-stone-400 py-8 mt-auto border-t border-stone-800">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
-            <div className="lg:col-span-4 lg:pr-8">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-12 gap-10 lg:gap-8">
+            <div className="lg:col-span-5 lg:pr-8">
               <h3 className="text-lg font-semibold text-stone-100 mb-2">주님품교회</h3>
               <p className="text-xs text-stone-400 mb-3">대한예수교장로회(통합)</p>
               <p className="text-xs text-stone-400 leading-relaxed max-w-xs">
                 믿음, 소망, 사랑으로 세워지며 주님품처럼 따뜻한 쉼과 회복이 있는 공동체입니다.
               </p>
             </div>
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-4">
               <h4 className="text-sm font-medium text-stone-200 mb-4 tracking-wide">예배 시간 안내</h4>
               <ul className="text-xs space-y-2.5 text-stone-400">
                 <li className="grid grid-cols-[110px_1fr] gap-2"><span>주일 대예배</span><span className="text-stone-300">오전 11:00</span></li>
@@ -74,20 +74,6 @@ export default function RootLayout({
               </ul>
             </div>
             <div className="lg:col-span-3">
-              <h4 className="text-sm font-medium text-stone-200 mb-4 tracking-wide">온라인 헌금 안내</h4>
-              <ul className="text-xs space-y-3 text-stone-400">
-                <li className="flex flex-col gap-1">
-                  <span>십일조 / 감사 / 주일 헌금</span>
-                  <span className="text-stone-300">농협 000-0000-0000</span>
-                </li>
-                <li className="flex flex-col gap-1">
-                  <span>건축 / 선교 / 구제 헌금</span>
-                  <span className="text-stone-300">농협 111-1111-1111</span>
-                </li>
-                <li className="pt-0.5">예금주: 주님품교회</li>
-              </ul>
-            </div>
-            <div className="lg:col-span-2">
               <h4 className="text-sm font-medium text-stone-200 mb-4 tracking-wide">교회 위치</h4>
               <p className="text-xs text-stone-300 font-medium mb-1">
                 전남 여수시 여서동 7길 28
