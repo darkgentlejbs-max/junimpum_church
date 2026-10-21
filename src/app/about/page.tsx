@@ -28,22 +28,56 @@ export default function AboutPage() {
         
         {/* Pastor Greeting Section */}
         <section id="greeting" className="bg-white p-5 sm:p-10 rounded-2xl sm:rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] mb-5 sm:mb-8 border border-stone-200/80 scroll-mt-24">
-          <div className="flex items-center mb-6">
-            <div className="w-9 h-9 rounded-xl bg-amber-100/70 text-amber-800 flex items-center justify-center mr-3">
-              <Sparkles size={18} />
+          <div className="flex items-center justify-between mb-6 pb-4 border-b border-stone-100">
+            <div className="flex items-center">
+              <div className="w-9 h-9 rounded-xl bg-amber-100/70 text-amber-800 flex items-center justify-center mr-3">
+                <Sparkles size={18} />
+              </div>
+              <h2 className="text-xl sm:text-2xl font-semibold text-stone-900">
+                목회자 인사말
+              </h2>
             </div>
-            <h2 className="text-xl sm:text-2xl font-semibold text-stone-900">
-              목회자 인사말
-            </h2>
+            <span className="text-xs font-serif italic text-amber-800/80 tracking-wider">
+              God bless you
+            </span>
           </div>
-          <p className="text-stone-600 leading-relaxed text-base sm:text-lg mb-6">
-            대한예수교장로회(통합) 주님품교회에 오신 여러분을 주님의 이름으로 진심으로 환영합니다.<br/><br/>
-            우리는 <strong className="text-amber-800 font-semibold">믿음, 소망, 사랑</strong>으로 함께 지어져 가는 거룩하고 따뜻한 신앙 공동체입니다.<br/>
-            복잡하고 지친 세상의 삶 속에서 주님품 안에서 참된 평안과 안식을 얻고, 말씀의 능력과 기도를 통해 날마다 새 힘을 공급받는 은혜의 자리가 되기를 소망합니다.<br/><br/>
-            성도 한 사람 한 사람을 귀하게 여기며 세상을 향해 그리스도의 사랑의 빛을 발하는 복된 교회로 여러분을 기쁨으로 초대합니다.
-          </p>
-          <div className="pt-4 border-t border-stone-100 text-right">
-            <span className="text-sm font-semibold text-stone-800">대한예수교장로회 주님품교회 담임목사 및 성도 일동</span>
+
+          <h3 className="text-xl sm:text-2xl font-bold text-stone-900 mb-5">
+            &ldquo;평안하시지요?&rdquo;
+          </h3>
+
+          <div className="text-stone-600 leading-relaxed text-sm sm:text-base space-y-5 mb-7 break-keep">
+            <p>
+              주님품교회를 방문해 주신 당신에게<br />
+              하나님의 크신 은혜와 평강이 임하기를 축복합니다.
+            </p>
+            <p>
+              교회의 궁극적인 목적은<br />
+              <strong className="text-stone-800 font-semibold">&lsquo;하나님이 원하시고, 기뻐하시는 교회를 이루어 가는 것&rsquo;</strong>이며,<br />
+              그 중심에는 <strong className="text-amber-800 font-semibold">&lsquo;한 영혼에 대한 소중함&rsquo;</strong>이 있습니다.
+            </p>
+            <p>
+              그러므로 주님품교회는<br />
+              한 영혼을 천하보다 귀하게 여기시는 하나님의 마음을 품고,<br />
+              영혼을 귀하게 여기고, 영혼을 살리고, 세우는 사역을 통해서<br />
+              행복한 성도들의 삶과 행복한 목회를 지향합니다.
+            </p>
+            <p>
+              그 아름다운 비전에 함께 동참해 보십시오.<br />
+              세상에서 힘들고 지친 당신이<br />
+              주님품교회를 통해서 예수님을 만나 참 평안을 누리고,<br />
+              참 쉼을 누릴 수 있기를 소망합니다.
+            </p>
+          </div>
+
+          <div className="pt-5 border-t border-stone-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <p className="text-sm sm:text-base font-semibold text-amber-800">
+              따뜻하고, 평안한 주님품교회로 오세요.
+            </p>
+            <div className="text-right">
+              <span className="text-sm text-stone-500 mr-2">주님품교회 담임목사</span>
+              <span className="text-base sm:text-lg font-bold text-stone-900 tracking-widest">차 지 명</span>
+            </div>
           </div>
         </section>
 
