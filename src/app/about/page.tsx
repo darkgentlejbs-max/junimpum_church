@@ -42,41 +42,60 @@ export default function AboutPage() {
             </span>
           </div>
 
-          <h3 className="text-xl sm:text-2xl font-bold text-stone-900 mb-5">
-            &ldquo;평안하시지요?&rdquo;
-          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 items-center">
+            {/* Left: Greeting Text */}
+            <div className="md:col-span-7 flex flex-col justify-between">
+              <div>
+                <h3 className="text-xl sm:text-2xl font-bold text-stone-900 mb-5">
+                  &ldquo;평안하시지요?&rdquo;
+                </h3>
 
-          <div className="text-stone-600 leading-relaxed text-sm sm:text-base space-y-5 mb-7 break-keep">
-            <p>
-              주님품교회를 방문해 주신 당신에게<br />
-              하나님의 크신 은혜와 평강이 임하기를 축복합니다.
-            </p>
-            <p>
-              교회의 궁극적인 목적은<br />
-              <strong className="text-stone-800 font-semibold">&lsquo;하나님이 원하시고, 기뻐하시는 교회를 이루어 가는 것&rsquo;</strong>이며,<br />
-              그 중심에는 <strong className="text-amber-800 font-semibold">&lsquo;한 영혼에 대한 소중함&rsquo;</strong>이 있습니다.
-            </p>
-            <p>
-              그러므로 주님품교회는<br />
-              한 영혼을 천하보다 귀하게 여기시는 하나님의 마음을 품고,<br />
-              영혼을 귀하게 여기고, 영혼을 살리고, 세우는 사역을 통해서<br />
-              행복한 성도들의 삶과 행복한 목회를 지향합니다.
-            </p>
-            <p>
-              그 아름다운 비전에 함께 동참해 보십시오.<br />
-              세상에서 힘들고 지친 당신이<br />
-              주님품교회를 통해서 예수님을 만나 참 평안을 누리고,<br />
-              참 쉼을 누릴 수 있기를 소망합니다.
-            </p>
-          </div>
+                <div className="text-stone-600 leading-relaxed text-sm sm:text-base space-y-4 sm:space-y-5 mb-6 break-keep">
+                  <p>
+                    주님품교회를 방문해 주신 당신에게<br />
+                    하나님의 크신 은혜와 평강이 임하기를 축복합니다.
+                  </p>
+                  <p>
+                    교회의 궁극적인 목적은<br />
+                    <strong className="text-stone-800 font-semibold">&lsquo;하나님이 원하시고, 기뻐하시는 교회를 이루어 가는 것&rsquo;</strong>이며,<br />
+                    그 중심에는 <strong className="text-amber-800 font-semibold">&lsquo;한 영혼에 대한 소중함&rsquo;</strong>이 있습니다.
+                  </p>
+                  <p>
+                    그러므로 주님품교회는<br />
+                    한 영혼을 천하보다 귀하게 여기시는 하나님의 마음을 품고,<br />
+                    영혼을 귀하게 여기고, 영혼을 살리고, 세우는 사역을 통해서<br />
+                    행복한 성도들의 삶과 행복한 목회를 지향합니다.
+                  </p>
+                  <p>
+                    그 아름다운 비전에 함께 동참해 보십시오.<br />
+                    세상에서 힘들고 지친 당신이<br />
+                    주님품교회를 통해서 예수님을 만나 참 평안을 누리고,<br />
+                    참 쉼을 누릴 수 있기를 소망합니다.
+                  </p>
+                </div>
+              </div>
 
-          <div className="pt-5 border-t border-stone-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <p className="text-sm sm:text-base font-semibold text-amber-800">
-              따뜻하고, 평안한 주님품교회로 오세요.
-            </p>
-            <div className="text-right">
-              <span className="text-sm text-stone-500 mr-2">주님품교회 담임목사</span>
-              <span className="text-base sm:text-lg font-bold text-stone-900 tracking-widest">차 지 명</span>
+              <div className="pt-4 border-t border-stone-100">
+                <p className="text-sm sm:text-base font-semibold text-amber-800 mb-2">
+                  따뜻하고, 평안한 주님품교회로 오세요.
+                </p>
+                <div className="text-right">
+                  <span className="text-xs sm:text-sm text-stone-500 mr-2">주님품교회 담임목사</span>
+                  <span className="text-base sm:text-lg font-bold text-stone-900 tracking-widest">차 지 명</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Pastor Portrait Photo */}
+            <div className="md:col-span-5 flex justify-center">
+              <div className="w-full max-w-[300px] md:max-w-none rounded-2xl overflow-hidden shadow-sm border border-stone-200/80 bg-stone-50">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/pastor-profile.png"
+                  alt="주님품교회 담임목사 차지명"
+                  className="w-full h-auto object-cover block"
+                />
+              </div>
             </div>
           </div>
         </section>
