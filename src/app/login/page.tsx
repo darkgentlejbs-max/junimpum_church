@@ -130,18 +130,23 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="mt-6 pt-6 border-t border-stone-100 text-center space-y-4">
-          <p className="text-xs text-stone-500">
-            아직 계정이 없으신가요?{" "}
+        <div className="mt-6 pt-6 border-t border-stone-100 text-center space-y-3.5">
+          <div className="flex items-center justify-center gap-3 text-xs sm:text-sm">
+            <Link
+              href="/forgot-password"
+              className="px-3.5 py-2 rounded-xl bg-amber-50 border border-amber-200/80 font-semibold text-amber-900 hover:bg-amber-100 transition-colors"
+            >
+              아이디 · 비밀번호 찾기
+            </Link>
             <Link
               href="/signup"
-              className="font-semibold text-amber-800 hover:underline ml-1"
+              className="px-3.5 py-2 rounded-xl bg-stone-100 font-semibold text-stone-700 hover:bg-stone-200 transition-colors"
             >
               회원가입
             </Link>
-          </p>
+          </div>
 
-          <div>
+          <div className="pt-1">
             <Link
               href="/"
               className="inline-flex items-center gap-1.5 text-xs font-medium text-stone-400 hover:text-stone-600 transition-colors"
