@@ -60,9 +60,20 @@ export default function RootLayout({
             <div className="lg:col-span-5 lg:pr-8">
               <h3 className="text-lg font-semibold text-stone-100 mb-2">주님품교회</h3>
               <p className="text-xs text-stone-400 mb-3">대한예수교장로회(통합)</p>
-              <p className="text-xs text-stone-400 leading-relaxed max-w-xs">
+              <p className="text-xs text-stone-400 leading-relaxed max-w-xs mb-4">
                 믿음, 소망, 사랑으로 세워지며 주님품처럼 따뜻한 쉼과 회복이 있는 공동체입니다.
               </p>
+              <a
+                href="https://blog.naver.com/jesusbosom"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-stone-800 hover:bg-stone-700 border border-stone-700 text-stone-200 text-[11px] font-medium transition-colors"
+              >
+                <span className="w-3.5 h-3.5 rounded-xs bg-[#03C75A] text-white text-[9px] font-extrabold flex items-center justify-center leading-none">
+                  N
+                </span>
+                <span>주님품교회 네이버 블로그</span>
+              </a>
             </div>
             <div className="lg:col-span-4">
               <h4 className="text-sm font-medium text-stone-200 mb-4 tracking-wide">예배 시간 안내</h4>

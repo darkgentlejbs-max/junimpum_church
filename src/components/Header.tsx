@@ -304,6 +304,17 @@ export default function Header() {
           <Link href="/gallery" className="hover:text-amber-700 transition-colors">
             갤러리
           </Link>
+          <a
+            href="https://blog.naver.com/jesusbosom"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 hover:text-[#03C75A] transition-colors"
+          >
+            <span className="w-4 h-4 rounded bg-[#03C75A] text-white text-[10px] font-extrabold flex items-center justify-center leading-none">
+              N
+            </span>
+            <span>블로그</span>
+          </a>
 
           {/* Auth Links (Desktop) */}
           <div className="pl-4 ml-2 border-l border-stone-200 flex items-center space-x-3">
@@ -483,6 +494,18 @@ export default function Header() {
             >
               갤러리
             </Link>
+            <a
+              href="https://blog.naver.com/jesusbosom"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMobileMenuOpen(false)}
+              className="inline-flex items-center gap-2 hover:text-[#03C75A] font-medium"
+            >
+              <span className="w-4 h-4 rounded bg-[#03C75A] text-white text-[10px] font-extrabold flex items-center justify-center leading-none">
+                N
+              </span>
+              <span>네이버 블로그</span>
+            </a>
 
             {/* Auth Links (Mobile) */}
             <div className="pt-4 mt-2 border-t border-stone-100 flex items-center gap-3">

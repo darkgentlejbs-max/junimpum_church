@@ -81,7 +81,7 @@ export default async function NewsPage() {
           </section>
 
           {/* Quick Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <Link href="/bulletins" className="bg-white p-5 rounded-2xl border border-stone-200/80 hover:border-amber-300/80 transition-all flex items-center gap-4 cursor-pointer group block">
               <div className="w-11 h-11 rounded-xl bg-stone-100 flex items-center justify-center text-stone-600 group-hover:bg-amber-50 group-hover:text-amber-700 transition-colors shrink-0">
                 <FileText size={20} />
@@ -100,6 +100,20 @@ export default async function NewsPage() {
                 <p className="text-xs text-stone-400 mt-0.5">교회 행사 및 활동 사진 모음</p>
               </div>
             </Link>
+            <a
+              href="https://blog.naver.com/jesusbosom"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white p-5 rounded-2xl border border-stone-200/80 hover:border-[#03C75A]/60 transition-all flex items-center gap-4 cursor-pointer group block"
+            >
+              <div className="w-11 h-11 rounded-xl bg-[#03C75A]/10 flex items-center justify-center text-[#03C75A] group-hover:bg-[#03C75A] group-hover:text-white transition-colors shrink-0 font-extrabold text-lg">
+                N
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-stone-900 group-hover:text-[#03C75A] transition-colors">네이버 블로그</h3>
+                <p className="text-xs text-stone-400 mt-0.5">주님품교회 공식 블로그 방문</p>
+              </div>
+            </a>
           </div>
 
         </div>
