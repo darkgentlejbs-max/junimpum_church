@@ -52,7 +52,7 @@ export default function ScheduleItem({ item }: { item: any }) {
       </div>
 
       {isOpen && item.content && (
-        <div className="mt-4 pt-4 border-t border-stone-100 pl-[76px] pr-4">
+        <div className="mt-4 pt-4 border-t border-stone-100 pl-2 sm:pl-[76px] pr-2 sm:pr-4">
           <p className="text-sm text-stone-600 whitespace-pre-wrap leading-relaxed">
             {item.content}
           </p>

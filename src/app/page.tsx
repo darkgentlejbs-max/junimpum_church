@@ -36,31 +36,31 @@ export default function Home() {
   return (
     <div className="bg-[#FAF9F6] text-stone-800">
       {/* Hero Section - Split Layout */}
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+      <section className="container mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-12 lg:py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-14 items-center">
           
-          {/* Left: Church Image Showcase (100% Full Image, Uncropped, Warm Framing) */}
-          <div className="lg:col-span-6 flex justify-center">
+          {/* Left: Church Image Showcase (Full width on mobile, uncropped warm framing) */}
+          <div className="lg:col-span-6 flex justify-center w-full">
             <motion.div 
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="relative w-full max-w-md lg:max-w-none bg-white p-3 sm:p-4 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.05)] border border-stone-200/80"
+              className="relative w-full bg-white p-2 sm:p-4 rounded-2xl sm:rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.05)] border border-stone-200/80"
             >
-              {/* Image Container: Aspect ratio adjusted so 100% of the building & cross are completely visible */}
-              <div className="relative w-full h-[280px] sm:h-[380px] lg:h-[540px] rounded-2xl overflow-hidden bg-stone-50/80 flex items-center justify-center">
+              {/* Image Container: Full screen width on mobile */}
+              <div className="relative w-full aspect-[4/5] sm:aspect-auto sm:h-[420px] lg:h-[540px] rounded-xl sm:rounded-2xl overflow-hidden bg-stone-50/80 flex items-center justify-center">
                 <Image
                   src="/images/church-exterior.jpg"
                   alt="주님품교회 전경"
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-contain object-center"
+                  className="object-cover sm:object-contain object-center"
                   priority
                 />
               </div>
 
               {/* Minimal caption */}
-              <div className="flex items-center justify-between px-3 pt-3 pb-1 text-[11px] text-stone-400 font-medium">
+              <div className="flex items-center justify-between px-2 sm:px-3 pt-2.5 pb-0.5 text-[11px] text-stone-400 font-medium">
                 <span>대한예수교장로회(통합)</span>
                 <span>주님품교회 전경</span>
               </div>
@@ -68,7 +68,7 @@ export default function Home() {
           </div>
 
           {/* Right: Refined Headline & Sleek Editorial Navigation Bar */}
-          <div className="lg:col-span-6">
+          <div className="lg:col-span-6 px-1 sm:px-0">
             <motion.div
               initial={{ opacity: 0, x: 16 }}
               animate={{ opacity: 1, x: 0 }}
@@ -126,9 +126,9 @@ export default function Home() {
       </section>
 
       {/* Info Section: Worship & Location (Clean, Minimalist Cards) */}
-      <section className="border-t border-stone-200/60 bg-white py-12 sm:py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <section className="border-t border-stone-200/60 bg-white py-8 sm:py-16">
+        <div className="container mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
             
             {/* Card 1: Worship Times */}
             <div className="p-6 rounded-2xl bg-[#FAF9F6] border border-stone-200/70 hover:border-amber-300/80 transition-all">

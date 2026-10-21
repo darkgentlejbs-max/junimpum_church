@@ -8,13 +8,13 @@ export default async function DalDalPage() {
   const daldals = await getDalDal();
 
   return (
-    <div className="py-12 sm:py-16 bg-[#FAF9F6] min-h-screen text-stone-800">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="py-8 sm:py-16 bg-[#FAF9F6] min-h-screen text-stone-800">
+      <div className="container mx-auto px-3 sm:px-6 lg:px-8">
         
         {/* Page Header */}
-        <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
+        <div className="max-w-3xl mx-auto text-center mb-8 sm:mb-16">
           <span className="text-xs font-semibold text-amber-800 uppercase tracking-widest block mb-3">DalDal Bible</span>
-          <h1 className="text-3xl sm:text-4xl font-semibold text-stone-900 tracking-tight mb-4 flex items-center justify-center gap-3">
+          <h1 className="text-2xl sm:text-4xl font-semibold text-stone-900 tracking-tight mb-4 flex items-center justify-center gap-3">
             <BookOpen className="text-amber-700" size={32} />
             달달바이블
           </h1>

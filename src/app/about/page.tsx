@@ -17,17 +17,17 @@ export default function AboutPage() {
   const naverMapUrl = `https://map.naver.com/v5/search/${encodeURIComponent(address)}`;
 
   return (
-    <div className="py-12 sm:py-16 bg-[#FAF9F6] min-h-screen text-stone-800">
-      <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
+    <div className="py-8 sm:py-16 bg-[#FAF9F6] min-h-screen text-stone-800">
+      <div className="container mx-auto px-3 sm:px-6 max-w-4xl">
         {/* Page Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8 sm:mb-12">
           <span className="text-xs font-semibold text-amber-800 uppercase tracking-widest block mb-2">About Us</span>
-          <h1 className="text-3xl sm:text-4xl font-semibold text-stone-900 tracking-tight">교회 소개</h1>
+          <h1 className="text-2xl sm:text-4xl font-semibold text-stone-900 tracking-tight">교회 소개</h1>
           <p className="text-sm text-stone-500 mt-2">대한예수교장로회(통합) 주님품교회를 소개합니다</p>
         </div>
         
         {/* Pastor Greeting Section */}
-        <section id="greeting" className="bg-white p-8 sm:p-10 rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] mb-8 border border-stone-200/80 scroll-mt-24">
+        <section id="greeting" className="bg-white p-5 sm:p-10 rounded-2xl sm:rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] mb-5 sm:mb-8 border border-stone-200/80 scroll-mt-24">
           <div className="flex items-center mb-6">
             <div className="w-9 h-9 rounded-xl bg-amber-100/70 text-amber-800 flex items-center justify-center mr-3">
               <Sparkles size={18} />
@@ -48,7 +48,7 @@ export default function AboutPage() {
         </section>
 
         {/* Church History Section */}
-        <section id="history" className="bg-white p-8 sm:p-10 rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] mb-8 border border-stone-200/80 scroll-mt-24">
+        <section id="history" className="bg-white p-5 sm:p-10 rounded-2xl sm:rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] mb-5 sm:mb-8 border border-stone-200/80 scroll-mt-24">
           <div className="flex items-center mb-8">
             <div className="w-9 h-9 rounded-xl bg-amber-100/70 text-amber-800 flex items-center justify-center mr-3">
               <History size={18} />
@@ -90,7 +90,7 @@ export default function AboutPage() {
         </section>
 
         {/* Worship Times Section */}
-        <section id="worship-times" className="bg-white p-8 sm:p-10 rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] mb-8 border border-stone-200/80 scroll-mt-24">
+        <section id="worship-times" className="bg-white p-5 sm:p-10 rounded-2xl sm:rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] mb-5 sm:mb-8 border border-stone-200/80 scroll-mt-24">
           <div className="flex items-center mb-6">
             <div className="w-9 h-9 rounded-xl bg-amber-100/70 text-amber-800 flex items-center justify-center mr-3">
               <Clock size={18} />
@@ -101,36 +101,36 @@ export default function AboutPage() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-stone-200 bg-stone-50/70">
-                  <th className="py-3.5 px-5 text-stone-700 font-medium text-sm rounded-tl-xl">예배명</th>
-                  <th className="py-3.5 px-5 text-stone-700 font-medium text-sm">시간</th>
-                  <th className="py-3.5 px-5 text-stone-700 font-medium text-sm rounded-tr-xl">장소</th>
+                  <th className="py-3 px-3 sm:px-5 text-stone-700 font-medium text-xs sm:text-sm rounded-tl-xl">예배명</th>
+                  <th className="py-3 px-3 sm:px-5 text-stone-700 font-medium text-xs sm:text-sm">시간</th>
+                  <th className="py-3 px-3 sm:px-5 text-stone-700 font-medium text-xs sm:text-sm rounded-tr-xl">장소</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-stone-100 text-sm">
+              <tbody className="divide-y divide-stone-100 text-xs sm:text-sm">
                 <tr className="hover:bg-stone-50/50 transition-colors">
-                  <td className="py-4 px-5 font-medium text-stone-900">주일 대예배</td>
-                  <td className="py-4 px-5 text-stone-600">주일 오전 11:00</td>
-                  <td className="py-4 px-5 text-stone-500">본당</td>
+                  <td className="py-3.5 px-3 sm:px-5 font-medium text-stone-900">주일 대예배</td>
+                  <td className="py-3.5 px-3 sm:px-5 text-stone-600">주일 오전 11:00</td>
+                  <td className="py-3.5 px-3 sm:px-5 text-stone-500">본당</td>
                 </tr>
                 <tr className="hover:bg-stone-50/50 transition-colors">
-                  <td className="py-4 px-5 font-medium text-stone-900">수요예배</td>
-                  <td className="py-4 px-5 text-stone-600">수요일 오후 7:30</td>
-                  <td className="py-4 px-5 text-stone-500">본당</td>
+                  <td className="py-3.5 px-3 sm:px-5 font-medium text-stone-900">수요예배</td>
+                  <td className="py-3.5 px-3 sm:px-5 text-stone-600">수요일 오후 7:30</td>
+                  <td className="py-3.5 px-3 sm:px-5 text-stone-500">본당</td>
                 </tr>
                 <tr className="hover:bg-stone-50/50 transition-colors">
-                  <td className="py-4 px-5 font-medium text-stone-900">금요 다함께 기도회</td>
-                  <td className="py-4 px-5 text-stone-600">금요일 오후 8:30</td>
-                  <td className="py-4 px-5 text-stone-500">본당</td>
+                  <td className="py-3.5 px-3 sm:px-5 font-medium text-stone-900">금요 다함께 기도회</td>
+                  <td className="py-3.5 px-3 sm:px-5 text-stone-600">금요일 오후 8:30</td>
+                  <td className="py-3.5 px-3 sm:px-5 text-stone-500">본당</td>
                 </tr>
                 <tr className="hover:bg-stone-50/50 transition-colors">
-                  <td className="py-4 px-5 font-medium text-stone-900">새벽 기도회</td>
-                  <td className="py-4 px-5 text-stone-600">월-금 오전 5:30</td>
-                  <td className="py-4 px-5 text-stone-500">본당</td>
+                  <td className="py-3.5 px-3 sm:px-5 font-medium text-stone-900">새벽 기도회</td>
+                  <td className="py-3.5 px-3 sm:px-5 text-stone-600">월-금 오전 5:30</td>
+                  <td className="py-3.5 px-3 sm:px-5 text-stone-500">본당</td>
                 </tr>
                 <tr className="hover:bg-stone-50/50 transition-colors">
-                  <td className="py-4 px-5 font-medium text-stone-900">교회학교 예배</td>
-                  <td className="py-4 px-5 text-stone-600">주일 오전 11:00</td>
-                  <td className="py-4 px-5 text-stone-500">본관 1층</td>
+                  <td className="py-3.5 px-3 sm:px-5 font-medium text-stone-900">교회학교 예배</td>
+                  <td className="py-3.5 px-3 sm:px-5 text-stone-600">주일 오전 11:00</td>
+                  <td className="py-3.5 px-3 sm:px-5 text-stone-500">본관 1층</td>
                 </tr>
               </tbody>
             </table>
@@ -138,7 +138,7 @@ export default function AboutPage() {
         </section>
 
         {/* Location Section */}
-        <section id="location" className="bg-white p-8 sm:p-10 rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80 scroll-mt-24">
+        <section id="location" className="bg-white p-5 sm:p-10 rounded-2xl sm:rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80 scroll-mt-24">
           <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
             <div className="flex items-center">
               <div className="w-9 h-9 rounded-xl bg-amber-100/70 text-amber-800 flex items-center justify-center mr-3">

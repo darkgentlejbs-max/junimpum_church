@@ -30,29 +30,29 @@ export default async function NewsPage() {
   }
 
   return (
-    <div className="py-12 sm:py-16 bg-[#FAF9F6] min-h-screen text-stone-800">
-      <div className="container mx-auto px-4 sm:px-6 max-w-5xl">
+    <div className="py-8 sm:py-16 bg-[#FAF9F6] min-h-screen text-stone-800">
+      <div className="container mx-auto px-3 sm:px-6 max-w-5xl">
         {/* Page Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8 sm:mb-12">
           <span className="text-xs font-semibold text-amber-800 uppercase tracking-widest block mb-2">News & Schedule</span>
-          <h1 className="text-3xl sm:text-4xl font-semibold text-stone-900 tracking-tight">소식 · 일정</h1>
+          <h1 className="text-2xl sm:text-4xl font-semibold text-stone-900 tracking-tight">소식 · 일정</h1>
           <p className="text-sm text-stone-500 mt-2">교회의 새로운 소식과 일정 안내입니다</p>
         </div>
         
-        <div className="max-w-3xl mx-auto space-y-8">
+        <div className="max-w-3xl mx-auto space-y-5 sm:space-y-8">
           
           {/* Main Content Area (Notices) */}
-          <section id="notices" className="bg-white p-7 sm:p-9 rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80">
-            <div className="mb-6 pb-4 border-b border-stone-100">
+          <section id="notices" className="bg-white p-5 sm:p-9 rounded-2xl sm:rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80">
+            <div className="mb-5 sm:mb-6 pb-4 border-b border-stone-100">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-amber-100/70 text-amber-800 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-lg bg-amber-100/70 text-amber-800 flex items-center justify-center shrink-0">
                     <Bell size={16} />
                   </div>
                   <h2 className="text-xl font-semibold text-stone-900">교회 소식</h2>
                 </div>
               </div>
-              <p className="text-sm text-stone-500 pl-[44px]">우리는 부드럽고, 따뜻하고, 겸손한 주님품교회의 성도입니다.</p>
+              <p className="text-xs sm:text-sm text-stone-500 pl-0 sm:pl-[44px] mt-1 sm:mt-0">우리는 부드럽고, 따뜻하고, 겸손한 주님품교회의 성도입니다.</p>
             </div>
             <ul className="divide-y divide-stone-100">
               {notices.map((notice: any) => (
@@ -62,15 +62,15 @@ export default async function NewsPage() {
           </section>
 
           {/* Schedule Section */}
-          <section id="schedule" className="bg-white p-7 sm:p-9 rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80">
-            <div className="mb-6 pb-4 border-b border-stone-100">
+          <section id="schedule" className="bg-white p-5 sm:p-9 rounded-2xl sm:rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80">
+            <div className="mb-5 sm:mb-6 pb-4 border-b border-stone-100">
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-8 rounded-lg bg-amber-100/70 text-amber-800 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-amber-100/70 text-amber-800 flex items-center justify-center shrink-0">
                   <Calendar size={16} />
                 </div>
                 <h2 className="text-xl font-semibold text-stone-900">교회 일정</h2>
               </div>
-              <p className="text-sm text-stone-500 pl-[44px]">주님품교회의 다가오는 주요 일정입니다.</p>
+              <p className="text-xs sm:text-sm text-stone-500 pl-0 sm:pl-[44px] mt-1 sm:mt-0">주님품교회의 다가오는 주요 일정입니다.</p>
             </div>
             
             <div className="space-y-4">

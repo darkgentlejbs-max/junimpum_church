@@ -38,10 +38,10 @@ export default function SermonView({ sermons }: { sermons: any[] }) {
   return (
     <>
       {/* Featured Sermon */}
-      <section className="mb-14">
+      <section className="mb-10 sm:mb-14">
         <div
           onClick={() => !playingInFeatured && handleSelectSermon(featured, true)}
-          className="bg-white rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] overflow-hidden border border-stone-200/80 flex flex-col lg:flex-row cursor-pointer group"
+          className="bg-white rounded-2xl sm:rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] overflow-hidden border border-stone-200/80 flex flex-col lg:flex-row cursor-pointer group"
         >
           <div className="w-full lg:w-3/5 aspect-video bg-stone-900 relative flex items-center justify-center group-hover:bg-stone-800 transition-colors overflow-hidden">
             {playingInFeatured && featuredYtId ? (
@@ -71,7 +71,7 @@ export default function SermonView({ sermons }: { sermons: any[] }) {
               </>
             )}
           </div>
-          <div className="w-full lg:w-2/5 p-8 sm:p-10 flex flex-col justify-between">
+          <div className="w-full lg:w-2/5 p-5 sm:p-10 flex flex-col justify-between">
             <div>
               <span className="inline-block px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-200/60 rounded-full text-xs font-medium mb-4">
                 최근 주일 설교

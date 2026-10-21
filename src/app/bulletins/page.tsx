@@ -8,17 +8,17 @@ export default async function BulletinsPage() {
   const bulletins = await getBulletins();
 
   return (
-    <div className="py-12 sm:py-16 bg-[#FAF9F6] min-h-screen text-stone-800">
-      <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
+    <div className="py-8 sm:py-16 bg-[#FAF9F6] min-h-screen text-stone-800">
+      <div className="container mx-auto px-3 sm:px-6 max-w-4xl">
         {/* Page Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8 sm:mb-12">
           <span className="text-xs font-semibold text-amber-800 uppercase tracking-widest block mb-2">Weekly Bulletin</span>
-          <h1 className="text-3xl sm:text-4xl font-semibold text-stone-900 tracking-tight">주보 다운로드</h1>
+          <h1 className="text-2xl sm:text-4xl font-semibold text-stone-900 tracking-tight">주보 다운로드</h1>
           <p className="text-sm text-stone-500 mt-2">매주 발행되는 주보를 확인하실 수 있습니다.</p>
         </div>
 
         {/* Bulletin List */}
-        <div className="bg-white p-7 sm:p-9 rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80">
+        <div className="bg-white p-5 sm:p-9 rounded-2xl sm:rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80">
           <div className="flex items-center gap-3 mb-6 pb-4 border-b border-stone-100">
             <div className="w-8 h-8 rounded-lg bg-amber-100/70 text-amber-800 flex items-center justify-center">
               <FileText size={16} />

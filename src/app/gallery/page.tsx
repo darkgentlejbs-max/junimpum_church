@@ -8,12 +8,12 @@ export default async function GalleryPage() {
   const photos = await getGallery();
 
   return (
-    <div className="py-12 sm:py-16 bg-[#FAF9F6] min-h-screen text-stone-800">
-      <div className="container mx-auto px-4 sm:px-6 max-w-6xl">
+    <div className="py-8 sm:py-16 bg-[#FAF9F6] min-h-screen text-stone-800">
+      <div className="container mx-auto px-3 sm:px-6 max-w-6xl">
         {/* Page Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8 sm:mb-12">
           <span className="text-xs font-semibold text-amber-800 uppercase tracking-widest block mb-2">Gallery</span>
-          <h1 className="text-3xl sm:text-4xl font-semibold text-stone-900 tracking-tight">교회 사진첩</h1>
+          <h1 className="text-2xl sm:text-4xl font-semibold text-stone-900 tracking-tight">교회 사진첩</h1>
           <p className="text-sm text-stone-500 mt-2">주님품교회의 은혜로운 순간들을 나눕니다</p>
         </div>
 
