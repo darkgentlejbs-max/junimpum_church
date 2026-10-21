@@ -480,4 +480,60 @@ export async function createMember(data: {
   };
 }
 
+export async function updateMemberPassword(pageId: string, newPasswordHash: string) {
+  await notion.pages.update({
+    page_id: pageId,
+    properties: {
+      비밀번호: {
+        rich_text: [{ text: { content: newPasswordHash } }],
+      },
+    },
+  });
+}
+
+export async function findMemberByNameAndPhone(name: string, phone: string) {
+  const dbId = await resolveMembersDatabaseId();
+  const targetName = name.trim();
+  const targetPhoneDigits = phone.replace(/\D/g, '');
+
+  const response = await notion.databases.query({
+    database_id: dbId,
+  });
+
+  for (const page of response.results as any[]) {
+    const props = page.properties || {};
+    let memberName = '';
+    for (const key of Object.keys(props)) {
+      if (props[key]?.type === 'title') {
+        memberName = props[key]?.title?.[0]?.plain_text?.trim() || '';
+        break;
+      }
+    }
+
+    if (memberName !== targetName) continue;
+
+    const storedPhone = props['연락처']?.rich_text?.[0]?.plain_text || '';
+    const storedPhoneDigits = storedPhone.replace(/\D/g, '');
+
+    if (targetPhoneDigits && storedPhoneDigits && targetPhoneDigits !== storedPhoneDigits) {
+      continue;
+    }
+
+    const memberId =
+      props['아이디']?.rich_text?.[0]?.plain_text ||
+      props['이메일']?.rich_text?.[0]?.plain_text ||
+      '';
+
+    return {
+      id: page.id,
+      name: memberName,
+      email: memberId,
+      phone: storedPhone,
+      role: props['직분']?.select?.name || '성도',
+    };
+  }
+
+  return null;
+}
+
 
