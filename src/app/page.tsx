@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowUpRight, MapPin, Video, Clock } from "lucide-react";
+import HomeShortcutButton from "@/components/HomeShortcutButton";
 
 export default function Home() {
   const navItems = [
@@ -118,6 +119,9 @@ export default function Home() {
                   </Link>
                 ))}
               </div>
+
+              {/* Mobile Home Screen Shortcut & Naver Blog Quick Buttons */}
+              <HomeShortcutButton />
 
             </motion.div>
           </div>

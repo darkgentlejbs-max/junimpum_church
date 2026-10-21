@@ -13,6 +13,10 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "주님품교회",
   applicationName: "주님품교회",
+  icons: {
+    icon: "/icon-192.png",
+    apple: "/apple-touch-icon.png",
+  },
   appleWebApp: {
     capable: true,
     title: "주님품교회",

@@ -353,14 +353,27 @@ export default function Header() {
           </div>
         </nav>
 
-        {/* Mobile Nav Toggle */}
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 text-stone-600 hover:text-amber-700 transition-colors"
-          aria-label="메뉴 열기"
-        >
-          {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
-        </button>
+        {/* Mobile Quick Blog Link & Nav Toggle */}
+        <div className="flex md:hidden items-center gap-1.5">
+          <a
+            href="https://blog.naver.com/jesusbosom"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[#03C75A]/10 text-[#03C75A] text-xs font-semibold"
+          >
+            <span className="w-3.5 h-3.5 rounded-xs bg-[#03C75A] text-white text-[9px] font-extrabold flex items-center justify-center leading-none">
+              N
+            </span>
+            <span>블로그</span>
+          </a>
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 text-stone-600 hover:text-amber-700 transition-colors"
+            aria-label="메뉴 열기"
+          >
+            {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu Drawer */}
