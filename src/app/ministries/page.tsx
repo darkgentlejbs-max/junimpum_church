@@ -7,9 +7,13 @@ export const dynamic = "force-dynamic";
 export default async function MinistriesPage() {
   const allPhotos = await getGallery();
   const worshipPhotos = allPhotos.filter(
-    (p: any) =>
-      p.title?.includes("찬양") ||
-      p.title?.includes("부따겸")
+    (p: any) => p.title?.includes("찬양") || p.title?.includes("부따겸")
+  );
+  const menPhotos = allPhotos.filter(
+    (p: any) => p.title?.includes("남선교")
+  );
+  const womenPhotos = allPhotos.filter(
+    (p: any) => p.title?.includes("여전도")
   );
 
   return (
@@ -61,7 +65,7 @@ export default async function MinistriesPage() {
                   </p>
                 </div>
                 <Link
-                  href="/gallery"
+                  href="/gallery?category=worship"
                   className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-50/80 hover:bg-amber-100/80 border border-amber-200/70 text-amber-900 text-xs sm:text-sm font-semibold transition-colors"
                 >
                   <ImageIcon size={15} className="text-amber-700" />
@@ -99,21 +103,99 @@ export default async function MinistriesPage() {
             </div>
           </section>
 
-          {/* Fellowships */}
+          {/* Fellowships / 기관 */}
           <section id="fellowships" className="scroll-mt-24 bg-white p-5 sm:p-9 rounded-2xl sm:rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80 flex flex-col md:flex-row gap-4 sm:gap-8 items-start hover:border-amber-300/80 transition-colors">
             <div className="w-12 h-12 rounded-2xl bg-amber-100/70 text-amber-800 flex items-center justify-center shrink-0">
               <Users size={24} />
             </div>
             <div className="flex-1 w-full">
-              <h2 className="text-lg sm:text-xl font-semibold mb-2 text-stone-900">선교회 및 구역모임</h2>
+              <h2 className="text-lg sm:text-xl font-semibold mb-2 text-stone-900">기관</h2>
               <p className="text-stone-600 text-sm leading-relaxed mb-5">
                 성도 간의 진실한 교제와 기도를 통해 그리스도의 한 몸을 이루고 사랑을 나누는 기관입니다.
               </p>
-              <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1.5 bg-stone-50 border border-stone-200/70 text-stone-700 rounded-lg text-xs font-medium">남선교회</span>
-                <span className="px-3 py-1.5 bg-stone-50 border border-stone-200/70 text-stone-700 rounded-lg text-xs font-medium">여전도회</span>
-                <span className="px-3 py-1.5 bg-stone-50 border border-stone-200/70 text-stone-700 rounded-lg text-xs font-medium">청년부</span>
-                <span className="px-3 py-1.5 bg-stone-50 border border-stone-200/70 text-stone-700 rounded-lg text-xs font-medium">지역별 구역(목장)</span>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* 남선교회 */}
+                <div className="bg-stone-50/80 p-4 sm:p-5 rounded-2xl border border-stone-200/70 flex flex-col justify-between gap-4">
+                  <div className="flex items-center justify-between gap-2">
+                    <h4 className="text-sm sm:text-base font-semibold text-stone-900">남선교회</h4>
+                    <Link
+                      href="/gallery?category=men"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100/80 border border-amber-200/70 text-amber-900 text-xs font-semibold transition-colors"
+                    >
+                      <ImageIcon size={14} className="text-amber-700" />
+                      <span>갤러리</span>
+                      <ArrowUpRight size={13} className="text-amber-700/80" />
+                    </Link>
+                  </div>
+
+                  {menPhotos.length > 0 && (
+                    <div className="grid grid-cols-2 gap-2.5 pt-2 border-t border-stone-200/60">
+                      {menPhotos.slice(0, 4).map((photo: any) => (
+                        <a
+                          key={photo.id}
+                          href={photo.imageUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group rounded-xl overflow-hidden border border-stone-200/80 bg-white block"
+                        >
+                          <div className="aspect-[4/3] overflow-hidden bg-stone-100">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={photo.imageUrl}
+                              alt={photo.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          </div>
+                          <div className="p-2">
+                            <p className="text-[11px] font-semibold text-stone-800 line-clamp-1">{photo.title}</p>
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* 여전도회 */}
+                <div className="bg-stone-50/80 p-4 sm:p-5 rounded-2xl border border-stone-200/70 flex flex-col justify-between gap-4">
+                  <div className="flex items-center justify-between gap-2">
+                    <h4 className="text-sm sm:text-base font-semibold text-stone-900">여전도회</h4>
+                    <Link
+                      href="/gallery?category=women"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100/80 border border-amber-200/70 text-amber-900 text-xs font-semibold transition-colors"
+                    >
+                      <ImageIcon size={14} className="text-amber-700" />
+                      <span>갤러리</span>
+                      <ArrowUpRight size={13} className="text-amber-700/80" />
+                    </Link>
+                  </div>
+
+                  {womenPhotos.length > 0 && (
+                    <div className="grid grid-cols-2 gap-2.5 pt-2 border-t border-stone-200/60">
+                      {womenPhotos.slice(0, 4).map((photo: any) => (
+                        <a
+                          key={photo.id}
+                          href={photo.imageUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group rounded-xl overflow-hidden border border-stone-200/80 bg-white block"
+                        >
+                          <div className="aspect-[4/3] overflow-hidden bg-stone-100">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={photo.imageUrl}
+                              alt={photo.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          </div>
+                          <div className="p-2">
+                            <p className="text-[11px] font-semibold text-stone-800 line-clamp-1">{photo.title}</p>
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </section>
