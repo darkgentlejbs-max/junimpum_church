@@ -644,8 +644,13 @@ export default function Header() {
               className="w-full max-w-md bg-white rounded-3xl p-8 text-center shadow-2xl border border-amber-200/80 animate-in fade-in zoom-in-95 duration-200"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-amber-50 border border-amber-200/70 flex items-center justify-center text-amber-700">
-                <Sparkles size={26} />
+              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl border border-amber-200/70 overflow-hidden shadow-xs flex items-center justify-center bg-[#FAF9F6]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/icon-192.png"
+                  alt="주님품교회 로고"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <h3 className="text-xl sm:text-2xl font-bold text-stone-900 mb-3 break-keep">
                 <span className="text-amber-800">{greeting.headline}</span>

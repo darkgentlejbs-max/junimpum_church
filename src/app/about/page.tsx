@@ -30,9 +30,12 @@ export default function AboutPage() {
         <section id="greeting" className="bg-white p-5 sm:p-10 rounded-2xl sm:rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] mb-5 sm:mb-8 border border-stone-200/80 scroll-mt-24">
           <div className="flex items-center justify-between mb-6 pb-4 border-b border-stone-100">
             <div className="flex items-center">
-              <div className="w-9 h-9 rounded-xl bg-amber-100/70 text-amber-800 flex items-center justify-center mr-3">
-                <Sparkles size={18} />
-              </div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/icon-192.png"
+                alt="주님품교회 로고"
+                className="w-9 h-9 rounded-xl border border-amber-200/70 object-cover mr-3 shadow-2xs"
+              />
               <h2 className="text-xl sm:text-2xl font-semibold text-stone-900">
                 목회자 인사말
               </h2>
