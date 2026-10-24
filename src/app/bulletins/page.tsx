@@ -1,10 +1,60 @@
 import { getBulletins } from "@/lib/notion";
-import { FileText, Download } from "lucide-react";
+import { getCurrentUser } from "@/lib/auth";
+import { FileText, Download, Lock, LogIn, UserPlus } from "lucide-react";
 import Link from "next/link";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function BulletinsPage() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return (
+      <div className="py-12 sm:py-20 bg-[#FAF9F6] min-h-[75vh] flex items-center justify-center text-stone-800 px-4">
+        <div className="w-full max-w-md bg-white p-7 sm:p-10 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-stone-200/80 text-center">
+          <div className="w-14 h-14 mx-auto mb-5 rounded-2xl bg-amber-50 border border-amber-200/70 text-amber-800 flex items-center justify-center">
+            <Lock size={24} />
+          </div>
+          <span className="text-xs font-semibold text-amber-800 uppercase tracking-widest block mb-1.5">
+            Members Only
+          </span>
+          <h1 className="text-xl sm:text-2xl font-bold text-stone-900 mb-3">
+            교인 전용 메뉴입니다
+          </h1>
+          <p className="text-sm text-stone-500 leading-relaxed mb-7 break-keep">
+            주보 열람 및 다운로드는 <strong className="text-stone-800 font-semibold">회원가입이 완료된 성도님</strong>만 이용하실 수 있습니다. 로그인 후 이용해 주세요.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-2.5">
+            <Link
+              href="/login?redirect=/bulletins"
+              className="flex-1 inline-flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-amber-800 hover:bg-amber-900 text-white text-sm font-semibold transition-colors"
+            >
+              <LogIn size={16} />
+              <span>로그인하기</span>
+            </Link>
+            <Link
+              href="/signup"
+              className="flex-1 inline-flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-stone-100 hover:bg-stone-200/80 text-stone-700 text-sm font-semibold transition-colors"
+            >
+              <UserPlus size={16} />
+              <span>회원가입</span>
+            </Link>
+          </div>
+
+          <div className="mt-6 pt-5 border-t border-stone-100">
+            <Link
+              href="/news"
+              className="text-xs text-stone-400 hover:text-amber-800 transition-colors underline underline-offset-4"
+            >
+              소식 및 일정으로 돌아가기
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const bulletins = await getBulletins();
 
   return (
@@ -12,9 +62,15 @@ export default async function BulletinsPage() {
       <div className="container mx-auto px-3 sm:px-6 max-w-4xl">
         {/* Page Header */}
         <div className="text-center mb-8 sm:mb-12">
-          <span className="text-xs font-semibold text-amber-800 uppercase tracking-widest block mb-2">Weekly Bulletin</span>
-          <h1 className="text-2xl sm:text-4xl font-semibold text-stone-900 tracking-tight">주보 다운로드</h1>
-          <p className="text-sm text-stone-500 mt-2">매주 발행되는 주보를 확인하실 수 있습니다.</p>
+          <span className="text-xs font-semibold text-amber-800 uppercase tracking-widest block mb-2">
+            Weekly Bulletin
+          </span>
+          <h1 className="text-2xl sm:text-4xl font-semibold text-stone-900 tracking-tight">
+            주보 다운로드
+          </h1>
+          <p className="text-sm text-stone-500 mt-2">
+            {user.name}{user.role}님, 매주 발행되는 주보를 열람 및 다운로드하실 수 있습니다.
+          </p>
         </div>
 
         {/* Bulletin List */}
@@ -29,9 +85,14 @@ export default async function BulletinsPage() {
           <div className="space-y-3">
             {bulletins.length > 0 ? (
               bulletins.map((bulletin: any) => (
-                <div key={bulletin.id} className="flex items-center justify-between p-4 sm:p-5 rounded-2xl border border-stone-100 bg-stone-50/50 hover:bg-stone-50 hover:border-amber-200/60 transition-colors group">
+                <div
+                  key={bulletin.id}
+                  className="flex items-center justify-between p-4 sm:p-5 rounded-2xl border border-stone-100 bg-stone-50/50 hover:bg-stone-50 hover:border-amber-200/60 transition-colors group"
+                >
                   <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
-                    <span className="text-xs text-stone-400 font-mono">{bulletin.date}</span>
+                    <span className="text-xs text-stone-400 font-mono">
+                      {bulletin.date}
+                    </span>
                     <h3 className="text-base font-medium text-stone-800 group-hover:text-amber-800 transition-colors">
                       {bulletin.title}
                     </h3>
@@ -56,7 +117,10 @@ export default async function BulletinsPage() {
         </div>
 
         <div className="mt-8 text-center">
-          <Link href="/news" className="text-sm text-stone-500 hover:text-amber-800 transition-colors underline underline-offset-4">
+          <Link
+            href="/news"
+            className="text-sm text-stone-500 hover:text-amber-800 transition-colors underline underline-offset-4"
+          >
             소식 및 일정으로 돌아가기
           </Link>
         </div>

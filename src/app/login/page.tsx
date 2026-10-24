@@ -33,7 +33,9 @@ export default function LoginPage() {
 
       sessionStorage.setItem("welcome_user", JSON.stringify(data.user));
       window.dispatchEvent(new Event("auth-change"));
-      router.push("/");
+      const params = new URLSearchParams(window.location.search);
+      const redirectTo = params.get("redirect") || "/";
+      router.push(redirectTo);
       router.refresh();
     } catch {
       setError("서버와 통신 중 오류가 발생했습니다.");
