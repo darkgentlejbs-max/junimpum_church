@@ -1,6 +1,17 @@
-import { Users, Music, BookOpen, Heart } from "lucide-react";
+import Link from "next/link";
+import { Users, Music, BookOpen, Heart, ImageIcon, ArrowUpRight } from "lucide-react";
+import { getGallery } from "@/lib/notion";
 
-export default function MinistriesPage() {
+export const dynamic = "force-dynamic";
+
+export default async function MinistriesPage() {
+  const allPhotos = await getGallery();
+  const worshipPhotos = allPhotos.filter(
+    (p: any) =>
+      p.title?.includes("찬양") ||
+      p.title?.includes("부따겸")
+  );
+
   return (
     <div className="py-8 sm:py-16 bg-[#FAF9F6] min-h-screen text-stone-800">
       <div className="container mx-auto px-3 sm:px-6 max-w-5xl">
@@ -42,16 +53,49 @@ export default function MinistriesPage() {
               <Music size={24} />
             </div>
             <div className="flex-1 w-full">
-              <h2 className="text-lg sm:text-xl font-semibold mb-2 text-stone-900">찬양팀</h2>
-              <p className="text-stone-600 text-sm leading-relaxed mb-5">
-                정성어린 찬양으로 하나님께 영광을 돌리고, 성도들의 예배를 돕는 은혜의 사역입니다.
-              </p>
-              <div className="grid grid-cols-1 gap-3">
-                <div className="bg-stone-50/80 p-4 rounded-xl border border-stone-100">
-                  <h4 className="text-sm font-semibold text-stone-800 mb-1">부따겸 찬양단</h4>
-                  <p className="text-xs text-stone-500">주일 예배 및 각종 예배 찬양 인도</p>
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
+                <div>
+                  <h2 className="text-lg sm:text-xl font-semibold text-stone-900">찬양팀(부따겸 찬양단)</h2>
+                  <p className="text-stone-600 text-sm leading-relaxed mt-1">
+                    예배 찬양 인도
+                  </p>
                 </div>
+                <Link
+                  href="/gallery"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-50/80 hover:bg-amber-100/80 border border-amber-200/70 text-amber-900 text-xs sm:text-sm font-semibold transition-colors"
+                >
+                  <ImageIcon size={15} className="text-amber-700" />
+                  <span>갤러리</span>
+                  <ArrowUpRight size={14} className="text-amber-700/80" />
+                </Link>
               </div>
+
+              {worshipPhotos.length > 0 && (
+                <div className="mt-4 pt-4 border-t border-stone-100 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {worshipPhotos.slice(0, 6).map((photo: any) => (
+                    <a
+                      key={photo.id}
+                      href={photo.imageUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group rounded-2xl overflow-hidden border border-stone-200/80 bg-stone-50 block"
+                    >
+                      <div className="aspect-[4/3] overflow-hidden bg-stone-100">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={photo.imageUrl}
+                          alt={photo.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                      <div className="p-3">
+                        <p className="text-xs font-semibold text-stone-800 line-clamp-1">{photo.title}</p>
+                        <p className="text-[11px] text-stone-400 mt-0.5">{photo.date}</p>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
           </section>
 
