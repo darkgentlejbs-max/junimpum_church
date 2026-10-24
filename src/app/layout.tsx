@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
+import FloatingHomeButton from "@/components/FloatingHomeButton";
 
 export const viewport: Viewport = {
   themeColor: "#FAF9F6",
@@ -57,6 +58,9 @@ export default function RootLayout({
 
         {/* Main Content */}
         <main className="flex-1 flex flex-col">{children}</main>
+
+        {/* Floating Home Button */}
+        <FloatingHomeButton />
 
         {/* Footer */}
         <footer className="bg-stone-900 text-stone-400 py-8 mt-auto border-t border-stone-800">
