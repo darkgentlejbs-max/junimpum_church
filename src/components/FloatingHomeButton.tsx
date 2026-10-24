@@ -25,15 +25,18 @@ export default function FloatingHomeButton() {
     return null;
   }
 
+  const buttonClass =
+    "fixed bottom-5 right-4 sm:bottom-8 sm:right-8 z-40 inline-flex items-center gap-1.5 px-3 py-1.5 bg-transparent text-sm font-medium text-stone-600 hover:text-amber-700 transition-colors cursor-pointer";
+
   if (isHome) {
     return (
       <button
         type="button"
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        className="fixed bottom-5 right-4 sm:bottom-8 sm:right-8 z-40 inline-flex items-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 rounded-full bg-amber-800/95 hover:bg-amber-900 text-white text-xs sm:text-sm font-semibold shadow-[0_8px_24px_rgba(146,64,14,0.35)] border border-amber-700/60 backdrop-blur-xs transition-all duration-200 hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+        className={buttonClass}
         aria-label="홈 화면 맨 위로 이동"
       >
-        <Home size={16} />
+        <Home size={15} />
         <span>홈으로 가기</span>
       </button>
     );
@@ -42,10 +45,10 @@ export default function FloatingHomeButton() {
   return (
     <Link
       href="/"
-      className="fixed bottom-5 right-4 sm:bottom-8 sm:right-8 z-40 inline-flex items-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 rounded-full bg-amber-800/95 hover:bg-amber-900 text-white text-xs sm:text-sm font-semibold shadow-[0_8px_24px_rgba(146,64,14,0.35)] border border-amber-700/60 backdrop-blur-xs transition-all duration-200 hover:-translate-y-0.5 active:scale-95"
+      className={buttonClass}
       aria-label="홈으로 가기"
     >
-      <Home size={16} />
+      <Home size={15} />
       <span>홈으로 가기</span>
     </Link>
   );
