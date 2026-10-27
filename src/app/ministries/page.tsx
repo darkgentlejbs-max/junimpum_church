@@ -199,19 +199,6 @@ export default async function MinistriesPage() {
               </div>
             </div>
           </section>
-
-          {/* Volunteering */}
-          <section className="bg-white p-5 sm:p-9 rounded-2xl sm:rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80 flex flex-col md:flex-row gap-4 sm:gap-8 items-start hover:border-amber-300/80 transition-colors">
-            <div className="w-12 h-12 rounded-2xl bg-amber-100/70 text-amber-800 flex items-center justify-center shrink-0">
-              <Heart size={24} />
-            </div>
-            <div className="flex-1">
-              <h2 className="text-lg sm:text-xl font-semibold mb-2 text-stone-900">봉사 및 구제 사역</h2>
-              <p className="text-stone-600 text-sm leading-relaxed">
-                그리스도의 따뜻한 손길이 되어 지역사회의 이웃을 돌보고, 국내외 선교지를 후원하며 하나님 나라를 확장해 갑니다.
-              </p>
-            </div>
-          </section>
         </div>
       </div>
     </div>
