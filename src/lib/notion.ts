@@ -538,11 +538,65 @@ export async function findMemberByNameAndPhone(name: string, phone: string) {
 
 export const MINISTRY_NOTICES_DB_ID = process.env.NOTION_MINISTRY_NOTICES_DB_ID || '';
 let cachedMinistryNoticesDbId = MINISTRY_NOTICES_DB_ID;
+let isDedicatedMinistryDb = false;
+
+async function ensureMinistryNoticesSchema(databaseId: string) {
+  let titlePropName = '이름';
+  let confirmedProps: Record<string, any> = {};
+
+  try {
+    const db: any = await notion.databases.retrieve({ database_id: databaseId });
+    confirmedProps = { ...(db.properties || {}) };
+
+    for (const [key, val] of Object.entries(confirmedProps) as any[]) {
+      if (val?.type === 'title') {
+        titlePropName = key;
+        break;
+      }
+    }
+
+    const updates: Record<string, any> = {};
+    if (!confirmedProps['사역분류']) {
+      updates['사역분류'] = { rich_text: {} };
+    }
+    if (!confirmedProps['내용']) {
+      updates['내용'] = { rich_text: {} };
+    }
+    if (!confirmedProps['작성자']) {
+      updates['작성자'] = { rich_text: {} };
+    }
+    if (!confirmedProps['날짜']) {
+      updates['날짜'] = { date: {} };
+    }
+
+    if (Object.keys(updates).length > 0) {
+      try {
+        const updatedDb: any = await notion.databases.update({
+          database_id: databaseId,
+          properties: updates,
+        });
+        confirmedProps = { ...(updatedDb.properties || confirmedProps) };
+      } catch (updateErr) {
+        console.error('Could not add new properties to ministry notices DB, using existing schema:', updateErr);
+      }
+    }
+  } catch (error) {
+    console.error('Error retrieving ministry notices schema:', error);
+  }
+
+  return {
+    titlePropName,
+    confirmedProps,
+  };
+}
 
 export async function resolveMinistryNoticesDbId(): Promise<string> {
   if (cachedMinistryNoticesDbId) {
     return cachedMinistryNoticesDbId;
   }
+
+  let fallbackDbId = NEWS_DATABASE_ID || SCHEDULE_DATABASE_ID || BULLETIN_DATABASE_ID;
+  const candidateParentPages: string[] = [];
 
   try {
     const searchRes = await notion.search({
@@ -553,46 +607,74 @@ export async function resolveMinistryNoticesDbId(): Promise<string> {
       const title = item.title?.[0]?.plain_text || '';
       if (title.includes('사역') && title.includes('공지')) {
         cachedMinistryNoticesDbId = item.id;
+        isDedicatedMinistryDb = true;
         return cachedMinistryNoticesDbId;
       }
+      if (!fallbackDbId && item.id) {
+        fallbackDbId = item.id;
+      }
+      if (item.parent?.type === 'page_id' && item.parent.page_id) {
+        if (!candidateParentPages.includes(item.parent.page_id)) {
+          candidateParentPages.push(item.parent.page_id);
+        }
+      }
     }
-
-    const createdDb: any = await notion.databases.create({
-      parent: {
-        type: 'page_id',
-        page_id: '3e3243467c5a805eaeedff2822e3ac31',
-      },
-      title: [
-        {
-          type: 'text',
-          text: { content: '사역 및 기관 공지사항' },
-        },
-      ],
-      properties: {
-        이름: { title: {} },
-        분류: {
-          select: {
-            options: [
-              { name: '전체', color: 'default' },
-              { name: '교회학교', color: 'green' },
-              { name: '찬양팀', color: 'yellow' },
-              { name: '남선교회', color: 'blue' },
-              { name: '여전도회', color: 'purple' },
-            ],
-          },
-        },
-        내용: { rich_text: {} },
-        작성자: { rich_text: {} },
-        날짜: { date: {} },
-      },
-    });
-
-    cachedMinistryNoticesDbId = createdDb.id;
-    return cachedMinistryNoticesDbId;
-  } catch (error) {
-    console.error('Error resolving ministry notices database:', error);
-    return '';
+  } catch (searchErr) {
+    console.error('Error searching databases for ministry notices:', searchErr);
   }
+
+  if (!candidateParentPages.includes('3e3243467c5a805eaeedff2822e3ac31')) {
+    candidateParentPages.push('3e3243467c5a805eaeedff2822e3ac31');
+  }
+
+  for (const parentPageId of candidateParentPages) {
+    try {
+      const createdDb: any = await notion.databases.create({
+        parent: {
+          type: 'page_id',
+          page_id: parentPageId,
+        },
+        title: [
+          {
+            type: 'text',
+            text: { content: '사역 및 기관 공지사항' },
+          },
+        ],
+        properties: {
+          이름: { title: {} },
+          분류: {
+            select: {
+              options: [
+                { name: '전체', color: 'default' },
+                { name: '교회학교', color: 'green' },
+                { name: '찬양팀', color: 'yellow' },
+                { name: '남선교회', color: 'blue' },
+                { name: '여전도회', color: 'purple' },
+              ],
+            },
+          },
+          사역분류: { rich_text: {} },
+          내용: { rich_text: {} },
+          작성자: { rich_text: {} },
+          날짜: { date: {} },
+        },
+      });
+
+      cachedMinistryNoticesDbId = createdDb.id;
+      isDedicatedMinistryDb = true;
+      return cachedMinistryNoticesDbId;
+    } catch {
+      // Try next candidate parent page or fallback to existing shared database
+    }
+  }
+
+  if (fallbackDbId) {
+    cachedMinistryNoticesDbId = fallbackDbId;
+    isDedicatedMinistryDb = false;
+    return cachedMinistryNoticesDbId;
+  }
+
+  return '';
 }
 
 export async function getMinistryNotices() {
@@ -602,32 +684,64 @@ export async function getMinistryNotices() {
 
     const response = await notion.databases.query({
       database_id: dbId,
-      sorts: [{ property: '날짜', direction: 'descending' }],
     });
 
-    return response.results.map((page: any) => {
-      const props = page.properties || {};
-      const title =
-        props['이름']?.title?.[0]?.plain_text ||
-        props['제목']?.title?.[0]?.plain_text ||
-        '제목 없음';
-      const category = props['분류']?.select?.name || '전체';
-      const content =
-        props['내용']?.rich_text?.map((t: any) => t.plain_text).join('') ||
-        props['텍스트']?.rich_text?.map((t: any) => t.plain_text).join('') ||
-        '';
-      const author = props['작성자']?.rich_text?.[0]?.plain_text || '주님품교회';
-      const date = props['날짜']?.date?.start || page.created_time?.split('T')[0] || '';
+    const ministryCategories = ['교회학교', '찬양팀', '남선교회', '여전도회'];
 
-      return {
-        id: page.id,
-        title,
-        category,
-        content,
-        author,
-        date,
-      };
-    });
+    const items = response.results
+      .map((page: any) => {
+        const props = page.properties || {};
+
+        let rawTitle = '';
+        for (const key of Object.keys(props)) {
+          if (props[key]?.type === 'title') {
+            rawTitle = props[key]?.title?.map((t: any) => t.plain_text).join('') || '';
+            break;
+          }
+        }
+        if (!rawTitle) {
+          rawTitle =
+            props['이름']?.title?.[0]?.plain_text ||
+            props['제목']?.title?.[0]?.plain_text ||
+            '제목 없음';
+        }
+
+        let prefixCategory = '';
+        let title = rawTitle;
+        const prefixMatch = rawTitle.match(/^\[사역공지:([^\]]+)\]\s*(.*)$/);
+        if (prefixMatch) {
+          prefixCategory = prefixMatch[1];
+          title = prefixMatch[2] || rawTitle;
+        }
+
+        const ministryCat = props['사역분류']?.rich_text?.[0]?.plain_text || prefixCategory;
+        const selectCat = props['분류']?.select?.name || '';
+
+        if (!isDedicatedMinistryDb && !ministryCat && !ministryCategories.includes(selectCat)) {
+          return null;
+        }
+
+        const category = ministryCat || selectCat || '전체';
+        const content =
+          props['내용']?.rich_text?.map((t: any) => t.plain_text).join('') ||
+          props['텍스트']?.rich_text?.map((t: any) => t.plain_text).join('') ||
+          '';
+        const author = props['작성자']?.rich_text?.[0]?.plain_text || '주님품교회';
+        const date = props['날짜']?.date?.start || page.created_time?.split('T')[0] || '';
+
+        return {
+          id: page.id,
+          title,
+          category,
+          content,
+          author,
+          date,
+        };
+      })
+      .filter(Boolean) as any[];
+
+    items.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    return items;
   } catch (error) {
     console.error('Error fetching ministry notices:', error);
     return [];
@@ -645,33 +759,64 @@ export async function createMinistryNotice(params: {
     throw new Error('공지사항 데이터베이스를 찾을 수 없습니다.');
   }
 
+  const { titlePropName, confirmedProps } = await ensureMinistryNoticesSchema(dbId);
   const today = new Date().toISOString().split('T')[0];
+  const category = params.category || '전체';
+
+  const hasMinistryCatProp = confirmedProps['사역분류']?.type === 'rich_text';
+  const storedTitle = isDedicatedMinistryDb
+    ? params.title
+    : `[사역공지:${category}] ${params.title}`;
+
+  const properties: Record<string, any> = {
+    [titlePropName]: {
+      title: [{ text: { content: storedTitle } }],
+    },
+  };
+
+  if (hasMinistryCatProp) {
+    properties['사역분류'] = {
+      rich_text: [{ text: { content: category } }],
+    };
+  }
+
+  if (confirmedProps['내용']?.type === 'rich_text') {
+    properties['내용'] = {
+      rich_text: [{ text: { content: params.content } }],
+    };
+  } else if (confirmedProps['텍스트']?.type === 'rich_text') {
+    properties['텍스트'] = {
+      rich_text: [{ text: { content: params.content } }],
+    };
+  }
+
+  if (confirmedProps['작성자']?.type === 'rich_text') {
+    properties['작성자'] = {
+      rich_text: [{ text: { content: params.author } }],
+    };
+  }
+
+  if (confirmedProps['날짜']?.type === 'date') {
+    properties['날짜'] = {
+      date: { start: today },
+    };
+  }
+
+  if (isDedicatedMinistryDb && confirmedProps['분류']?.type === 'select') {
+    properties['분류'] = {
+      select: { name: category },
+    };
+  }
 
   const created: any = await notion.pages.create({
     parent: { database_id: dbId },
-    properties: {
-      이름: {
-        title: [{ text: { content: params.title } }],
-      },
-      분류: {
-        select: { name: params.category || '전체' },
-      },
-      내용: {
-        rich_text: [{ text: { content: params.content } }],
-      },
-      작성자: {
-        rich_text: [{ text: { content: params.author } }],
-      },
-      날짜: {
-        date: { start: today },
-      },
-    },
+    properties,
   });
 
   return {
     id: created.id,
     title: params.title,
-    category: params.category || '전체',
+    category,
     content: params.content,
     author: params.author,
     date: today,

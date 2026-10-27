@@ -7,7 +7,8 @@ import ScheduleItem from "@/components/ScheduleItem";
 export const dynamic = 'force-dynamic';
 
 export default async function NewsPage() {
-  const notices = await getNews();
+  const rawNotices = await getNews();
+  const notices = rawNotices.filter((n: any) => !n.title?.startsWith("[사역공지:"));
   const schedules = await getSchedule();
 
   if (notices.length === 0) {
