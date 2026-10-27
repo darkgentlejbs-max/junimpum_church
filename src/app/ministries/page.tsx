@@ -1,11 +1,17 @@
 import Link from "next/link";
-import { Users, Music, BookOpen, Heart, ImageIcon, ArrowUpRight } from "lucide-react";
-import { getGallery } from "@/lib/notion";
+import { Users, Music, BookOpen, ImageIcon, ArrowUpRight } from "lucide-react";
+import { getGallery, getMinistryNotices } from "@/lib/notion";
+import { getCurrentUser } from "@/lib/auth";
+import MinistryNoticeBoard from "@/components/MinistryNoticeBoard";
 
 export const dynamic = "force-dynamic";
 
 export default async function MinistriesPage() {
-  const allPhotos = await getGallery();
+  const [allPhotos, ministryNotices, user] = await Promise.all([
+    getGallery(),
+    getMinistryNotices(),
+    getCurrentUser(),
+  ]);
   const worshipPhotos = allPhotos.filter(
     (p: any) => p.title?.includes("찬양") || p.title?.includes("부따겸")
   );
@@ -199,6 +205,12 @@ export default async function MinistriesPage() {
               </div>
             </div>
           </section>
+
+          {/* 사역 및 기관 공지사항 게시판 */}
+          <MinistryNoticeBoard
+            initialNotices={ministryNotices}
+            currentUser={user ? { name: user.name, role: user.role } : null}
+          />
         </div>
       </div>
     </div>

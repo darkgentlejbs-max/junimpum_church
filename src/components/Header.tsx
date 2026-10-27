@@ -283,6 +283,14 @@ export default function Header() {
                 >
                   여전도회
                 </Link>
+                <div className="my-1 border-t border-stone-100"></div>
+                <Link
+                  href="/ministries#board"
+                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  onClick={() => setMinistryDropdownOpen(false)}
+                >
+                  공지사항 게시판
+                </Link>
               </div>
             )}
           </div>
@@ -521,6 +529,13 @@ export default function Header() {
                   className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
                 >
                   여전도회
+                </Link>
+                <Link
+                  href="/ministries#board"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                >
+                  공지사항 게시판
                 </Link>
               </div>
             </div>

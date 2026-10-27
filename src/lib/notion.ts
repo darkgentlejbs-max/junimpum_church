@@ -536,4 +536,147 @@ export async function findMemberByNameAndPhone(name: string, phone: string) {
   return null;
 }
 
+export const MINISTRY_NOTICES_DB_ID = process.env.NOTION_MINISTRY_NOTICES_DB_ID || '';
+let cachedMinistryNoticesDbId = MINISTRY_NOTICES_DB_ID;
+
+export async function resolveMinistryNoticesDbId(): Promise<string> {
+  if (cachedMinistryNoticesDbId) {
+    return cachedMinistryNoticesDbId;
+  }
+
+  try {
+    const searchRes = await notion.search({
+      filter: { property: 'object', value: 'database' },
+    });
+
+    for (const item of searchRes.results as any[]) {
+      const title = item.title?.[0]?.plain_text || '';
+      if (title.includes('사역') && title.includes('공지')) {
+        cachedMinistryNoticesDbId = item.id;
+        return cachedMinistryNoticesDbId;
+      }
+    }
+
+    const createdDb: any = await notion.databases.create({
+      parent: {
+        type: 'page_id',
+        page_id: '3e3243467c5a805eaeedff2822e3ac31',
+      },
+      title: [
+        {
+          type: 'text',
+          text: { content: '사역 및 기관 공지사항' },
+        },
+      ],
+      properties: {
+        이름: { title: {} },
+        분류: {
+          select: {
+            options: [
+              { name: '전체', color: 'default' },
+              { name: '교회학교', color: 'green' },
+              { name: '찬양팀', color: 'yellow' },
+              { name: '남선교회', color: 'blue' },
+              { name: '여전도회', color: 'purple' },
+            ],
+          },
+        },
+        내용: { rich_text: {} },
+        작성자: { rich_text: {} },
+        날짜: { date: {} },
+      },
+    });
+
+    cachedMinistryNoticesDbId = createdDb.id;
+    return cachedMinistryNoticesDbId;
+  } catch (error) {
+    console.error('Error resolving ministry notices database:', error);
+    return '';
+  }
+}
+
+export async function getMinistryNotices() {
+  try {
+    const dbId = await resolveMinistryNoticesDbId();
+    if (!dbId) return [];
+
+    const response = await notion.databases.query({
+      database_id: dbId,
+      sorts: [{ property: '날짜', direction: 'descending' }],
+    });
+
+    return response.results.map((page: any) => {
+      const props = page.properties || {};
+      const title =
+        props['이름']?.title?.[0]?.plain_text ||
+        props['제목']?.title?.[0]?.plain_text ||
+        '제목 없음';
+      const category = props['분류']?.select?.name || '전체';
+      const content =
+        props['내용']?.rich_text?.map((t: any) => t.plain_text).join('') ||
+        props['텍스트']?.rich_text?.map((t: any) => t.plain_text).join('') ||
+        '';
+      const author = props['작성자']?.rich_text?.[0]?.plain_text || '주님품교회';
+      const date = props['날짜']?.date?.start || page.created_time?.split('T')[0] || '';
+
+      return {
+        id: page.id,
+        title,
+        category,
+        content,
+        author,
+        date,
+      };
+    });
+  } catch (error) {
+    console.error('Error fetching ministry notices:', error);
+    return [];
+  }
+}
+
+export async function createMinistryNotice(params: {
+  title: string;
+  category: string;
+  content: string;
+  author: string;
+}) {
+  const dbId = await resolveMinistryNoticesDbId();
+  if (!dbId) {
+    throw new Error('공지사항 데이터베이스를 찾을 수 없습니다.');
+  }
+
+  const today = new Date().toISOString().split('T')[0];
+
+  const created: any = await notion.pages.create({
+    parent: { database_id: dbId },
+    properties: {
+      이름: {
+        title: [{ text: { content: params.title } }],
+      },
+      분류: {
+        select: { name: params.category || '전체' },
+      },
+      내용: {
+        rich_text: [{ text: { content: params.content } }],
+      },
+      작성자: {
+        rich_text: [{ text: { content: params.author } }],
+      },
+      날짜: {
+        date: { start: today },
+      },
+    },
+  });
+
+  return {
+    id: created.id,
+    title: params.title,
+    category: params.category || '전체',
+    content: params.content,
+    author: params.author,
+    date: today,
+  };
+}
+
+
 
