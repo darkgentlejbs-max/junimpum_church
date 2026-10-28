@@ -14,7 +14,7 @@ import {
   Check,
 } from "lucide-react";
 
-interface MinistryNotice {
+export interface MinistryNotice {
   id: string;
   title: string;
   category: string;
@@ -24,21 +24,22 @@ interface MinistryNotice {
 }
 
 interface Props {
+  department: string;
   initialNotices: MinistryNotice[];
   currentUser: { name: string; role: string } | null;
 }
 
-const CATEGORIES = ["전체", "교회학교", "찬양팀", "남선교회", "여전도회"];
-
-export default function MinistryNoticeBoard({ initialNotices, currentUser }: Props) {
+export default function MinistryNoticeBoard({
+  department,
+  initialNotices,
+  currentUser,
+}: Props) {
   const [notices, setNotices] = useState<MinistryNotice[]>(initialNotices);
-  const [activeCategory, setActiveCategory] = useState("전체");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [isWriting, setIsWriting] = useState(false);
 
   // 새 글 작성 상태
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("전체");
   const [content, setContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -46,17 +47,11 @@ export default function MinistryNoticeBoard({ initialNotices, currentUser }: Pro
   // 글 수정/삭제 상태
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
-  const [editCategory, setEditCategory] = useState("전체");
   const [editContent, setEditContent] = useState("");
   const [editSubmitting, setEditSubmitting] = useState(false);
   const [editError, setEditError] = useState("");
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-
-  const filteredNotices =
-    activeCategory === "전체"
-      ? notices
-      : notices.filter((n) => n.category === activeCategory);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,7 +67,11 @@ export default function MinistryNoticeBoard({ initialNotices, currentUser }: Pro
       const res = await fetch("/api/ministries/notices", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, category, content }),
+        body: JSON.stringify({
+          title,
+          category: department,
+          content,
+        }),
       });
 
       const data = await res.json();
@@ -85,7 +84,6 @@ export default function MinistryNoticeBoard({ initialNotices, currentUser }: Pro
       setNotices([data.notice, ...notices]);
       setTitle("");
       setContent("");
-      setCategory("전체");
       setIsWriting(false);
       setExpandedId(data.notice.id);
     } catch {
@@ -98,7 +96,6 @@ export default function MinistryNoticeBoard({ initialNotices, currentUser }: Pro
   const startEdit = (notice: MinistryNotice) => {
     setEditingId(notice.id);
     setEditTitle(notice.title);
-    setEditCategory(notice.category || "전체");
     setEditContent(notice.content);
     setEditError("");
     setConfirmDeleteId(null);
@@ -119,7 +116,7 @@ export default function MinistryNoticeBoard({ initialNotices, currentUser }: Pro
         body: JSON.stringify({
           id,
           title: editTitle,
-          category: editCategory,
+          category: department,
           content: editContent,
         }),
       });
@@ -179,24 +176,19 @@ export default function MinistryNoticeBoard({ initialNotices, currentUser }: Pro
   };
 
   return (
-    <section
-      id="board"
-      className="scroll-mt-24 bg-white p-5 sm:p-9 rounded-2xl sm:rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80"
-    >
+    <div className="mt-4 pt-4 border-t border-stone-200/70">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-5 pb-4 border-b border-stone-100">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl bg-amber-100/70 text-amber-800 flex items-center justify-center shrink-0">
-            <Megaphone size={22} />
-          </div>
-          <div>
-            <h2 className="text-lg sm:text-xl font-semibold text-stone-900">
-              게시판
-            </h2>
-            <p className="text-xs sm:text-sm text-stone-500 mt-0.5">
-              교회학교, 찬양팀, 남선교회, 여전도회의 공지사항과 모임 소식을 나눕니다.
-            </p>
-          </div>
+      <div className="flex items-center justify-between gap-2 mb-3">
+        <div className="flex items-center gap-2">
+          <Megaphone size={15} className="text-amber-700" />
+          <h4 className="text-xs sm:text-sm font-semibold text-stone-800">
+            게시판
+          </h4>
+          {notices.length > 0 && (
+            <span className="text-[11px] font-mono text-amber-800 bg-amber-50 border border-amber-200/60 px-1.5 py-0.2 rounded-full">
+              {notices.length}
+            </span>
+          )}
         </div>
 
         {currentUser ? (
@@ -206,18 +198,18 @@ export default function MinistryNoticeBoard({ initialNotices, currentUser }: Pro
               setIsWriting(!isWriting);
               setError("");
             }}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-800 hover:bg-amber-900 text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-amber-800 hover:bg-amber-900 text-white text-xs font-semibold transition-colors cursor-pointer"
           >
-            {isWriting ? <X size={15} /> : <PenLine size={15} />}
-            <span>{isWriting ? "작성 닫기" : "글쓰기"}</span>
+            {isWriting ? <X size={13} /> : <PenLine size={13} />}
+            <span>{isWriting ? "닫기" : "글쓰기"}</span>
           </button>
         ) : (
           <Link
-            href="/login?redirect=/ministries#board"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-stone-100 hover:bg-amber-50 text-stone-700 hover:text-amber-800 border border-stone-200/80 text-xs sm:text-sm font-semibold transition-colors"
+            href="/login?redirect=/ministries"
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white hover:bg-amber-50 text-stone-600 hover:text-amber-800 border border-stone-200/80 text-xs font-semibold transition-colors"
           >
-            <Plus size={15} />
-            <span>글쓰기 (로그인)</span>
+            <Plus size={13} />
+            <span>글쓰기</span>
           </Link>
         )}
       </div>
@@ -226,61 +218,37 @@ export default function MinistryNoticeBoard({ initialNotices, currentUser }: Pro
       {isWriting && currentUser && (
         <form
           onSubmit={handleSubmit}
-          className="mb-6 p-4 sm:p-6 rounded-2xl bg-[#FAF9F6] border border-amber-200/80 space-y-4"
+          className="mb-4 p-3.5 sm:p-4 rounded-2xl bg-white border border-amber-200/80 space-y-3 shadow-2xs"
         >
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-stone-900">
-              새 게시글 작성 ({currentUser.name} {currentUser.role}님)
-            </h3>
+            <span className="text-xs font-semibold text-stone-800">
+              {department} 게시글 작성 ({currentUser.name} {currentUser.role}님)
+            </span>
           </div>
 
           {error && (
-            <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium">
+            <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium">
               {error}
             </div>
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-            <div>
-              <label className="block text-xs font-medium text-stone-600 mb-1">
-                부서 · 기관 분류
-              </label>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 text-stone-800 text-sm focus:outline-none focus:border-amber-600"
-              >
-                {CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="sm:col-span-3">
-              <label className="block text-xs font-medium text-stone-600 mb-1">
-                제목
-              </label>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="제목을 입력해 주세요"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 text-stone-800 text-sm focus:outline-none focus:border-amber-600"
-              />
-            </div>
+          <div>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="제목을 입력해 주세요"
+              className="w-full px-3 py-2 rounded-xl bg-[#FAF9F6] border border-stone-200 text-stone-800 text-xs sm:text-sm focus:outline-none focus:border-amber-600"
+            />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-stone-600 mb-1">
-              내용
-            </label>
             <textarea
-              rows={4}
+              rows={3}
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="상세 내용이나 모임 안내를 작성해 주세요"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 text-stone-800 text-sm focus:outline-none focus:border-amber-600 resize-y"
+              placeholder="공지 내용이나 모임 소식을 입력해 주세요"
+              className="w-full px-3 py-2 rounded-xl bg-[#FAF9F6] border border-stone-200 text-stone-800 text-xs sm:text-sm focus:outline-none focus:border-amber-600 resize-y"
             />
           </div>
 
@@ -288,61 +256,37 @@ export default function MinistryNoticeBoard({ initialNotices, currentUser }: Pro
             <button
               type="button"
               onClick={() => setIsWriting(false)}
-              className="px-4 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-600 text-xs sm:text-sm font-medium transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-600 text-xs font-medium transition-colors cursor-pointer"
             >
               취소
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-amber-800 hover:bg-amber-900 disabled:opacity-60 text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-amber-800 hover:bg-amber-900 disabled:opacity-60 text-white text-xs font-semibold transition-colors cursor-pointer"
             >
-              {submitting && <Loader2 size={14} className="animate-spin" />}
+              {submitting && <Loader2 size={13} className="animate-spin" />}
               <span>등록하기</span>
             </button>
           </div>
         </form>
       )}
 
-      {/* Category Filter Tabs */}
-      <div className="flex flex-wrap items-center gap-1.5 mb-5">
-        {CATEGORIES.map((cat) => {
-          const active = activeCategory === cat;
-          return (
-            <button
-              key={cat}
-              type="button"
-              onClick={() => setActiveCategory(cat)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
-                active
-                  ? "bg-amber-800 text-white"
-                  : "bg-stone-100 text-stone-600 hover:bg-amber-50 hover:text-amber-800"
-              }`}
-            >
-              {cat}
-            </button>
-          );
-        })}
-      </div>
-
       {/* Notices List */}
-      {filteredNotices.length === 0 ? (
-        <div className="text-center py-12 bg-stone-50/60 rounded-2xl border border-stone-100">
-          <p className="text-sm text-stone-500">등록된 게시글이 없습니다.</p>
-          <p className="text-xs text-stone-400 mt-1">
-            우측 상단의 &lsquo;글쓰기&rsquo; 버튼으로 새 게시글을 등록하실 수 있습니다.
-          </p>
+      {notices.length === 0 ? (
+        <div className="text-center py-4 px-3 bg-white/70 rounded-xl border border-stone-200/60">
+          <p className="text-xs text-stone-400">등록된 게시글이 없습니다.</p>
         </div>
       ) : (
-        <ul className="divide-y divide-stone-100 border-t border-stone-100">
-          {filteredNotices.map((notice) => {
+        <ul className="divide-y divide-stone-200/60 bg-white rounded-xl border border-stone-200/70 px-3.5">
+          {notices.map((notice) => {
             const isOpen = expandedId === notice.id;
             const isEditing = editingId === notice.id;
             const isConfirmingDelete = confirmDeleteId === notice.id;
             const isDeleting = deletingId === notice.id;
 
             return (
-              <li key={notice.id} className="py-3.5">
+              <li key={notice.id} className="py-2.5">
                 <button
                   type="button"
                   onClick={() => {
@@ -354,25 +298,20 @@ export default function MinistryNoticeBoard({ initialNotices, currentUser }: Pro
                       setExpandedId(notice.id);
                     }
                   }}
-                  className="w-full text-left flex items-center justify-between gap-3 group cursor-pointer"
+                  className="w-full text-left flex items-center justify-between gap-2 group cursor-pointer"
                 >
-                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 min-w-0">
-                    <span className="px-2.5 py-0.5 rounded-md bg-amber-50 border border-amber-200/70 text-amber-800 text-[11px] font-semibold shrink-0">
-                      {notice.category}
-                    </span>
-                    <span className="text-sm sm:text-base font-medium text-stone-800 group-hover:text-amber-800 transition-colors break-keep">
-                      {notice.title}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <span className="hidden sm:inline text-xs text-stone-400">
+                  <span className="text-xs sm:text-sm font-medium text-stone-800 group-hover:text-amber-800 transition-colors break-keep line-clamp-1">
+                    {notice.title}
+                  </span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="hidden sm:inline text-[11px] text-stone-400">
                       {notice.author}
                     </span>
-                    <span className="text-xs font-mono text-stone-400">
+                    <span className="text-[11px] font-mono text-stone-400">
                       {notice.date}
                     </span>
                     <ChevronDown
-                      size={16}
+                      size={14}
                       className={`text-stone-400 transition-transform duration-200 ${
                         isOpen ? "rotate-180 text-amber-700" : ""
                       }`}
@@ -381,60 +320,42 @@ export default function MinistryNoticeBoard({ initialNotices, currentUser }: Pro
                 </button>
 
                 {isOpen && (
-                  <div className="mt-3 p-4 sm:p-5 rounded-2xl bg-stone-50/80 border border-stone-200/60 text-xs sm:text-sm text-stone-700 leading-relaxed">
+                  <div className="mt-2.5 p-3 sm:p-4 rounded-xl bg-stone-50/90 border border-stone-200/60 text-xs sm:text-sm text-stone-700 leading-relaxed">
                     {editError && (
-                      <div className="mb-3 p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium">
+                      <div className="mb-2.5 p-2 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-medium">
                         {editError}
                       </div>
                     )}
 
                     {isEditing ? (
-                      <div className="space-y-3">
-                        <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
-                          <div>
-                            <label className="block text-[11px] font-medium text-stone-500 mb-1">
-                              부서 · 기관 분류
-                            </label>
-                            <select
-                              value={editCategory}
-                              onChange={(e) => setEditCategory(e.target.value)}
-                              className="w-full px-3 py-2 rounded-xl bg-white border border-stone-200 text-stone-800 text-xs sm:text-sm focus:outline-none focus:border-amber-600"
-                            >
-                              {CATEGORIES.map((cat) => (
-                                <option key={cat} value={cat}>
-                                  {cat}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                          <div className="sm:col-span-3">
-                            <label className="block text-[11px] font-medium text-stone-500 mb-1">
-                              제목
-                            </label>
-                            <input
-                              type="text"
-                              value={editTitle}
-                              onChange={(e) => setEditTitle(e.target.value)}
-                              className="w-full px-3 py-2 rounded-xl bg-white border border-stone-200 text-stone-800 text-xs sm:text-sm focus:outline-none focus:border-amber-600"
-                            />
-                          </div>
+                      <div className="space-y-2.5">
+                        <div>
+                          <label className="block text-[11px] font-medium text-stone-500 mb-1">
+                            제목
+                          </label>
+                          <input
+                            type="text"
+                            value={editTitle}
+                            onChange={(e) => setEditTitle(e.target.value)}
+                            className="w-full px-3 py-1.5 rounded-xl bg-white border border-stone-200 text-stone-800 text-xs sm:text-sm focus:outline-none focus:border-amber-600"
+                          />
                         </div>
                         <div>
                           <label className="block text-[11px] font-medium text-stone-500 mb-1">
                             내용
                           </label>
                           <textarea
-                            rows={4}
+                            rows={3}
                             value={editContent}
                             onChange={(e) => setEditContent(e.target.value)}
-                            className="w-full px-3 py-2 rounded-xl bg-white border border-stone-200 text-stone-800 text-xs sm:text-sm focus:outline-none focus:border-amber-600 resize-y"
+                            className="w-full px-3 py-1.5 rounded-xl bg-white border border-stone-200 text-stone-800 text-xs sm:text-sm focus:outline-none focus:border-amber-600 resize-y"
                           />
                         </div>
                         <div className="flex justify-end gap-2 pt-1">
                           <button
                             type="button"
                             onClick={() => setEditingId(null)}
-                            className="px-3.5 py-1.5 rounded-xl bg-stone-200/70 hover:bg-stone-200 text-stone-700 text-xs font-medium transition-colors cursor-pointer"
+                            className="px-3 py-1 rounded-lg bg-stone-200/70 hover:bg-stone-200 text-stone-700 text-xs font-medium transition-colors cursor-pointer"
                           >
                             취소
                           </button>
@@ -442,12 +363,12 @@ export default function MinistryNoticeBoard({ initialNotices, currentUser }: Pro
                             type="button"
                             disabled={editSubmitting}
                             onClick={() => handleUpdate(notice.id)}
-                            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-amber-800 hover:bg-amber-900 disabled:opacity-60 text-white text-xs font-semibold transition-colors cursor-pointer"
+                            className="inline-flex items-center gap-1 px-3.5 py-1 rounded-lg bg-amber-800 hover:bg-amber-900 disabled:opacity-60 text-white text-xs font-semibold transition-colors cursor-pointer"
                           >
                             {editSubmitting ? (
-                              <Loader2 size={13} className="animate-spin" />
+                              <Loader2 size={12} className="animate-spin" />
                             ) : (
-                              <Check size={13} />
+                              <Check size={12} />
                             )}
                             <span>수정 저장</span>
                           </button>
@@ -455,8 +376,8 @@ export default function MinistryNoticeBoard({ initialNotices, currentUser }: Pro
                       </div>
                     ) : (
                       <>
-                        <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-stone-400 mb-3 pb-2.5 border-b border-stone-200/60">
-                          <div className="flex items-center gap-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-stone-400 mb-2.5 pb-2 border-b border-stone-200/60">
+                          <div className="flex items-center gap-2.5">
                             <span>작성자: {notice.author}</span>
                             <span>작성일: {notice.date}</span>
                           </div>
@@ -464,7 +385,7 @@ export default function MinistryNoticeBoard({ initialNotices, currentUser }: Pro
                           {currentUser && (
                             <div className="flex items-center gap-1.5">
                               {isConfirmingDelete ? (
-                                <div className="flex items-center gap-1.5 bg-red-50 border border-red-200 px-2.5 py-1 rounded-lg">
+                                <div className="flex items-center gap-1.5 bg-red-50 border border-red-200 px-2 py-0.5 rounded-lg">
                                   <span className="text-red-700 font-medium">
                                     삭제할까요?
                                   </span>
@@ -489,17 +410,17 @@ export default function MinistryNoticeBoard({ initialNotices, currentUser }: Pro
                                   <button
                                     type="button"
                                     onClick={() => startEdit(notice)}
-                                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-stone-200/80 text-stone-600 hover:text-amber-800 hover:border-amber-300 transition-colors cursor-pointer"
+                                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white border border-stone-200/80 text-stone-600 hover:text-amber-800 hover:border-amber-300 transition-colors cursor-pointer"
                                   >
-                                    <Pencil size={12} />
+                                    <Pencil size={11} />
                                     <span>수정</span>
                                   </button>
                                   <button
                                     type="button"
                                     onClick={() => setConfirmDeleteId(notice.id)}
-                                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-stone-200/80 text-stone-500 hover:text-red-600 hover:border-red-200 transition-colors cursor-pointer"
+                                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white border border-stone-200/80 text-stone-500 hover:text-red-600 hover:border-red-200 transition-colors cursor-pointer"
                                   >
-                                    <Trash2 size={12} />
+                                    <Trash2 size={11} />
                                     <span>삭제</span>
                                   </button>
                                 </>
@@ -519,6 +440,6 @@ export default function MinistryNoticeBoard({ initialNotices, currentUser }: Pro
           })}
         </ul>
       )}
-    </section>
+    </div>
   );
 }
