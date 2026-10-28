@@ -27,12 +27,14 @@ interface Props {
   department: string;
   initialNotices: MinistryNotice[];
   currentUser: { name: string; role: string } | null;
+  canWrite?: boolean;
 }
 
 export default function MinistryNoticeBoard({
   department,
   initialNotices,
   currentUser,
+  canWrite = false,
 }: Props) {
   const [notices, setNotices] = useState<MinistryNotice[]>(initialNotices);
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -155,7 +157,7 @@ export default function MinistryNoticeBoard({
       const res = await fetch("/api/ministries/notices", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
+        body: JSON.stringify({ id, category: department }),
       });
 
       const data = await res.json();
@@ -192,17 +194,23 @@ export default function MinistryNoticeBoard({
         </div>
 
         {currentUser ? (
-          <button
-            type="button"
-            onClick={() => {
-              setIsWriting(!isWriting);
-              setError("");
-            }}
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-amber-800 hover:bg-amber-900 text-white text-xs font-semibold transition-colors cursor-pointer"
-          >
-            {isWriting ? <X size={13} /> : <PenLine size={13} />}
-            <span>{isWriting ? "닫기" : "글쓰기"}</span>
-          </button>
+          canWrite ? (
+            <button
+              type="button"
+              onClick={() => {
+                setIsWriting(!isWriting);
+                setError("");
+              }}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-amber-800 hover:bg-amber-900 text-white text-xs font-semibold transition-colors cursor-pointer"
+            >
+              {isWriting ? <X size={13} /> : <PenLine size={13} />}
+              <span>{isWriting ? "닫기" : "글쓰기"}</span>
+            </button>
+          ) : (
+            <span className="text-[11px] font-medium text-stone-400 bg-stone-100/80 border border-stone-200/70 px-2.5 py-1 rounded-lg">
+              {department === "교회학교" ? "학생부" : department} 회원 전용
+            </span>
+          )
         ) : (
           <Link
             href="/login?redirect=/ministries"
@@ -215,7 +223,7 @@ export default function MinistryNoticeBoard({
       </div>
 
       {/* Write Form */}
-      {isWriting && currentUser && (
+      {isWriting && currentUser && canWrite && (
         <form
           onSubmit={handleSubmit}
           className="mb-4 p-3.5 sm:p-4 rounded-2xl bg-white border border-amber-200/80 space-y-3 shadow-2xs"
@@ -382,7 +390,7 @@ export default function MinistryNoticeBoard({
                             <span>작성일: {notice.date}</span>
                           </div>
 
-                          {currentUser && (
+                          {currentUser && canWrite && (
                             <div className="flex items-center gap-1.5">
                               {isConfirmingDelete ? (
                                 <div className="flex items-center gap-1.5 bg-red-50 border border-red-200 px-2 py-0.5 rounded-lg">

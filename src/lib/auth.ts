@@ -10,6 +10,22 @@ export interface SessionUser {
   email: string;
   phone?: string;
   role: string;
+  departments?: string[];
+}
+
+export function canAccessDepartmentBoard(
+  departments: string[] | undefined,
+  targetDepartment: string
+): boolean {
+  const list = Array.isArray(departments) ? departments : [];
+  if (list.includes(targetDepartment)) return true;
+  if (
+    (targetDepartment === '교회학교' || targetDepartment === '학생부') &&
+    (list.includes('학생부') || list.includes('교회학교'))
+  ) {
+    return true;
+  }
+  return false;
 }
 
 export function hashPassword(password: string): string {
@@ -67,6 +83,7 @@ export function verifySessionToken(token: string): SessionUser | null {
       email: payload.email,
       phone: payload.phone,
       role: payload.role,
+      departments: Array.isArray(payload.departments) ? payload.departments : [],
     };
   } catch {
     return null;

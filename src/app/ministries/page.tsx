@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Users, Music, BookOpen, ImageIcon, ArrowUpRight } from "lucide-react";
-import { getGallery, getMinistryNotices } from "@/lib/notion";
-import { getCurrentUser } from "@/lib/auth";
+import { getGallery, getMinistryNotices, findMemberByEmail } from "@/lib/notion";
+import { getCurrentUser, canAccessDepartmentBoard } from "@/lib/auth";
 import MinistryNoticeBoard from "@/components/MinistryNoticeBoard";
 
 export const dynamic = "force-dynamic";
@@ -12,6 +12,18 @@ export default async function MinistriesPage() {
     getMinistryNotices(),
     getCurrentUser(),
   ]);
+
+  let userDepts: string[] = user?.departments || [];
+  if (user?.email) {
+    try {
+      const liveMember = await findMemberByEmail(user.email);
+      if (liveMember && Array.isArray(liveMember.departments)) {
+        userDepts = liveMember.departments;
+      }
+    } catch {
+      // ignore
+    }
+  }
 
   const currentUserInfo = user ? { name: user.name, role: user.role } : null;
 
@@ -116,6 +128,7 @@ export default async function MinistriesPage() {
                     department="남선교회"
                     initialNotices={menNotices}
                     currentUser={currentUserInfo}
+                    canWrite={canAccessDepartmentBoard(userDepts, "남선교회")}
                   />
                 </div>
 
@@ -172,6 +185,7 @@ export default async function MinistriesPage() {
                     department="여전도회"
                     initialNotices={womenNotices}
                     currentUser={currentUserInfo}
+                    canWrite={canAccessDepartmentBoard(userDepts, "여전도회")}
                   />
                 </div>
               </div>
@@ -249,6 +263,7 @@ export default async function MinistriesPage() {
                   department="교회학교"
                   initialNotices={schoolNotices}
                   currentUser={currentUserInfo}
+                  canWrite={canAccessDepartmentBoard(userDepts, "교회학교")}
                 />
               </div>
             </div>
@@ -318,6 +333,7 @@ export default async function MinistriesPage() {
                   department="찬양팀"
                   initialNotices={worshipNotices}
                   currentUser={currentUserInfo}
+                  canWrite={canAccessDepartmentBoard(userDepts, "찬양팀")}
                 />
               </div>
             </div>

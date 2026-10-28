@@ -1,11 +1,24 @@
 import { NextResponse } from "next/server";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, canAccessDepartmentBoard } from "@/lib/auth";
 import {
   getMinistryNotices,
   createMinistryNotice,
   updateMinistryNotice,
   deleteMinistryNotice,
+  findMemberByEmail,
 } from "@/lib/notion";
+
+async function getLiveDepartments(email: string, fallback?: string[]) {
+  try {
+    const member = await findMemberByEmail(email);
+    if (member && Array.isArray(member.departments)) {
+      return member.departments;
+    }
+  } catch {
+    // ignore
+  }
+  return Array.isArray(fallback) ? fallback : [];
+}
 
 export async function GET() {
   try {
@@ -32,6 +45,16 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     const { title, category, content } = body;
+    const targetCategory = category || "전체";
+
+    const userDepts = await getLiveDepartments(user.email, user.departments);
+    if (!canAccessDepartmentBoard(userDepts, targetCategory)) {
+      const displayLabel = targetCategory === "교회학교" ? "학생부" : targetCategory;
+      return NextResponse.json(
+        { error: `${displayLabel} 소속으로 등록된 회원만 작성하실 수 있습니다.` },
+        { status: 403 }
+      );
+    }
 
     if (!title?.trim() || !content?.trim()) {
       return NextResponse.json(
@@ -43,7 +66,7 @@ export async function POST(request: Request) {
     const author = `${user.name} ${user.role}`;
     const created = await createMinistryNotice({
       title: title.trim(),
-      category: category || "전체",
+      category: targetCategory,
       content: content.trim(),
       author,
     });
@@ -70,6 +93,16 @@ export async function PATCH(request: Request) {
 
     const body = await request.json();
     const { id, title, category, content } = body;
+    const targetCategory = category || "전체";
+
+    const userDepts = await getLiveDepartments(user.email, user.departments);
+    if (!canAccessDepartmentBoard(userDepts, targetCategory)) {
+      const displayLabel = targetCategory === "교회학교" ? "학생부" : targetCategory;
+      return NextResponse.json(
+        { error: `${displayLabel} 소속으로 등록된 회원만 수정하실 수 있습니다.` },
+        { status: 403 }
+      );
+    }
 
     if (!id || !title?.trim() || !content?.trim()) {
       return NextResponse.json(
@@ -81,7 +114,7 @@ export async function PATCH(request: Request) {
     const updated = await updateMinistryNotice({
       id,
       title: title.trim(),
-      category: category || "전체",
+      category: targetCategory,
       content: content.trim(),
     });
 
@@ -106,7 +139,18 @@ export async function DELETE(request: Request) {
     }
 
     const body = await request.json();
-    const { id } = body;
+    const { id, category } = body;
+
+    if (category) {
+      const userDepts = await getLiveDepartments(user.email, user.departments);
+      if (!canAccessDepartmentBoard(userDepts, category)) {
+        const displayLabel = category === "교회학교" ? "학생부" : category;
+        return NextResponse.json(
+          { error: `${displayLabel} 소속으로 등록된 회원만 삭제하실 수 있습니다.` },
+          { status: 403 }
+        );
+      }
+    }
 
     if (!id) {
       return NextResponse.json(

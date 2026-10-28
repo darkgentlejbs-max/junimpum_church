@@ -28,6 +28,7 @@ export async function POST(request: Request) {
       email: member.email,
       phone: member.phone,
       role: member.role,
+      departments: member.departments || [],
     };
 
     const token = createSessionToken(sessionUser);

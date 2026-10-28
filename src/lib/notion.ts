@@ -422,6 +422,20 @@ export async function findMemberByEmail(identifier: string) {
     }
   }
 
+  let departments: string[] = [];
+  const deptProp = props['소속기관'];
+  if (deptProp?.type === 'multi_select' && Array.isArray(deptProp.multi_select)) {
+    departments = deptProp.multi_select.map((opt: any) => opt.name).filter(Boolean);
+  } else if (deptProp?.type === 'select' && deptProp.select?.name) {
+    departments = [deptProp.select.name];
+  } else if (deptProp?.type === 'rich_text') {
+    const raw = deptProp.rich_text?.map((t: any) => t.plain_text).join('') || '';
+    departments = raw
+      .split(',')
+      .map((s: string) => s.trim())
+      .filter(Boolean);
+  }
+
   return {
     id: page.id,
     name,
@@ -432,6 +446,7 @@ export async function findMemberByEmail(identifier: string) {
     passwordHash: props['비밀번호']?.rich_text?.[0]?.plain_text || '',
     phone: props['연락처']?.rich_text?.[0]?.plain_text || '',
     role: props['직분']?.select?.name || '성도',
+    departments,
   };
 }
 
