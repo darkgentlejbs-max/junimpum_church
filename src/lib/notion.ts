@@ -296,6 +296,18 @@ async function ensureMembersSchema(databaseId: string) {
     if (!props['가입일']) {
       updates['가입일'] = { date: {} };
     }
+    if (!props['소속기관']) {
+      updates['소속기관'] = {
+        multi_select: {
+          options: [
+            { name: '남선교회', color: 'blue' },
+            { name: '여전도회', color: 'purple' },
+            { name: '학생부', color: 'green' },
+            { name: '찬양팀', color: 'yellow' },
+          ],
+        },
+      };
+    }
 
     if (Object.keys(updates).length > 0) {
       await notion.databases.update({
@@ -429,6 +441,7 @@ export async function createMember(data: {
   passwordHash: string;
   phone: string;
   role: string;
+  departments?: string[];
 }) {
   const dbId = await resolveMembersDatabaseId();
   const normalizedId = data.email.trim().toLowerCase();
@@ -436,39 +449,58 @@ export async function createMember(data: {
 
   // 데이터베이스의 기본 title 컬럼명 확인
   const db: any = await notion.databases.retrieve({ database_id: dbId });
+  const dbProps = db.properties || {};
   let titlePropName = '이름';
-  for (const [key, val] of Object.entries(db.properties || {}) as any[]) {
+  for (const [key, val] of Object.entries(dbProps) as any[]) {
     if (val.type === 'title') {
       titlePropName = key;
       break;
     }
   }
 
+  const departmentsList = Array.isArray(data.departments)
+    ? data.departments.filter(Boolean)
+    : [];
+
+  const properties: Record<string, any> = {
+    [titlePropName]: {
+      title: [{ text: { content: data.name.trim() } }],
+    },
+    아이디: {
+      rich_text: [{ text: { content: normalizedId } }],
+    },
+    이메일: {
+      rich_text: [{ text: { content: normalizedId.includes('@') ? normalizedId : '' } }],
+    },
+    비밀번호: {
+      rich_text: [{ text: { content: data.passwordHash } }],
+    },
+    연락처: {
+      rich_text: [{ text: { content: data.phone.trim() } }],
+    },
+    직분: {
+      select: { name: data.role || '성도' },
+    },
+    가입일: {
+      date: { start: today },
+    },
+  };
+
+  if (departmentsList.length > 0) {
+    if (dbProps['소속기관']?.type === 'multi_select') {
+      properties['소속기관'] = {
+        multi_select: departmentsList.map((d) => ({ name: d })),
+      };
+    } else if (dbProps['소속기관']?.type === 'rich_text') {
+      properties['소속기관'] = {
+        rich_text: [{ text: { content: departmentsList.join(', ') } }],
+      };
+    }
+  }
+
   const page: any = await notion.pages.create({
     parent: { database_id: dbId },
-    properties: {
-      [titlePropName]: {
-        title: [{ text: { content: data.name.trim() } }],
-      },
-      아이디: {
-        rich_text: [{ text: { content: normalizedId } }],
-      },
-      이메일: {
-        rich_text: [{ text: { content: normalizedId.includes('@') ? normalizedId : '' } }],
-      },
-      비밀번호: {
-        rich_text: [{ text: { content: data.passwordHash } }],
-      },
-      연락처: {
-        rich_text: [{ text: { content: data.phone.trim() } }],
-      },
-      직분: {
-        select: { name: data.role || '성도' },
-      },
-      가입일: {
-        date: { start: today },
-      },
-    },
+    properties,
   });
 
   return {
@@ -477,6 +509,7 @@ export async function createMember(data: {
     email: normalizedId,
     phone: data.phone.trim(),
     role: data.role || '성도',
+    departments: departmentsList,
   };
 }
 

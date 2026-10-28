@@ -3,9 +3,22 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, UserPlus, User, KeyRound, Lock, Phone, Award, Loader2 } from "lucide-react";
+import {
+  ArrowLeft,
+  UserPlus,
+  User,
+  KeyRound,
+  Lock,
+  Phone,
+  Award,
+  Users,
+  Music,
+  Check,
+  Loader2,
+} from "lucide-react";
 
 const ROLES = ["성도", "새가족", "집사", "권사", "장로", "교역자"];
+const ORGANIZATIONS = ["남선교회", "여전도회", "학생부"];
 
 export default function SignupPage() {
   const router = useRouter();
@@ -15,6 +28,8 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [role, setRole] = useState("성도");
+  const [organization, setOrganization] = useState("남선교회");
+  const [inPraiseTeam, setInPraiseTeam] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -34,11 +49,22 @@ export default function SignupPage() {
 
     setLoading(true);
 
+    const departments: string[] = [];
+    if (organization) departments.push(organization);
+    if (inPraiseTeam) departments.push("찬양팀");
+
     try {
       const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, phone, role }),
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          phone,
+          role,
+          departments,
+        }),
       });
 
       const data = await res.json();
@@ -203,6 +229,64 @@ export default function SignupPage() {
                   ))}
                 </select>
               </div>
+            </div>
+          </div>
+
+          {/* 소속기관 선택 */}
+          <div className="pt-1">
+            <label className="flex items-center gap-1.5 text-xs font-semibold text-stone-700 mb-2">
+              <Users size={14} className="text-amber-700" />
+              <span>소속기관</span>
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              {ORGANIZATIONS.map((org) => {
+                const selected = organization === org;
+                return (
+                  <button
+                    key={org}
+                    type="button"
+                    onClick={() => setOrganization(org)}
+                    className={`py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold border transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                      selected
+                        ? "bg-amber-800 text-white border-amber-800 shadow-2xs"
+                        : "bg-stone-50/70 text-stone-600 border-stone-200 hover:border-amber-300 hover:bg-amber-50/50"
+                    }`}
+                  >
+                    {selected && <Check size={14} />}
+                    <span>{org}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* 찬양팀 복수 선택 */}
+            <div className="mt-2.5">
+              <button
+                type="button"
+                onClick={() => setInPraiseTeam(!inPraiseTeam)}
+                className={`w-full py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold border transition-all cursor-pointer flex items-center justify-between ${
+                  inPraiseTeam
+                    ? "bg-amber-50 text-amber-900 border-amber-500 shadow-2xs"
+                    : "bg-stone-50/50 text-stone-600 border-stone-200 hover:border-amber-300"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Music
+                    size={15}
+                    className={inPraiseTeam ? "text-amber-700" : "text-stone-400"}
+                  />
+                  <span>찬양팀 (복수 선택 가능)</span>
+                </div>
+                <div
+                  className={`w-5 h-5 rounded-md flex items-center justify-center border transition-colors ${
+                    inPraiseTeam
+                      ? "bg-amber-800 border-amber-800 text-white"
+                      : "bg-white border-stone-300 text-transparent"
+                  }`}
+                >
+                  <Check size={13} />
+                </div>
+              </button>
             </div>
           </div>
 

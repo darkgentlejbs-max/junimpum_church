@@ -5,7 +5,7 @@ import { hashPassword, createSessionToken, SESSION_COOKIE_NAME } from '@/lib/aut
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, email, password, phone, role } = body;
+    const { name, email, password, phone, role, departments } = body;
 
     if (!name || !email || !password) {
       return NextResponse.json(
@@ -36,6 +36,7 @@ export async function POST(request: Request) {
       passwordHash,
       phone: phone || '',
       role: role || '성도',
+      departments: Array.isArray(departments) ? departments : [],
     });
 
     const token = createSessionToken(member);
