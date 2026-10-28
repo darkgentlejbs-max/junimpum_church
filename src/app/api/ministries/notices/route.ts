@@ -8,16 +8,28 @@ import {
   findMemberByEmail,
 } from "@/lib/notion";
 
-async function getLiveDepartments(email: string, fallback?: string[]) {
+async function getLiveMemberInfo(
+  email: string,
+  fallbackDepts?: string[],
+  fallbackRole?: string
+) {
   try {
     const member = await findMemberByEmail(email);
-    if (member && Array.isArray(member.departments)) {
-      return member.departments;
+    if (member) {
+      return {
+        departments: Array.isArray(member.departments)
+          ? member.departments
+          : fallbackDepts || [],
+        role: member.role || fallbackRole || "",
+      };
     }
   } catch {
     // ignore
   }
-  return Array.isArray(fallback) ? fallback : [];
+  return {
+    departments: Array.isArray(fallbackDepts) ? fallbackDepts : [],
+    role: fallbackRole || "",
+  };
 }
 
 export async function GET() {
@@ -47,8 +59,12 @@ export async function POST(request: Request) {
     const { title, category, content } = body;
     const targetCategory = category || "전체";
 
-    const userDepts = await getLiveDepartments(user.email, user.departments);
-    if (!canAccessDepartmentBoard(userDepts, targetCategory)) {
+    const { departments: userDepts, role: userRole } = await getLiveMemberInfo(
+      user.email,
+      user.departments,
+      user.role
+    );
+    if (!canAccessDepartmentBoard(userDepts, targetCategory, userRole)) {
       const displayLabel = targetCategory === "교회학교" ? "학생부" : targetCategory;
       return NextResponse.json(
         { error: `${displayLabel} 소속으로 등록된 회원만 작성하실 수 있습니다.` },
@@ -95,8 +111,12 @@ export async function PATCH(request: Request) {
     const { id, title, category, content } = body;
     const targetCategory = category || "전체";
 
-    const userDepts = await getLiveDepartments(user.email, user.departments);
-    if (!canAccessDepartmentBoard(userDepts, targetCategory)) {
+    const { departments: userDepts, role: userRole } = await getLiveMemberInfo(
+      user.email,
+      user.departments,
+      user.role
+    );
+    if (!canAccessDepartmentBoard(userDepts, targetCategory, userRole)) {
       const displayLabel = targetCategory === "교회학교" ? "학생부" : targetCategory;
       return NextResponse.json(
         { error: `${displayLabel} 소속으로 등록된 회원만 수정하실 수 있습니다.` },
@@ -142,8 +162,12 @@ export async function DELETE(request: Request) {
     const { id, category } = body;
 
     if (category) {
-      const userDepts = await getLiveDepartments(user.email, user.departments);
-      if (!canAccessDepartmentBoard(userDepts, category)) {
+      const { departments: userDepts, role: userRole } = await getLiveMemberInfo(
+        user.email,
+        user.departments,
+        user.role
+      );
+      if (!canAccessDepartmentBoard(userDepts, category, userRole)) {
         const displayLabel = category === "교회학교" ? "학생부" : category;
         return NextResponse.json(
           { error: `${displayLabel} 소속으로 등록된 회원만 삭제하실 수 있습니다.` },

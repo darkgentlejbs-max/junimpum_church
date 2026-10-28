@@ -15,8 +15,12 @@ export interface SessionUser {
 
 export function canAccessDepartmentBoard(
   departments: string[] | undefined,
-  targetDepartment: string
+  targetDepartment: string,
+  role?: string
 ): boolean {
+  if (role === '교역자' || role?.includes('목사') || role?.includes('전도사')) {
+    return true;
+  }
   const list = Array.isArray(departments) ? departments : [];
   if (list.includes(targetDepartment)) return true;
   if (

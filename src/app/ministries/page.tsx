@@ -14,11 +14,17 @@ export default async function MinistriesPage() {
   ]);
 
   let userDepts: string[] = user?.departments || [];
+  let userRole: string = user?.role || "";
   if (user?.email) {
     try {
       const liveMember = await findMemberByEmail(user.email);
-      if (liveMember && Array.isArray(liveMember.departments)) {
-        userDepts = liveMember.departments;
+      if (liveMember) {
+        if (Array.isArray(liveMember.departments)) {
+          userDepts = liveMember.departments;
+        }
+        if (liveMember.role) {
+          userRole = liveMember.role;
+        }
       }
     } catch {
       // ignore
@@ -128,7 +134,7 @@ export default async function MinistriesPage() {
                     department="남선교회"
                     initialNotices={menNotices}
                     currentUser={currentUserInfo}
-                    canWrite={canAccessDepartmentBoard(userDepts, "남선교회")}
+                    canWrite={canAccessDepartmentBoard(userDepts, "남선교회", userRole)}
                   />
                 </div>
 
@@ -185,7 +191,7 @@ export default async function MinistriesPage() {
                     department="여전도회"
                     initialNotices={womenNotices}
                     currentUser={currentUserInfo}
-                    canWrite={canAccessDepartmentBoard(userDepts, "여전도회")}
+                    canWrite={canAccessDepartmentBoard(userDepts, "여전도회", userRole)}
                   />
                 </div>
               </div>
@@ -263,7 +269,7 @@ export default async function MinistriesPage() {
                   department="교회학교"
                   initialNotices={schoolNotices}
                   currentUser={currentUserInfo}
-                  canWrite={canAccessDepartmentBoard(userDepts, "교회학교")}
+                  canWrite={canAccessDepartmentBoard(userDepts, "교회학교", userRole)}
                 />
               </div>
             </div>
@@ -333,7 +339,7 @@ export default async function MinistriesPage() {
                   department="찬양팀"
                   initialNotices={worshipNotices}
                   currentUser={currentUserInfo}
-                  canWrite={canAccessDepartmentBoard(userDepts, "찬양팀")}
+                  canWrite={canAccessDepartmentBoard(userDepts, "찬양팀", userRole)}
                 />
               </div>
             </div>
