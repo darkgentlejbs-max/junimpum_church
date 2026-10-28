@@ -87,7 +87,7 @@ export default function MinistryNoticeBoard({ initialNotices, currentUser }: Pro
           </div>
           <div>
             <h2 className="text-lg sm:text-xl font-semibold text-stone-900">
-              사역 · 기관 공지사항 게시판
+              게시판
             </h2>
             <p className="text-xs sm:text-sm text-stone-500 mt-0.5">
               교회학교, 찬양팀, 남선교회, 여전도회의 공지사항과 모임 소식을 나눕니다.
@@ -105,7 +105,7 @@ export default function MinistryNoticeBoard({ initialNotices, currentUser }: Pro
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-800 hover:bg-amber-900 text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
           >
             {isWriting ? <X size={15} /> : <PenLine size={15} />}
-            <span>{isWriting ? "작성 닫기" : "공지 글쓰기"}</span>
+            <span>{isWriting ? "작성 닫기" : "글쓰기"}</span>
           </button>
         ) : (
           <Link
@@ -113,7 +113,7 @@ export default function MinistryNoticeBoard({ initialNotices, currentUser }: Pro
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-stone-100 hover:bg-amber-50 text-stone-700 hover:text-amber-800 border border-stone-200/80 text-xs sm:text-sm font-semibold transition-colors"
           >
             <Plus size={15} />
-            <span>공지 글쓰기 (로그인)</span>
+            <span>글쓰기 (로그인)</span>
           </Link>
         )}
       </div>

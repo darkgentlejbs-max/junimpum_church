@@ -289,7 +289,7 @@ export default function Header() {
                   className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
                   onClick={() => setMinistryDropdownOpen(false)}
                 >
-                  공지사항 게시판
+                  게시판
                 </Link>
               </div>
             )}
@@ -535,7 +535,7 @@ export default function Header() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
                 >
-                  공지사항 게시판
+                  게시판
                 </Link>
               </div>
             </div>
