@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { findMemberByEmail, createMember } from '@/lib/notion';
-import { hashPassword, createSessionToken, SESSION_COOKIE_NAME } from '@/lib/auth';
+import { hashPassword } from '@/lib/auth';
 
 export async function POST(request: Request) {
   try {
@@ -39,18 +39,15 @@ export async function POST(request: Request) {
       departments: Array.isArray(departments) ? departments : [],
     });
 
-    const token = createSessionToken(member);
-    const response = NextResponse.json({ user: member });
-
-    response.cookies.set(SESSION_COOKIE_NAME, token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 14, // 14 days
+    return NextResponse.json({
+      pendingApproval: true,
+      message: '회원가입 신청이 완료되었습니다. 마스터의 승인 후 로그인하여 이용하실 수 있습니다.',
+      user: {
+        name: member.name,
+        email: member.email,
+        role: member.role,
+      },
     });
-
-    return response;
   } catch (error: any) {
     console.error('Signup error:', error);
     return NextResponse.json(

@@ -308,6 +308,16 @@ async function ensureMembersSchema(databaseId: string) {
         },
       };
     }
+    if (!props['승인상태']) {
+      updates['승인상태'] = {
+        select: {
+          options: [
+            { name: '승인대기', color: 'yellow' },
+            { name: '승인완료', color: 'green' },
+          ],
+        },
+      };
+    }
 
     if (Object.keys(updates).length > 0) {
       await notion.databases.update({
@@ -319,6 +329,24 @@ async function ensureMembersSchema(databaseId: string) {
   } catch (error) {
     console.error('Error ensuring members database schema:', error);
   }
+}
+
+function extractMemberStatus(props: Record<string, any>): '승인대기' | '승인완료' {
+  const statusProp = props['승인상태'];
+  if (statusProp?.type === 'select' && statusProp.select?.name) {
+    return statusProp.select.name === '승인대기' ? '승인대기' : '승인완료';
+  }
+  if (statusProp?.type === 'rich_text') {
+    const text = statusProp.rich_text?.[0]?.plain_text?.trim() || '';
+    if (text === '승인대기') return '승인대기';
+    if (text === '승인완료') return '승인완료';
+  }
+  const checkProp = props['승인여부'];
+  if (checkProp?.type === 'checkbox') {
+    return checkProp.checkbox ? '승인완료' : '승인대기';
+  }
+  // 기존에 등록된 회원(승인상태가 비어있는 경우)은 승인완료로 처리
+  return '승인완료';
 }
 
 export async function resolveMembersDatabaseId(): Promise<string> {
@@ -436,6 +464,8 @@ export async function findMemberByEmail(identifier: string) {
       .filter(Boolean);
   }
 
+  const status = extractMemberStatus(props);
+
   return {
     id: page.id,
     name,
@@ -447,6 +477,8 @@ export async function findMemberByEmail(identifier: string) {
     phone: props['연락처']?.rich_text?.[0]?.plain_text || '',
     role: props['직분']?.select?.name || '성도',
     departments,
+    status,
+    approved: status === '승인완료',
   };
 }
 
@@ -501,6 +533,16 @@ export async function createMember(data: {
     },
   };
 
+  if (dbProps['승인상태']?.type === 'select') {
+    properties['승인상태'] = {
+      select: { name: '승인대기' },
+    };
+  } else if (dbProps['승인상태']?.type === 'rich_text') {
+    properties['승인상태'] = {
+      rich_text: [{ text: { content: '승인대기' } }],
+    };
+  }
+
   if (departmentsList.length > 0) {
     if (dbProps['소속기관']?.type === 'multi_select') {
       properties['소속기관'] = {
@@ -525,7 +567,94 @@ export async function createMember(data: {
     phone: data.phone.trim(),
     role: data.role || '성도',
     departments: departmentsList,
+    status: '승인대기' as const,
+    approved: false,
   };
+}
+
+export async function getAllMembers() {
+  const dbId = await resolveMembersDatabaseId();
+  const response = await notion.databases.query({
+    database_id: dbId,
+    sorts: [
+      {
+        timestamp: 'created_time',
+        direction: 'descending',
+      },
+    ],
+  });
+
+  return (response.results as any[]).map((page) => {
+    const props = page.properties || {};
+    let name = '성도';
+    for (const key of Object.keys(props)) {
+      if (props[key]?.type === 'title') {
+        name = props[key]?.title?.[0]?.plain_text || '성도';
+        break;
+      }
+    }
+
+    let departments: string[] = [];
+    const deptProp = props['소속기관'];
+    if (deptProp?.type === 'multi_select' && Array.isArray(deptProp.multi_select)) {
+      departments = deptProp.multi_select.map((opt: any) => opt.name).filter(Boolean);
+    } else if (deptProp?.type === 'select' && deptProp.select?.name) {
+      departments = [deptProp.select.name];
+    } else if (deptProp?.type === 'rich_text') {
+      const raw = deptProp.rich_text?.map((t: any) => t.plain_text).join('') || '';
+      departments = raw
+        .split(',')
+        .map((s: string) => s.trim())
+        .filter(Boolean);
+    }
+
+    const status = extractMemberStatus(props);
+
+    return {
+      id: page.id,
+      name,
+      email:
+        props['아이디']?.rich_text?.[0]?.plain_text ||
+        props['이메일']?.rich_text?.[0]?.plain_text ||
+        '',
+      phone: props['연락처']?.rich_text?.[0]?.plain_text || '',
+      role: props['직분']?.select?.name || '성도',
+      departments,
+      joinDate: props['가입일']?.date?.start || page.created_time?.split('T')[0] || '',
+      status,
+      approved: status === '승인완료',
+    };
+  });
+}
+
+export async function updateMemberApproval(pageId: string, approved: boolean) {
+  const dbId = await resolveMembersDatabaseId();
+  const db: any = await notion.databases.retrieve({ database_id: dbId });
+  const dbProps = db.properties || {};
+  const targetStatus = approved ? '승인완료' : '승인대기';
+
+  const properties: Record<string, any> = {};
+  if (dbProps['승인상태']?.type === 'select') {
+    properties['승인상태'] = {
+      select: { name: targetStatus },
+    };
+  } else if (dbProps['승인상태']?.type === 'rich_text') {
+    properties['승인상태'] = {
+      rich_text: [{ text: { content: targetStatus } }],
+    };
+  }
+
+  await notion.pages.update({
+    page_id: pageId,
+    properties,
+  });
+}
+
+export async function deleteMember(pageId: string) {
+  await notion.pages.update({
+    page_id: pageId,
+    archived: true,
+  });
 }
 
 export async function updateMemberPassword(pageId: string, newPasswordHash: string) {

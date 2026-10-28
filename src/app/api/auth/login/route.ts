@@ -22,6 +22,13 @@ export async function POST(request: Request) {
       );
     }
 
+    if (member.status === '승인대기' || member.approved === false) {
+      return NextResponse.json(
+        { error: '현재 회원가입 승인 대기 중입니다. 마스터의 승인 후 로그인하실 수 있습니다.' },
+        { status: 403 }
+      );
+    }
+
     const sessionUser = {
       id: member.id,
       name: member.name,
@@ -29,6 +36,7 @@ export async function POST(request: Request) {
       phone: member.phone,
       role: member.role,
       departments: member.departments || [],
+      status: member.status,
     };
 
     const token = createSessionToken(sessionUser);

@@ -32,6 +32,7 @@ export default function SignupPage() {
   const [inPraiseTeam, setInPraiseTeam] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [submittedUser, setSubmittedUser] = useState<{ name: string; role: string } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,6 +75,12 @@ export default function SignupPage() {
         return;
       }
 
+      if (data.pendingApproval) {
+        setSubmittedUser({ name, role });
+        setLoading(false);
+        return;
+      }
+
       sessionStorage.setItem("welcome_user", JSON.stringify(data.user));
       window.dispatchEvent(new Event("auth-change"));
       router.push("/");
@@ -83,6 +90,42 @@ export default function SignupPage() {
       setLoading(false);
     }
   };
+
+  if (submittedUser) {
+    return (
+      <div className="min-h-[80vh] flex flex-col items-center justify-center bg-[#FAF9F6] px-4 py-12">
+        <div className="w-full max-w-md bg-white p-8 sm:p-10 rounded-3xl shadow-sm border border-amber-200/80 text-center">
+          <div className="w-16 h-16 mx-auto mb-5 rounded-2xl border border-amber-200 bg-amber-50 flex items-center justify-center text-amber-800">
+            <Check size={30} />
+          </div>
+          <span className="text-xs font-semibold text-amber-800 uppercase tracking-widest block mb-2">
+            Registration Submitted
+          </span>
+          <h1 className="text-2xl font-bold text-stone-900 mb-3 break-keep">
+            회원가입 신청이 완료되었습니다
+          </h1>
+          <p className="text-sm text-stone-600 leading-relaxed mb-6 break-keep">
+            <strong className="text-stone-900">{submittedUser.name} {submittedUser.role}</strong>님, 주님품교회 온라인 공동체 가입 신청을 환영합니다.<br />
+            안전한 교회 공동체 운영을 위해 <strong className="text-amber-800 font-semibold">마스터(관리자)의 승인 후</strong> 로그인하여 모든 메뉴를 이용하실 수 있습니다.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link
+              href="/login"
+              className="flex-1 py-3.5 rounded-xl bg-amber-800 text-white text-sm font-semibold hover:bg-amber-900 transition-colors"
+            >
+              로그인 화면으로
+            </Link>
+            <Link
+              href="/"
+              className="flex-1 py-3.5 rounded-xl bg-stone-100 text-stone-700 text-sm font-semibold hover:bg-stone-200 transition-colors"
+            >
+              홈으로 가기
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[80vh] flex flex-col items-center justify-center bg-[#FAF9F6] px-4 py-12">
@@ -96,6 +139,9 @@ export default function SignupPage() {
           </h1>
           <p className="text-sm text-stone-500">
             주님품교회 성도 등록을 환영합니다.
+          </p>
+          <p className="text-xs text-amber-800/80 mt-1 font-medium">
+            * 가입 신청 후 마스터(관리자) 승인 시 로그인이 가능합니다.
           </p>
         </div>
 
@@ -303,7 +349,7 @@ export default function SignupPage() {
             ) : (
               <>
                 <UserPlus size={16} />
-                회원가입 완료
+                회원가입 신청
               </>
             )}
           </button>

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Menu, X, ChevronDown, User as UserIcon, LogOut, Sparkles, Smartphone, Share, MoreVertical, PlusSquare } from "lucide-react";
+import { Menu, X, ChevronDown, User as UserIcon, LogOut, Sparkles, Smartphone, Share, MoreVertical, PlusSquare, ShieldCheck } from "lucide-react";
 
 export default function Header() {
   const router = useRouter();
@@ -13,7 +13,7 @@ export default function Header() {
   const [worshipDropdownOpen, setWorshipDropdownOpen] = useState(false);
   const [ministryDropdownOpen, setMinistryDropdownOpen] = useState(false);
   const [newsDropdownOpen, setNewsDropdownOpen] = useState(false);
-  const [user, setUser] = useState<{ name: string; email: string; role: string } | null>(null);
+  const [user, setUser] = useState<{ name: string; email: string; role: string; isMaster?: boolean } | null>(null);
   const [welcomeUser, setWelcomeUser] = useState<{ name: string; role: string } | null>(null);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showShortcutGuide, setShowShortcutGuide] = useState(false);
@@ -362,6 +362,16 @@ export default function Header() {
           <div className="pl-4 ml-2 border-l border-stone-200 flex items-center space-x-3">
             {user ? (
               <>
+                {(user.isMaster || user.role === "교역자") && (
+                  <Link
+                    href="/admin/members"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-amber-800 bg-amber-100/80 border border-amber-300/80 px-2.5 py-1.5 rounded-full hover:bg-amber-200/80 transition-colors"
+                    title="회원가입 승인 및 교인 관리"
+                  >
+                    <ShieldCheck size={13} />
+                    <span>회원승인</span>
+                  </Link>
+                )}
                 <button
                   type="button"
                   onClick={() => setWelcomeUser({ name: user.name, role: user.role })}
@@ -587,7 +597,7 @@ export default function Header() {
             {/* Auth Links (Mobile) */}
             <div className="pt-4 mt-2 border-t border-stone-100 flex items-center gap-3">
               {user ? (
-                <div className="w-full bg-amber-50/70 border border-amber-200/60 px-4 py-3.5 rounded-xl space-y-1.5">
+                <div className="w-full bg-amber-50/70 border border-amber-200/60 px-4 py-3.5 rounded-xl space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-sm text-stone-700">
                       <UserIcon size={16} className="text-amber-700" />
@@ -596,13 +606,25 @@ export default function Header() {
                         <span className="text-amber-800 font-semibold">{user.role}</span>님
                       </span>
                     </div>
-                    <button
-                      onClick={handleLogout}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-stone-500 hover:text-red-600 transition-colors cursor-pointer"
-                    >
-                      <LogOut size={14} />
-                      <span>로그아웃</span>
-                    </button>
+                    <div className="flex items-center gap-2">
+                      {(user.isMaster || user.role === "교역자") && (
+                        <Link
+                          href="/admin/members"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-800 text-white text-xs font-semibold"
+                        >
+                          <ShieldCheck size={12} />
+                          <span>회원승인</span>
+                        </Link>
+                      )}
+                      <button
+                        onClick={handleLogout}
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-stone-500 hover:text-red-600 transition-colors cursor-pointer"
+                      >
+                        <LogOut size={14} />
+                        <span>로그아웃</span>
+                      </button>
+                    </div>
                   </div>
                   <p className="text-xs text-amber-900/80 leading-relaxed pl-6">
                     {getTimeGreeting(user.name, user.role).message}

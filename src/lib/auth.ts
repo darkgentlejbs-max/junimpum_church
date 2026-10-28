@@ -11,6 +11,18 @@ export interface SessionUser {
   phone?: string;
   role: string;
   departments?: string[];
+  status?: string;
+}
+
+export function isMasterRole(role?: string): boolean {
+  if (!role) return false;
+  return (
+    role === '교역자' ||
+    role === '마스터' ||
+    role === '관리자' ||
+    role.includes('목사') ||
+    role.includes('전도사')
+  );
 }
 
 export function canAccessDepartmentBoard(
@@ -18,7 +30,7 @@ export function canAccessDepartmentBoard(
   targetDepartment: string,
   role?: string
 ): boolean {
-  if (role === '교역자' || role?.includes('목사') || role?.includes('전도사')) {
+  if (isMasterRole(role)) {
     return true;
   }
   const list = Array.isArray(departments) ? departments : [];
