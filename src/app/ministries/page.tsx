@@ -17,6 +17,9 @@ export default async function MinistriesPage() {
 
   const menPhotos = allPhotos.filter((p: any) => p.title?.includes("남선교"));
   const womenPhotos = allPhotos.filter((p: any) => p.title?.includes("여전도"));
+  const schoolPhotos = allPhotos.filter(
+    (p: any) => p.title?.includes("학생부") || p.title?.includes("교회학교")
+  );
   const worshipPhotos = allPhotos.filter(
     (p: any) => p.title?.includes("찬양") || p.title?.includes("부따겸")
   );
@@ -192,14 +195,55 @@ export default async function MinistriesPage() {
               </p>
 
               <div className="bg-stone-50/80 p-4 sm:p-5 rounded-2xl border border-stone-200/70">
-                <div className="mb-1">
-                  <h4 className="text-sm sm:text-base font-semibold text-stone-900 mb-0.5">
-                    학생부
-                  </h4>
-                  <p className="text-xs text-stone-500">
-                    주일 오전 11:00 / 본관 1층
-                  </p>
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <div>
+                    <h4 className="text-sm sm:text-base font-semibold text-stone-900 mb-0.5">
+                      학생부
+                    </h4>
+                    <p className="text-xs text-stone-500">
+                      주일 오전 11:00 / 본관 1층
+                    </p>
+                  </div>
+                  <Link
+                    href="/gallery?category=school"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100/80 border border-amber-200/70 text-amber-900 text-xs font-semibold transition-colors"
+                  >
+                    <ImageIcon size={14} className="text-amber-700" />
+                    <span>갤러리</span>
+                    <ArrowUpRight size={13} className="text-amber-700/80" />
+                  </Link>
                 </div>
+
+                {schoolPhotos.length > 0 && (
+                  <div className="mt-3 pt-3 border-t border-stone-200/60 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {schoolPhotos.slice(0, 6).map((photo: any) => (
+                      <a
+                        key={photo.id}
+                        href={photo.imageUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group rounded-2xl overflow-hidden border border-stone-200/80 bg-white block"
+                      >
+                        <div className="aspect-[4/3] overflow-hidden bg-stone-100">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={photo.imageUrl}
+                            alt={photo.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                        <div className="p-3">
+                          <p className="text-xs font-semibold text-stone-800 line-clamp-1">
+                            {photo.title}
+                          </p>
+                          <p className="text-[11px] text-stone-400 mt-0.5">
+                            {photo.date}
+                          </p>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                )}
 
                 <MinistryNoticeBoard
                   department="교회학교"

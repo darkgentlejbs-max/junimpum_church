@@ -15,9 +15,10 @@ export default async function GalleryPage({
 
   const categories = [
     { key: "all", label: "전체 사진첩" },
-    { key: "worship", label: "찬양팀(부따겸 찬양단)" },
     { key: "men", label: "남선교회" },
     { key: "women", label: "여전도회" },
+    { key: "school", label: "학생부" },
+    { key: "worship", label: "찬양팀(부따겸 찬양단)" },
   ];
 
   const photos = allPhotos.filter((photo: any) => {
@@ -30,6 +31,9 @@ export default async function GalleryPage({
     }
     if (activeCategory === "women") {
       return title.includes("여전도");
+    }
+    if (activeCategory === "school") {
+      return title.includes("학생부") || title.includes("교회학교");
     }
     return true;
   });
