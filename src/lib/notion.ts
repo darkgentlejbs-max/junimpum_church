@@ -823,5 +823,73 @@ export async function createMinistryNotice(params: {
   };
 }
 
+export async function updateMinistryNotice(params: {
+  id: string;
+  title: string;
+  category: string;
+  content: string;
+}) {
+  const dbId = await resolveMinistryNoticesDbId();
+  if (!dbId) {
+    throw new Error('공지사항 데이터베이스를 찾을 수 없습니다.');
+  }
+
+  const { titlePropName, confirmedProps } = await ensureMinistryNoticesSchema(dbId);
+  const category = params.category || '전체';
+
+  const hasMinistryCatProp = confirmedProps['사역분류']?.type === 'rich_text';
+  const storedTitle = isDedicatedMinistryDb
+    ? params.title
+    : `[사역공지:${category}] ${params.title}`;
+
+  const properties: Record<string, any> = {
+    [titlePropName]: {
+      title: [{ text: { content: storedTitle } }],
+    },
+  };
+
+  if (hasMinistryCatProp) {
+    properties['사역분류'] = {
+      rich_text: [{ text: { content: category } }],
+    };
+  }
+
+  if (confirmedProps['내용']?.type === 'rich_text') {
+    properties['내용'] = {
+      rich_text: [{ text: { content: params.content } }],
+    };
+  } else if (confirmedProps['텍스트']?.type === 'rich_text') {
+    properties['텍스트'] = {
+      rich_text: [{ text: { content: params.content } }],
+    };
+  }
+
+  if (isDedicatedMinistryDb && confirmedProps['분류']?.type === 'select') {
+    properties['분류'] = {
+      select: { name: category },
+    };
+  }
+
+  await notion.pages.update({
+    page_id: params.id,
+    properties,
+  });
+
+  return {
+    id: params.id,
+    title: params.title,
+    category,
+    content: params.content,
+  };
+}
+
+export async function deleteMinistryNotice(pageId: string) {
+  await notion.pages.update({
+    page_id: pageId,
+    archived: true,
+  });
+}
+
+
 
 

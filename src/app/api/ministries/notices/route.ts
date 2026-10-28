@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
-import { getMinistryNotices, createMinistryNotice } from "@/lib/notion";
+import {
+  getMinistryNotices,
+  createMinistryNotice,
+  updateMinistryNotice,
+  deleteMinistryNotice,
+} from "@/lib/notion";
 
 export async function GET() {
   try {
@@ -9,7 +14,7 @@ export async function GET() {
   } catch (error) {
     console.error("Failed to fetch ministry notices:", error);
     return NextResponse.json(
-      { error: "공지사항을 불러오지 못했습니다." },
+      { error: "게시글을 불러오지 못했습니다." },
       { status: 500 }
     );
   }
@@ -20,7 +25,7 @@ export async function POST(request: Request) {
     const user = await getCurrentUser();
     if (!user) {
       return NextResponse.json(
-        { error: "로그인한 성도님만 공지사항을 작성하실 수 있습니다." },
+        { error: "로그인한 성도님만 글을 작성하실 수 있습니다." },
         { status: 401 }
       );
     }
@@ -47,7 +52,75 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Failed to create ministry notice:", error);
     return NextResponse.json(
-      { error: "공지사항 등록 중 오류가 발생했습니다." },
+      { error: "게시글 등록 중 오류가 발생했습니다." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(request: Request) {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json(
+        { error: "로그인한 성도님만 글을 수정하실 수 있습니다." },
+        { status: 401 }
+      );
+    }
+
+    const body = await request.json();
+    const { id, title, category, content } = body;
+
+    if (!id || !title?.trim() || !content?.trim()) {
+      return NextResponse.json(
+        { error: "제목과 내용을 모두 입력해 주세요." },
+        { status: 400 }
+      );
+    }
+
+    const updated = await updateMinistryNotice({
+      id,
+      title: title.trim(),
+      category: category || "전체",
+      content: content.trim(),
+    });
+
+    return NextResponse.json({ notice: updated });
+  } catch (error) {
+    console.error("Failed to update ministry notice:", error);
+    return NextResponse.json(
+      { error: "게시글 수정 중 오류가 발생했습니다." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json(
+        { error: "로그인한 성도님만 글을 삭제하실 수 있습니다." },
+        { status: 401 }
+      );
+    }
+
+    const body = await request.json();
+    const { id } = body;
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "삭제할 게시글 정보가 없습니다." },
+        { status: 400 }
+      );
+    }
+
+    await deleteMinistryNotice(id);
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("Failed to delete ministry notice:", error);
+    return NextResponse.json(
+      { error: "게시글 삭제 중 오류가 발생했습니다." },
       { status: 500 }
     );
   }
