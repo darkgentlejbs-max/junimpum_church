@@ -15,8 +15,8 @@ export const metadata: Metadata = {
   title: "주님품교회",
   applicationName: "주님품교회",
   icons: {
-    icon: "/icon-192.png",
-    apple: "/apple-touch-icon.png",
+    icon: "/icon-192.png?v=2",
+    apple: "/apple-touch-icon.png?v=2",
   },
   appleWebApp: {
     capable: true,

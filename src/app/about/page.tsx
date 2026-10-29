@@ -32,7 +32,7 @@ export default function AboutPage() {
             <div className="flex items-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/icon-192.png"
+                src="/icon-192.png?v=2"
                 alt="주님품교회 로고"
                 className="w-9 h-9 rounded-xl border border-amber-200/70 object-cover mr-3 shadow-2xs"
               />

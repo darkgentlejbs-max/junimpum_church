@@ -125,10 +125,11 @@ export default function Header() {
         <Link href="/" className="flex items-center group py-2">
           <div className="relative h-10 w-36 sm:h-12 sm:w-44 transition-transform group-hover:scale-[1.02]">
             <Image
-              src="/images/church-logo-header.png"
+              src="/images/church-logo-header.png?v=2"
               alt="믿음 소망 사랑으로 세워가는 주님품교회"
               fill
-              sizes="(max-width: 640px) 144px, 176px"
+              unoptimized
+              sizes="(max-width: 640px) 288px, 352px"
               className="object-contain object-left"
               priority
             />
@@ -669,7 +670,7 @@ export default function Header() {
               <div className="w-16 h-16 mx-auto mb-4 rounded-2xl border border-amber-200/70 overflow-hidden shadow-xs flex items-center justify-center bg-[#FAF9F6]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/icon-192.png"
+                  src="/icon-192.png?v=2"
                   alt="주님품교회 로고"
                   className="w-full h-full object-cover"
                 />
@@ -705,7 +706,7 @@ export default function Header() {
             <div className="flex items-center justify-between mb-4 pb-3 border-b border-stone-100">
               <div className="flex items-center gap-2.5">
                 <img
-                  src="/icon-192.png"
+                  src="/icon-192.png?v=2"
                   alt="주님품교회 아이콘"
                   className="w-9 h-9 rounded-xl border border-stone-200"
                 />
