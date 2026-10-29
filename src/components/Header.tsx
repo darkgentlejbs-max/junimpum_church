@@ -4,7 +4,33 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Menu, X, ChevronDown, User as UserIcon, LogOut, Sparkles, Smartphone, Share, MoreVertical, PlusSquare, ShieldCheck } from "lucide-react";
+import {
+  Menu,
+  X,
+  ChevronDown,
+  User as UserIcon,
+  LogOut,
+  Sparkles,
+  Smartphone,
+  Share,
+  MoreVertical,
+  PlusSquare,
+  ShieldCheck,
+  HeartHandshake,
+  History,
+  Clock,
+  MapPin,
+  Video,
+  BookOpen,
+  Users,
+  Heart,
+  GraduationCap,
+  Music,
+  Bell,
+  Calendar,
+  FileText,
+  Image as ImageIcon,
+} from "lucide-react";
 
 export default function Header() {
   const router = useRouter();
@@ -159,35 +185,47 @@ export default function Header() {
 
             {/* Dropdown Menu Box */}
             {dropdownOpen && (
-              <div className="absolute left-0 top-full -mt-1 w-44 rounded-2xl bg-white p-2 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-stone-200/80 py-2.5 transition-all">
+              <div className="absolute left-0 top-full -mt-1 w-48 rounded-2xl bg-white p-2 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-stone-200/80 py-2.5 transition-all">
                 <Link
                   href="/about#greeting"
-                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
                   onClick={() => setDropdownOpen(false)}
                 >
-                  목회자 인사말
+                  <span className="w-5 h-5 rounded-md bg-[#F1731C] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <HeartHandshake size={12} />
+                  </span>
+                  <span>목회자 인사말</span>
                 </Link>
                 <Link
                   href="/about#history"
-                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
                   onClick={() => setDropdownOpen(false)}
                 >
-                  교회연혁
+                  <span className="w-5 h-5 rounded-md bg-[#F7B118] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <History size={12} />
+                  </span>
+                  <span>교회연혁</span>
                 </Link>
                 <div className="my-1 border-t border-stone-100"></div>
                 <Link
                   href="/about#worship-times"
-                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
                   onClick={() => setDropdownOpen(false)}
                 >
-                  예배안내
+                  <span className="w-5 h-5 rounded-md bg-[#F1731C] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <Clock size={12} />
+                  </span>
+                  <span>예배안내</span>
                 </Link>
                 <Link
                   href="/about#location"
-                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
                   onClick={() => setDropdownOpen(false)}
                 >
-                  오시는 길
+                  <span className="w-5 h-5 rounded-md bg-[#F7B118] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <MapPin size={12} />
+                  </span>
+                  <span>오시는 길</span>
                 </Link>
               </div>
             )}
@@ -214,20 +252,26 @@ export default function Header() {
 
             {/* Dropdown Menu Box */}
             {worshipDropdownOpen && (
-              <div className="absolute left-0 top-full -mt-1 w-44 rounded-2xl bg-white p-2 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-stone-200/80 py-2.5 transition-all">
+              <div className="absolute left-0 top-full -mt-1 w-48 rounded-2xl bg-white p-2 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-stone-200/80 py-2.5 transition-all">
                 <Link
                   href="/sermons"
-                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
                   onClick={() => setWorshipDropdownOpen(false)}
                 >
-                  주일 설교
+                  <span className="w-5 h-5 rounded-md bg-[#F1731C] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <Video size={12} />
+                  </span>
+                  <span>주일 설교</span>
                 </Link>
                 <Link
                   href="/daldal"
-                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
                   onClick={() => setWorshipDropdownOpen(false)}
                 >
-                  달달바이블
+                  <span className="w-5 h-5 rounded-md bg-[#F7B118] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <BookOpen size={12} />
+                  </span>
+                  <span>달달바이블</span>
                 </Link>
               </div>
             )}
@@ -254,35 +298,47 @@ export default function Header() {
 
             {/* Dropdown Menu Box */}
             {ministryDropdownOpen && (
-              <div className="absolute left-0 top-full -mt-1 w-44 rounded-2xl bg-white p-2 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-stone-200/80 py-2.5 transition-all">
+              <div className="absolute left-0 top-full -mt-1 w-48 rounded-2xl bg-white p-2 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-stone-200/80 py-2.5 transition-all">
                 <Link
                   href="/ministries#men"
-                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
                   onClick={() => setMinistryDropdownOpen(false)}
                 >
-                  남선교회
+                  <span className="w-5 h-5 rounded-md bg-[#F1731C] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <Users size={12} />
+                  </span>
+                  <span>남선교회</span>
                 </Link>
                 <Link
                   href="/ministries#women"
-                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
                   onClick={() => setMinistryDropdownOpen(false)}
                 >
-                  여전도회
+                  <span className="w-5 h-5 rounded-md bg-[#F7B118] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <Heart size={12} />
+                  </span>
+                  <span>여전도회</span>
                 </Link>
                 <div className="my-1 border-t border-stone-100"></div>
                 <Link
                   href="/ministries#school"
-                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
                   onClick={() => setMinistryDropdownOpen(false)}
                 >
-                  교회학교
+                  <span className="w-5 h-5 rounded-md bg-[#F1731C] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <GraduationCap size={12} />
+                  </span>
+                  <span>교회학교</span>
                 </Link>
                 <Link
                   href="/ministries#worship"
-                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
                   onClick={() => setMinistryDropdownOpen(false)}
                 >
-                  찬양팀
+                  <span className="w-5 h-5 rounded-md bg-[#F7B118] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <Music size={12} />
+                  </span>
+                  <span>찬양팀</span>
                 </Link>
               </div>
             )}
@@ -308,28 +364,37 @@ export default function Header() {
 
             {/* Dropdown Menu Box */}
             {newsDropdownOpen && (
-              <div className="absolute left-0 top-full -mt-1 w-44 rounded-2xl bg-white p-2 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-stone-200/80 py-2.5 transition-all">
+              <div className="absolute left-0 top-full -mt-1 w-48 rounded-2xl bg-white p-2 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-stone-200/80 py-2.5 transition-all">
                 <Link
                   href="/news#notices"
-                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
                   onClick={() => setNewsDropdownOpen(false)}
                 >
-                  교회 소식
+                  <span className="w-5 h-5 rounded-md bg-[#F1731C] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <Bell size={12} />
+                  </span>
+                  <span>교회 소식</span>
                 </Link>
                 <Link
                   href="/news#schedule"
-                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
                   onClick={() => setNewsDropdownOpen(false)}
                 >
-                  교회 일정
+                  <span className="w-5 h-5 rounded-md bg-[#F7B118] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <Calendar size={12} />
+                  </span>
+                  <span>교회 일정</span>
                 </Link>
                 <div className="my-1 border-t border-stone-100"></div>
                 <Link
                   href="/bulletins"
-                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
                   onClick={() => setNewsDropdownOpen(false)}
                 >
-                  주보
+                  <span className="w-5 h-5 rounded-md bg-[#F1731C] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <FileText size={12} />
+                  </span>
+                  <span>주보</span>
                 </Link>
               </div>
             )}
@@ -500,34 +565,46 @@ export default function Header() {
             <div className="text-xs font-semibold text-amber-800 uppercase tracking-wider mb-2">
               교회소개
             </div>
-            <div className="pl-3 space-y-2.5 border-l-2 border-amber-300">
+            <div className="pl-3 space-y-2.5 border-l-2 border-[#F1731C]/50">
               <Link
                 href="/about#greeting"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                className="flex items-center gap-2.5 text-sm text-stone-700 hover:text-amber-700 font-medium"
               >
-                목회자 인사말
+                <span className="w-5 h-5 rounded-md bg-[#F1731C] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                  <HeartHandshake size={12} />
+                </span>
+                <span>목회자 인사말</span>
               </Link>
               <Link
                 href="/about#history"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                className="flex items-center gap-2.5 text-sm text-stone-700 hover:text-amber-700 font-medium"
               >
-                교회연혁
+                <span className="w-5 h-5 rounded-md bg-[#F7B118] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                  <History size={12} />
+                </span>
+                <span>교회연혁</span>
               </Link>
               <Link
                 href="/about#worship-times"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                className="flex items-center gap-2.5 text-sm text-stone-700 hover:text-amber-700 font-medium"
               >
-                예배안내
+                <span className="w-5 h-5 rounded-md bg-[#F1731C] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                  <Clock size={12} />
+                </span>
+                <span>예배안내</span>
               </Link>
               <Link
                 href="/about#location"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                className="flex items-center gap-2.5 text-sm text-stone-700 hover:text-amber-700 font-medium"
               >
-                오시는 길
+                <span className="w-5 h-5 rounded-md bg-[#F7B118] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                  <MapPin size={12} />
+                </span>
+                <span>오시는 길</span>
               </Link>
             </div>
           </div>
@@ -537,20 +614,26 @@ export default function Header() {
               <div className="text-xs font-semibold text-amber-800 uppercase tracking-wider mb-2">
                 예배/말씀
               </div>
-              <div className="pl-3 space-y-2.5 border-l-2 border-amber-300">
+              <div className="pl-3 space-y-2.5 border-l-2 border-[#F7B118]/70">
                 <Link
                   href="/sermons"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                  className="flex items-center gap-2.5 text-sm text-stone-700 hover:text-amber-700 font-medium"
                 >
-                  주일 설교
+                  <span className="w-5 h-5 rounded-md bg-[#F1731C] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <Video size={12} />
+                  </span>
+                  <span>주일 설교</span>
                 </Link>
                 <Link
                   href="/daldal"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                  className="flex items-center gap-2.5 text-sm text-stone-700 hover:text-amber-700 font-medium"
                 >
-                  달달바이블
+                  <span className="w-5 h-5 rounded-md bg-[#F7B118] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <BookOpen size={12} />
+                  </span>
+                  <span>달달바이블</span>
                 </Link>
               </div>
             </div>
@@ -558,34 +641,46 @@ export default function Header() {
               <div className="text-xs font-semibold text-amber-800 uppercase tracking-wider mb-2">
                 사역/기관
               </div>
-              <div className="pl-3 space-y-2.5 border-l-2 border-amber-300">
+              <div className="pl-3 space-y-2.5 border-l-2 border-[#F1731C]/50">
                 <Link
                   href="/ministries#men"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                  className="flex items-center gap-2.5 text-sm text-stone-700 hover:text-amber-700 font-medium"
                 >
-                  남선교회
+                  <span className="w-5 h-5 rounded-md bg-[#F1731C] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <Users size={12} />
+                  </span>
+                  <span>남선교회</span>
                 </Link>
                 <Link
                   href="/ministries#women"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                  className="flex items-center gap-2.5 text-sm text-stone-700 hover:text-amber-700 font-medium"
                 >
-                  여전도회
+                  <span className="w-5 h-5 rounded-md bg-[#F7B118] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <Heart size={12} />
+                  </span>
+                  <span>여전도회</span>
                 </Link>
                 <Link
                   href="/ministries#school"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                  className="flex items-center gap-2.5 text-sm text-stone-700 hover:text-amber-700 font-medium"
                 >
-                  교회학교
+                  <span className="w-5 h-5 rounded-md bg-[#F1731C] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <GraduationCap size={12} />
+                  </span>
+                  <span>교회학교</span>
                 </Link>
                 <Link
                   href="/ministries#worship"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                  className="flex items-center gap-2.5 text-sm text-stone-700 hover:text-amber-700 font-medium"
                 >
-                  찬양팀
+                  <span className="w-5 h-5 rounded-md bg-[#F7B118] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <Music size={12} />
+                  </span>
+                  <span>찬양팀</span>
                 </Link>
               </div>
             </div>
@@ -593,36 +688,48 @@ export default function Header() {
               <div className="text-xs font-semibold text-amber-800 uppercase tracking-wider mb-2">
                 소식/일정
               </div>
-              <div className="pl-3 space-y-2.5 border-l-2 border-amber-300">
+              <div className="pl-3 space-y-2.5 border-l-2 border-[#F7B118]/70">
                 <Link
                   href="/news#notices"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                  className="flex items-center gap-2.5 text-sm text-stone-700 hover:text-amber-700 font-medium"
                 >
-                  교회 소식
+                  <span className="w-5 h-5 rounded-md bg-[#F1731C] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <Bell size={12} />
+                  </span>
+                  <span>교회 소식</span>
                 </Link>
                 <Link
                   href="/news#schedule"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                  className="flex items-center gap-2.5 text-sm text-stone-700 hover:text-amber-700 font-medium"
                 >
-                  교회 일정
+                  <span className="w-5 h-5 rounded-md bg-[#F7B118] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <Calendar size={12} />
+                  </span>
+                  <span>교회 일정</span>
                 </Link>
                 <Link
                   href="/bulletins"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                  className="flex items-center gap-2.5 text-sm text-stone-700 hover:text-amber-700 font-medium"
                 >
-                  주보
+                  <span className="w-5 h-5 rounded-md bg-[#F1731C] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <FileText size={12} />
+                  </span>
+                  <span>주보</span>
                 </Link>
               </div>
             </div>
             <Link
               href="/gallery"
               onClick={() => setMobileMenuOpen(false)}
-              className="block hover:text-amber-700"
+              className="flex items-center gap-2.5 hover:text-amber-700 font-medium"
             >
-              갤러리
+              <span className="w-5 h-5 rounded-md bg-[#F7B118] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                <ImageIcon size={12} />
+              </span>
+              <span>갤러리</span>
             </Link>
             <div className="space-y-2.5 pt-1">
               <a

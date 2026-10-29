@@ -282,7 +282,7 @@ export default function AboutPage() {
         >
           <div className="flex items-center justify-between mb-8 flex-wrap gap-2">
             <div className="flex items-center">
-              <div className="w-9 h-9 rounded-xl bg-amber-100/70 text-amber-800 flex items-center justify-center mr-3">
+              <div className="w-9 h-9 rounded-xl bg-[#F7B118] text-white shadow-2xs flex items-center justify-center mr-3">
                 <History size={18} />
               </div>
               <h2 className="text-xl sm:text-2xl font-semibold text-stone-900">
@@ -337,7 +337,7 @@ export default function AboutPage() {
         >
           <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
             <div className="flex items-center">
-              <div className="w-9 h-9 rounded-xl bg-amber-100/70 text-amber-800 flex items-center justify-center mr-3">
+              <div className="w-9 h-9 rounded-xl bg-[#F1731C] text-white shadow-2xs flex items-center justify-center mr-3">
                 <Clock size={18} />
               </div>
               <h2 className="text-xl sm:text-2xl font-semibold text-stone-900">
@@ -395,7 +395,7 @@ export default function AboutPage() {
         >
           <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
             <div className="flex items-center">
-              <div className="w-9 h-9 rounded-xl bg-amber-100/70 text-amber-800 flex items-center justify-center mr-3">
+              <div className="w-9 h-9 rounded-xl bg-[#F7B118] text-white shadow-2xs flex items-center justify-center mr-3">
                 <MapPin size={18} />
               </div>
               <h2 className="text-xl sm:text-2xl font-semibold text-stone-900">

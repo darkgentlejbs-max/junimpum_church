@@ -244,7 +244,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
             {/* Card 1: Worship Times */}
             <div className="p-6 rounded-2xl bg-[#FAF9F6] border border-stone-200/70 hover:border-amber-300/80 transition-all">
-              <div className="w-9 h-9 rounded-xl bg-amber-100/70 text-amber-800 flex items-center justify-center mb-4">
+              <div className="w-9 h-9 rounded-xl bg-[#F1731C] text-white shadow-2xs flex items-center justify-center mb-4">
                 <Clock size={18} />
               </div>
               <h3 className="text-sm font-semibold text-stone-900 mb-1.5">
@@ -263,7 +263,7 @@ export default function Home() {
 
             {/* Card 2: Sermons */}
             <div className="p-6 rounded-2xl bg-[#FAF9F6] border border-stone-200/70 hover:border-amber-300/80 transition-all">
-              <div className="w-9 h-9 rounded-xl bg-amber-100/70 text-amber-800 flex items-center justify-center mb-4">
+              <div className="w-9 h-9 rounded-xl bg-[#F7B118] text-white shadow-2xs flex items-center justify-center mb-4">
                 <Video size={18} />
               </div>
               <h3 className="text-sm font-semibold text-stone-900 mb-1.5">
@@ -283,7 +283,7 @@ export default function Home() {
             {/* Card 3: Location */}
             <div className="p-6 rounded-2xl bg-[#FAF9F6] border border-stone-200/70 hover:border-amber-300/80 transition-all flex flex-col justify-between">
               <div>
-                <div className="w-9 h-9 rounded-xl bg-amber-100/70 text-amber-800 flex items-center justify-center mb-4">
+                <div className="w-9 h-9 rounded-xl bg-[#F1731C] text-white shadow-2xs flex items-center justify-center mb-4">
                   <MapPin size={18} />
                 </div>
                 <h3 className="text-sm font-semibold text-stone-900 mb-1.5">

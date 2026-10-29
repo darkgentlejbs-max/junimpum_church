@@ -95,7 +95,7 @@ export default async function MinistriesPage() {
             id="fellowships"
             className="scroll-mt-24 bg-white p-5 sm:p-9 rounded-2xl sm:rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80 flex flex-col md:flex-row gap-4 sm:gap-8 items-start hover:border-amber-300/80 transition-colors"
           >
-            <div className="w-12 h-12 rounded-2xl bg-amber-100/70 text-amber-800 flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-[#F1731C] text-white shadow-2xs flex items-center justify-center shrink-0">
               <Users size={24} />
             </div>
             <div className="flex-1 w-full">
@@ -255,7 +255,7 @@ export default async function MinistriesPage() {
             id="school"
             className="scroll-mt-24 bg-white p-5 sm:p-9 rounded-2xl sm:rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80 flex flex-col md:flex-row gap-4 sm:gap-8 items-start hover:border-amber-300/80 transition-colors"
           >
-            <div className="w-12 h-12 rounded-2xl bg-amber-100/70 text-amber-800 flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-[#F7B118] text-white shadow-2xs flex items-center justify-center shrink-0">
               <BookOpen size={24} />
             </div>
             <div className="flex-1 w-full">
@@ -345,7 +345,7 @@ export default async function MinistriesPage() {
             id="worship"
             className="scroll-mt-24 bg-white p-5 sm:p-9 rounded-2xl sm:rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80 flex flex-col md:flex-row gap-4 sm:gap-8 items-start hover:border-amber-300/80 transition-colors"
           >
-            <div className="w-12 h-12 rounded-2xl bg-amber-100/70 text-amber-800 flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-[#F1731C] text-white shadow-2xs flex items-center justify-center shrink-0">
               <Music size={24} />
             </div>
             <div className="flex-1 w-full">

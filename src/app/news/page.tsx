@@ -66,7 +66,7 @@ export default async function NewsPage() {
             <div className="mb-5 sm:mb-6 pb-4 border-b border-stone-100">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-amber-100/70 text-amber-800 flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-[#F1731C] text-white shadow-2xs flex items-center justify-center shrink-0">
                     <Bell size={16} />
                   </div>
                   <h2 className="text-xl font-semibold text-stone-900">교회 소식</h2>
@@ -89,7 +89,7 @@ export default async function NewsPage() {
             <div className="mb-5 sm:mb-6 pb-4 border-b border-stone-100">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-amber-100/70 text-amber-800 flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-[#F7B118] text-white shadow-2xs flex items-center justify-center shrink-0">
                     <Calendar size={16} />
                   </div>
                   <h2 className="text-xl font-semibold text-stone-900">교회 일정</h2>
@@ -107,7 +107,7 @@ export default async function NewsPage() {
           {/* Quick Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <Link href="/bulletins" className="bg-white p-5 rounded-2xl border border-stone-200/80 hover:border-amber-300/80 transition-all flex items-center gap-4 cursor-pointer group block">
-              <div className="w-11 h-11 rounded-xl bg-stone-100 flex items-center justify-center text-stone-600 group-hover:bg-amber-50 group-hover:text-amber-700 transition-colors shrink-0">
+              <div className="w-11 h-11 rounded-xl bg-[#F1731C] text-white shadow-2xs flex items-center justify-center transition-colors shrink-0">
                 <FileText size={20} />
               </div>
               <div>
@@ -116,7 +116,7 @@ export default async function NewsPage() {
               </div>
             </Link>
             <Link href="/gallery" className="bg-white p-5 rounded-2xl border border-stone-200/80 hover:border-amber-300/80 transition-all flex items-center gap-4 cursor-pointer group block">
-              <div className="w-11 h-11 rounded-xl bg-stone-100 flex items-center justify-center text-stone-600 group-hover:bg-amber-50 group-hover:text-amber-700 transition-colors shrink-0">
+              <div className="w-11 h-11 rounded-xl bg-[#F7B118] text-white shadow-2xs flex items-center justify-center transition-colors shrink-0">
                 <ImageIcon size={20} />
               </div>
               <div>
