@@ -265,7 +265,16 @@ export default function SignupPage() {
                 />
                 <select
                   value={role}
-                  onChange={(e) => setRole(e.target.value)}
+                  onChange={(e) => {
+                    const nextRole = e.target.value;
+                    setRole(nextRole);
+                    if (nextRole === "교역자") {
+                      setOrganization("");
+                      setInPraiseTeam(false);
+                    } else if (!organization) {
+                      setOrganization("남선교회");
+                    }
+                  }}
                   className="w-full pl-10 pr-4 py-3 text-sm rounded-xl border border-stone-200 bg-stone-50/50 focus:bg-white focus:outline-none focus:border-amber-600 transition-colors"
                 >
                   {ROLES.map((r) => (
@@ -280,10 +289,17 @@ export default function SignupPage() {
 
           {/* 소속기관 선택 */}
           <div className="pt-1">
-            <label className="flex items-center gap-1.5 text-xs font-semibold text-stone-700 mb-2">
-              <Users size={14} className="text-amber-700" />
-              <span>소속기관</span>
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="flex items-center gap-1.5 text-xs font-semibold text-stone-700">
+                <Users size={14} className="text-amber-700" />
+                <span>소속기관 {role === "교역자" && <span className="text-stone-400 font-normal">(선택 안 함 가능)</span>}</span>
+              </label>
+              {role === "교역자" && (
+                <span className="text-[11px] font-medium text-amber-800">
+                  * 교역자는 선택하지 않아도 가입됩니다
+                </span>
+              )}
+            </div>
             <div className="grid grid-cols-3 gap-2">
               {ORGANIZATIONS.map((org) => {
                 const selected = organization === org;
@@ -291,7 +307,7 @@ export default function SignupPage() {
                   <button
                     key={org}
                     type="button"
-                    onClick={() => setOrganization(org)}
+                    onClick={() => setOrganization(selected ? "" : org)}
                     className={`py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold border transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                       selected
                         ? "bg-amber-800 text-white border-amber-800 shadow-2xs"
