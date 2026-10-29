@@ -13,7 +13,7 @@ const DEFAULT_HOME = {
   headlineLine1: "믿음 · 소망 · 사랑으로",
   headlineLine2: "세워져 가는 따뜻한 공동체",
   subtitle:
-    "하나님의 은혜와 사랑이 머무는 곳, 주님품처럼 따뜻한 안식과 회복이 있는 주님품교회에 오신 것을 진심으로 환영합니다.",
+    "하나님의 은혜와 사랑이 머무는 곳,\n주님품처럼 따뜻한 안식과 회복이 있는 주님품교회에 오신 것을\n진심으로 환영합니다.",
   navItems: [
     {
       no: "01",
@@ -64,9 +64,17 @@ export default function Home() {
       .then((r) => r.json())
       .then((res) => {
         if (res?.config?.home) {
+          let loadedSubtitle = res.config.home.subtitle || DEFAULT_HOME.subtitle;
+          if (
+            loadedSubtitle ===
+            "하나님의 은혜와 사랑이 머무는 곳, 주님품처럼 따뜻한 안식과 회복이 있는 주님품교회에 오신 것을 진심으로 환영합니다."
+          ) {
+            loadedSubtitle = DEFAULT_HOME.subtitle;
+          }
           const merged = {
             ...DEFAULT_HOME,
             ...res.config.home,
+            subtitle: loadedSubtitle,
             cards: { ...DEFAULT_HOME.cards, ...(res.config.home.cards || {}) },
             navItems:
               Array.isArray(res.config.home.navItems) && res.config.home.navItems.length > 0
@@ -189,7 +197,7 @@ export default function Home() {
                 <span className="text-amber-800 font-medium">{homeData.headlineLine2}</span>
               </h1>
 
-              <p className="text-stone-500 text-sm font-normal leading-relaxed mb-8 max-w-lg whitespace-pre-line">
+              <p className="text-stone-500 text-sm font-normal leading-relaxed mb-8 max-w-lg whitespace-pre-line break-keep">
                 {homeData.subtitle}
               </p>
 
