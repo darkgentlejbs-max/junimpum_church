@@ -75,9 +75,14 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.1 }}
             >
               {/* Subtle Tagline */}
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200/60 text-amber-900 text-xs font-medium mb-4">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                대한예수교장로회(통합) 주님품교회
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200/60 text-amber-900 text-xs font-medium mb-4">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/pck-logo.png"
+                  alt="대한예수교장로회(통합)"
+                  className="h-4 w-auto object-contain shrink-0"
+                />
+                <span>대한예수교장로회(통합) 주님품교회</span>
               </div>
 
               {/* Smaller, Elegant Headline */}
