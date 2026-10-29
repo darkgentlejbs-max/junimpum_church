@@ -158,13 +158,13 @@ export default function Home() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
             >
-              <div className="flex items-center justify-between gap-2 mb-4 flex-wrap">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200/60 text-amber-900 text-xs font-medium">
+              <div className="flex items-center justify-between gap-2 mb-5 flex-wrap">
+                <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-amber-50 border border-amber-200/80 text-amber-900 text-sm sm:text-base font-semibold shadow-2xs">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src="/images/pck-logo.png"
                     alt="대한예수교장로회(통합)"
-                    className="h-4 w-auto object-contain shrink-0"
+                    className="h-6 sm:h-7 w-auto object-contain shrink-0"
                   />
                   <span>{homeData.badgeText}</span>
                 </div>
