@@ -10,12 +10,14 @@ interface WriteProps {
   menuType: MenuType;
   buttonLabel?: string;
   defaultCategory?: string;
+  defaultDate?: string;
 }
 
 export default function MasterWriteButton({
   menuType,
   buttonLabel = "글쓰기",
   defaultCategory = "",
+  defaultDate,
 }: WriteProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -25,7 +27,7 @@ export default function MasterWriteButton({
   const today = new Date().toISOString().split("T")[0];
 
   const [title, setTitle] = useState("");
-  const [date, setDate] = useState(today);
+  const [date, setDate] = useState(defaultDate || today);
   const [passage, setPassage] = useState("");
   const [preacher, setPreacher] = useState("담임목사");
   const [videoUrl, setVideoUrl] = useState("");
@@ -38,7 +40,7 @@ export default function MasterWriteButton({
 
   const resetForm = () => {
     setTitle("");
-    setDate(today);
+    setDate(defaultDate || today);
     setPassage("");
     setPreacher("담임목사");
     setVideoUrl("");
@@ -141,7 +143,10 @@ export default function MasterWriteButton({
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setDate(defaultDate || today);
+          setOpen(true);
+        }}
         className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-800 hover:bg-amber-900 text-white text-xs sm:text-sm font-semibold shadow-2xs transition-colors cursor-pointer"
       >
         <PenLine size={14} />

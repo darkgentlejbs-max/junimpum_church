@@ -3,7 +3,7 @@ import { Bell, FileText, Image as ImageIcon, Calendar } from "lucide-react";
 import { getNews, getSchedule, findMemberByEmail } from "@/lib/notion";
 import { getCurrentUser, isMasterRole } from "@/lib/auth";
 import NoticeItem from "@/components/NoticeItem";
-import ScheduleItem from "@/components/ScheduleItem";
+import ScheduleCalendar from "@/components/ScheduleCalendar";
 import MasterWriteButton from "@/components/MasterWriteModal";
 
 export const dynamic = 'force-dynamic';
@@ -96,14 +96,10 @@ export default async function NewsPage() {
                   <MasterWriteButton menuType="schedule" buttonLabel="일정 글쓰기" />
                 )}
               </div>
-              <p className="text-xs sm:text-sm text-stone-500 pl-0 sm:pl-[44px] mt-1 sm:mt-0">주님품교회의 다가오는 주요 일정입니다.</p>
+              <p className="text-xs sm:text-sm text-stone-500 pl-0 sm:pl-[44px] mt-1 sm:mt-0">달력에서 날짜를 클릭하시면 해당 날짜의 상세 일정을 확인하실 수 있습니다.</p>
             </div>
             
-            <div className="space-y-4">
-              {schedules.map((item: any) => (
-                <ScheduleItem key={item.id} item={item} canWrite={canWrite} />
-              ))}
-            </div>
+            <ScheduleCalendar schedules={schedules} canWrite={canWrite} />
           </section>
 
           {/* Quick Cards */}
