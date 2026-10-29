@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { MasterDeleteButton } from "@/components/MasterWriteModal";
+import { MasterEditButton, MasterDeleteButton } from "@/components/MasterWriteModal";
 
 export default function NoticeItem({
   notice,
@@ -29,9 +29,14 @@ export default function NoticeItem({
             </span>
           </div>
         </div>
-        <div className="flex items-center justify-between w-full sm:w-auto sm:justify-end mt-1 sm:mt-0 gap-2">
+        <div className="flex items-center justify-between w-full sm:w-auto sm:justify-end mt-1 sm:mt-0 gap-1.5">
           <span className="text-xs text-stone-400 shrink-0 font-mono">{notice.date}</span>
-          {canWrite && <MasterDeleteButton id={notice.id} />}
+          {canWrite && (
+            <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+              <MasterEditButton menuType="news" item={notice} />
+              <MasterDeleteButton id={notice.id} />
+            </div>
+          )}
           {notice.content && (
             <ChevronDown 
               size={16} 

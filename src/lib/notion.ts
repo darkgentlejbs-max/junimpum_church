@@ -1480,6 +1480,303 @@ export async function deleteContentPage(pageId: string) {
   }
 }
 
+async function resolvePageId(rawId: string): Promise<string> {
+  const cleanId = rawId.includes('-prop-') ? rawId.split('-prop-')[0] : rawId;
+  try {
+    await notion.pages.retrieve({ page_id: cleanId });
+    return cleanId;
+  } catch {
+    const block: any = await notion.blocks.retrieve({ block_id: cleanId });
+    if (block?.parent?.page_id) {
+      return block.parent.page_id;
+    }
+    return cleanId;
+  }
+}
+
+export async function updateSermon(params: {
+  id: string;
+  title: string;
+  passage: string;
+  preacher: string;
+  date: string;
+  videoUrl: string;
+}) {
+  if (!SERMONS_DATABASE_ID) throw new Error('설교 데이터베이스 ID가 설정되지 않았습니다.');
+  const { titlePropName, props } = await getTitlePropertyName(SERMONS_DATABASE_ID);
+  const dateVal = params.date || new Date().toISOString().split('T')[0];
+
+  const properties: Record<string, any> = {
+    [titlePropName]: {
+      title: [{ text: { content: params.title } }],
+    },
+  };
+
+  if (props['설교 제목']?.type === 'rich_text') {
+    properties['설교 제목'] = { rich_text: [{ text: { content: params.title } }] };
+  }
+  if (props['성경구절']?.type === 'rich_text') {
+    properties['성경구절'] = { rich_text: [{ text: { content: params.passage } }] };
+  }
+  if (props['설교자']?.type === 'select') {
+    properties['설교자'] = { select: { name: params.preacher || '담임목사' } };
+  } else if (props['설교자']?.type === 'rich_text') {
+    properties['설교자'] = { rich_text: [{ text: { content: params.preacher || '담임목사' } }] };
+  }
+  if (props['날짜']?.type === 'date') {
+    properties['날짜'] = { date: { start: dateVal } };
+  }
+  if (params.videoUrl !== undefined) {
+    if (props['영상링크']?.type === 'url') {
+      properties['영상링크'] = { url: params.videoUrl || null };
+    } else if (props['영상링크']?.type === 'rich_text') {
+      properties['영상링크'] = { rich_text: [{ text: { content: params.videoUrl } }] };
+    } else if (props['링크']?.type === 'url') {
+      properties['링크'] = { url: params.videoUrl || null };
+    } else if (props['링크']?.type === 'rich_text') {
+      properties['링크'] = { rich_text: [{ text: { content: params.videoUrl } }] };
+    }
+  }
+
+  await notion.pages.update({
+    page_id: params.id,
+    properties,
+  });
+}
+
+export async function updateNewsItem(params: {
+  id: string;
+  title: string;
+  type: string;
+  content: string;
+  date?: string;
+}) {
+  if (!NEWS_DATABASE_ID) throw new Error('교회 소식 데이터베이스 ID가 설정되지 않았습니다.');
+  const { titlePropName, props } = await getTitlePropertyName(NEWS_DATABASE_ID);
+  const dateVal = params.date || new Date().toISOString().split('T')[0];
+
+  const properties: Record<string, any> = {
+    [titlePropName]: {
+      title: [{ text: { content: params.title } }],
+    },
+  };
+
+  if (props['분류']?.type === 'select') {
+    properties['분류'] = { select: { name: params.type || '공지' } };
+  }
+  if (props['내용']?.type === 'rich_text') {
+    properties['내용'] = { rich_text: [{ text: { content: params.content } }] };
+  } else if (props['텍스트']?.type === 'rich_text') {
+    properties['텍스트'] = { rich_text: [{ text: { content: params.content } }] };
+  }
+  if (props['날짜']?.type === 'date') {
+    properties['날짜'] = { date: { start: dateVal } };
+  }
+
+  await notion.pages.update({
+    page_id: params.id,
+    properties,
+  });
+}
+
+export async function updateScheduleItem(params: {
+  id: string;
+  title: string;
+  type: string;
+  location: string;
+  content: string;
+  date: string;
+}) {
+  if (!SCHEDULE_DATABASE_ID) throw new Error('교회 일정 데이터베이스 ID가 설정되지 않았습니다.');
+  const { titlePropName, props } = await getTitlePropertyName(SCHEDULE_DATABASE_ID);
+  const dateVal = params.date || new Date().toISOString().split('T')[0];
+
+  const properties: Record<string, any> = {
+    [titlePropName]: {
+      title: [{ text: { content: params.title } }],
+    },
+  };
+
+  if (props['분류']?.type === 'select') {
+    properties['분류'] = { select: { name: params.type || '행사' } };
+  }
+  if (props['장소']?.type === 'rich_text') {
+    properties['장소'] = { rich_text: [{ text: { content: params.location || '' } }] };
+  } else if (props['장소']?.type === 'select' && params.location) {
+    properties['장소'] = { select: { name: params.location } };
+  }
+  if (props['텍스트']?.type === 'rich_text') {
+    properties['텍스트'] = { rich_text: [{ text: { content: params.content || '' } }] };
+  } else if (props['내용']?.type === 'rich_text') {
+    properties['내용'] = { rich_text: [{ text: { content: params.content || '' } }] };
+  }
+  if (props['날짜']?.type === 'date') {
+    properties['날짜'] = { date: { start: dateVal } };
+  }
+
+  await notion.pages.update({
+    page_id: params.id,
+    properties,
+  });
+}
+
+export async function updateDalDalItem(params: {
+  id: string;
+  title: string;
+  date?: string;
+  imageUrl?: string;
+  fileUploadId?: string;
+  fileName?: string;
+}) {
+  if (!DALDAL_DATABASE_ID) throw new Error('달달바이블 데이터베이스 ID가 설정되지 않았습니다.');
+  const { titlePropName, props } = await getTitlePropertyName(DALDAL_DATABASE_ID);
+  const dateVal = params.date || new Date().toISOString().split('T')[0];
+
+  const properties: Record<string, any> = {
+    [titlePropName]: {
+      title: [{ text: { content: params.title } }],
+    },
+  };
+
+  if (props['날짜']?.type === 'date') {
+    properties['날짜'] = { date: { start: dateVal } };
+  }
+
+  if (props['이미지']?.type === 'files') {
+    if (params.fileUploadId) {
+      properties['이미지'] = {
+        files: [
+          {
+            type: 'file_upload',
+            file_upload: { id: params.fileUploadId },
+            name: params.fileName || params.title,
+          },
+        ],
+      };
+    } else if (params.imageUrl && !params.imageUrl.includes('amazonaws.com')) {
+      properties['이미지'] = {
+        files: [
+          {
+            type: 'external',
+            external: { url: params.imageUrl },
+            name: params.title,
+          },
+        ],
+      };
+    }
+  }
+
+  await notion.pages.update({
+    page_id: params.id,
+    properties,
+  });
+}
+
+export async function updateBulletinItem(params: {
+  id: string;
+  title: string;
+  date?: string;
+  fileUrl?: string;
+  fileUploadId?: string;
+  fileName?: string;
+}) {
+  if (!BULLETIN_DATABASE_ID) throw new Error('주보 데이터베이스 ID가 설정되지 않았습니다.');
+  const { titlePropName, props } = await getTitlePropertyName(BULLETIN_DATABASE_ID);
+  const dateVal = params.date || new Date().toISOString().split('T')[0];
+
+  const properties: Record<string, any> = {
+    [titlePropName]: {
+      title: [{ text: { content: params.title } }],
+    },
+  };
+
+  if (props['날짜']?.type === 'date') {
+    properties['날짜'] = { date: { start: dateVal } };
+  }
+
+  if (props['파일']?.type === 'files') {
+    if (params.fileUploadId) {
+      properties['파일'] = {
+        files: [
+          {
+            type: 'file_upload',
+            file_upload: { id: params.fileUploadId },
+            name: params.fileName || params.title,
+          },
+        ],
+      };
+    } else if (params.fileUrl && params.fileUrl !== '#' && !params.fileUrl.includes('amazonaws.com')) {
+      properties['파일'] = {
+        files: [
+          {
+            type: 'external',
+            external: { url: params.fileUrl },
+            name: params.title,
+          },
+        ],
+      };
+    }
+  }
+
+  await notion.pages.update({
+    page_id: params.id,
+    properties,
+  });
+}
+
+export async function updateGalleryItem(params: {
+  id: string;
+  title: string;
+  date?: string;
+  imageUrl?: string;
+  fileUploadId?: string;
+  fileName?: string;
+}) {
+  if (!GALLERY_DATABASE_ID) throw new Error('갤러리 데이터베이스 ID가 설정되지 않았습니다.');
+  const targetPageId = await resolvePageId(params.id);
+  const { titlePropName, props } = await getTitlePropertyName(GALLERY_DATABASE_ID);
+  const dateVal = params.date || new Date().toISOString().split('T')[0];
+
+  const properties: Record<string, any> = {
+    [titlePropName]: {
+      title: [{ text: { content: params.title } }],
+    },
+  };
+
+  if (props['날짜']?.type === 'date') {
+    properties['날짜'] = { date: { start: dateVal } };
+  }
+
+  if (props['사진']?.type === 'files') {
+    if (params.fileUploadId) {
+      properties['사진'] = {
+        files: [
+          {
+            type: 'file_upload',
+            file_upload: { id: params.fileUploadId },
+            name: params.fileName || params.title,
+          },
+        ],
+      };
+    } else if (params.imageUrl && !params.imageUrl.includes('amazonaws.com')) {
+      properties['사진'] = {
+        files: [
+          {
+            type: 'external',
+            external: { url: params.imageUrl },
+            name: params.title,
+          },
+        ],
+      };
+    }
+  }
+
+  await notion.pages.update({
+    page_id: targetPageId,
+    properties,
+  });
+}
+
 
 
 

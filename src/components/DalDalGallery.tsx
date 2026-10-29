@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { BookOpen, X } from "lucide-react";
-import { MasterDeleteButton } from "@/components/MasterWriteModal";
+import { MasterEditButton, MasterDeleteButton } from "@/components/MasterWriteModal";
 
 export default function DalDalGallery({
   daldals,
@@ -53,7 +53,12 @@ export default function DalDalGallery({
               <div>
                 <div className="flex items-center justify-between gap-2 mb-2">
                   <span className="text-xs font-mono text-amber-700 font-medium block">{item.date}</span>
-                  {canWrite && <MasterDeleteButton id={item.id} />}
+                  {canWrite && (
+                    <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                      <MasterEditButton menuType="daldal" item={item} />
+                      <MasterDeleteButton id={item.id} />
+                    </div>
+                  )}
                 </div>
                 <h3 className="text-sm font-semibold text-stone-800 line-clamp-2">{item.title}</h3>
               </div>

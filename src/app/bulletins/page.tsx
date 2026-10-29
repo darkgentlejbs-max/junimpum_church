@@ -2,7 +2,10 @@ import { getBulletins, findMemberByEmail } from "@/lib/notion";
 import { getCurrentUser, isMasterRole } from "@/lib/auth";
 import { FileText, Download, Lock, LogIn, UserPlus } from "lucide-react";
 import Link from "next/link";
-import MasterWriteButton, { MasterDeleteButton } from "@/components/MasterWriteModal";
+import MasterWriteButton, {
+  MasterEditButton,
+  MasterDeleteButton,
+} from "@/components/MasterWriteModal";
 
 export const dynamic = "force-dynamic";
 
@@ -123,8 +126,13 @@ export default async function BulletinsPage() {
                       {bulletin.title}
                     </h3>
                   </div>
-                  <div className="flex items-center gap-2 mt-3 sm:mt-0 shrink-0">
-                    {canWrite && <MasterDeleteButton id={bulletin.id} />}
+                  <div className="flex items-center gap-1.5 mt-3 sm:mt-0 shrink-0">
+                    {canWrite && (
+                      <>
+                        <MasterEditButton menuType="bulletin" item={bulletin} />
+                        <MasterDeleteButton id={bulletin.id} />
+                      </>
+                    )}
                     <a
                       href={bulletin.fileUrl}
                       target="_blank"

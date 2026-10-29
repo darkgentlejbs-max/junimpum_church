@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { PlayCircle, Calendar, User, X } from "lucide-react";
-import { MasterDeleteButton } from "@/components/MasterWriteModal";
+import { MasterEditButton, MasterDeleteButton } from "@/components/MasterWriteModal";
 
 function getYouTubeId(url: string): string | null {
   if (!url) return null;
@@ -102,7 +102,12 @@ export default function SermonView({
               <span className="text-xs font-medium text-amber-700 group-hover:text-amber-800 flex items-center gap-1">
                 {featured.videoUrl ? "설교 영상 시청하기 \u2192" : "영상 준비 중"}
               </span>
-              {canWrite && <MasterDeleteButton id={featured.id} />}
+              {canWrite && (
+                <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                  <MasterEditButton menuType="sermon" item={featured} />
+                  <MasterDeleteButton id={featured.id} />
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -159,9 +164,14 @@ export default function SermonView({
                   <span className="flex items-center gap-1.5">
                     <Calendar size={14} /> {sermon.date}
                   </span>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
                     <span>{sermon.preacher}</span>
-                    {canWrite && <MasterDeleteButton id={sermon.id} />}
+                    {canWrite && (
+                      <>
+                        <MasterEditButton menuType="sermon" item={sermon} />
+                        <MasterDeleteButton id={sermon.id} />
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
