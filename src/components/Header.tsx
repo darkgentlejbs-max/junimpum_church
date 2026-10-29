@@ -406,32 +406,86 @@ export default function Header() {
           </div>
         </nav>
 
-        {/* Mobile Quick Blog Link & Nav Toggle */}
-        <div className="flex md:hidden items-center gap-2">
+        {/* Mobile Quick Auth, Blog Link & Nav Toggle */}
+        <div className="flex md:hidden items-center gap-1.5">
           <div className="flex flex-col items-end justify-center gap-1">
-            <a
-              href="https://blog.naver.com/jesusbosom"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#03C75A]/10 text-[#03C75A] text-[11px] font-semibold leading-none"
-            >
-              <span className="w-3.5 h-3.5 rounded-xs bg-[#03C75A] text-white text-[9px] font-extrabold flex items-center justify-center leading-none">
-                N
-              </span>
-              <span>블로그</span>
-            </a>
-            <button
-              type="button"
-              onClick={handleShortcutClick}
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200/70 text-amber-800 text-[10px] font-semibold leading-none cursor-pointer"
-            >
-              <Smartphone size={10} className="text-amber-700" />
-              <span>스마트홈 바로가기</span>
-            </button>
+            {/* Row 1: Auth Links (Login / Signup or User Info) */}
+            <div className="flex items-center gap-1">
+              {user ? (
+                <>
+                  {(user.isMaster || user.role === "담임목사" || user.role === "사모" || user.role === "교역자") && (
+                    <Link
+                      href="/admin/members"
+                      className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-amber-800 text-white text-[10px] font-semibold leading-none"
+                    >
+                      <ShieldCheck size={10} />
+                      <span>회원승인</span>
+                    </Link>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setWelcomeUser({ name: user.name, role: user.role })}
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200/70 text-stone-800 text-[10px] font-semibold leading-none cursor-pointer"
+                  >
+                    <UserIcon size={10} className="text-amber-700" />
+                    <span>
+                      {user.name}
+                      <span className="text-amber-800">{user.role}</span>님
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-stone-100 text-stone-500 hover:text-red-600 text-[10px] font-semibold leading-none cursor-pointer"
+                  >
+                    <LogOut size={10} />
+                    <span>로그아웃</span>
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-stone-100 border border-stone-200/80 text-stone-700 text-[10px] font-semibold leading-none"
+                  >
+                    로그인
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-amber-100/80 border border-amber-200/80 text-amber-900 text-[10px] font-semibold leading-none"
+                  >
+                    회원가입
+                  </Link>
+                </>
+              )}
+            </div>
+
+            {/* Row 2: Blog & Smart Home Shortcut */}
+            <div className="flex items-center gap-1">
+              <a
+                href="https://blog.naver.com/jesusbosom"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#03C75A]/10 text-[#03C75A] text-[10px] font-semibold leading-none"
+              >
+                <span className="w-3 h-3 rounded-xs bg-[#03C75A] text-white text-[8px] font-extrabold flex items-center justify-center leading-none">
+                  N
+                </span>
+                <span>블로그</span>
+              </a>
+              <button
+                type="button"
+                onClick={handleShortcutClick}
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200/70 text-amber-800 text-[10px] font-semibold leading-none cursor-pointer"
+              >
+                <Smartphone size={10} className="text-amber-700" />
+                <span>스마트홈 바로가기</span>
+              </button>
+            </div>
           </div>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 text-stone-600 hover:text-amber-700 transition-colors"
+            className="p-1.5 text-stone-600 hover:text-amber-700 transition-colors"
             aria-label="메뉴 열기"
           >
             {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
