@@ -101,7 +101,7 @@ export default async function BulletinsPage() {
         <div className="bg-white p-5 sm:p-9 rounded-2xl sm:rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80">
           <div className="flex items-center justify-between gap-3 mb-6 pb-4 border-b border-stone-100">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-amber-100/70 text-amber-800 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-[#F1731C] text-white shadow-2xs flex items-center justify-center">
                 <FileText size={16} />
               </div>
               <h2 className="text-xl font-semibold text-stone-900">주보 목록</h2>
