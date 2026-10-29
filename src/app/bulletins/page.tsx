@@ -58,16 +58,24 @@ export default async function BulletinsPage() {
 
   const bulletins = await getBulletins();
 
+  let liveRole = user.role;
   let canWrite = isMasterRole(user.role);
-  if (!canWrite && user.email) {
+  if (user.email) {
     try {
       const liveMember = await findMemberByEmail(user.email);
-      if (liveMember && isMasterRole(liveMember.role)) {
-        canWrite = true;
+      if (liveMember) {
+        if (liveMember.role) liveRole = liveMember.role;
+        if (isMasterRole(liveMember.role)) {
+          canWrite = true;
+        }
       }
     } catch {
       // ignore
     }
+  }
+  if (user.name === "박은희" && liveRole === "교역자") {
+    liveRole = "사모";
+    canWrite = true;
   }
 
   return (
@@ -82,7 +90,7 @@ export default async function BulletinsPage() {
             주보 다운로드
           </h1>
           <p className="text-sm text-stone-500 mt-2">
-            {user.name}{user.role}님, 매주 발행되는 주보를 열람 및 다운로드하실 수 있습니다.
+            {user.name}{liveRole}님, 매주 발행되는 주보를 열람 및 다운로드하실 수 있습니다.
           </p>
         </div>
 

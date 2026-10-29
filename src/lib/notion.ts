@@ -466,6 +466,16 @@ export async function findMemberByEmail(identifier: string) {
   }
 
   const status = extractMemberStatus(props);
+  let rawRole = props['직분']?.select?.name || '성도';
+  if (name.trim() === '박은희' && rawRole === '교역자') {
+    rawRole = '사모';
+    notion.pages
+      .update({
+        page_id: page.id,
+        properties: { 직분: { select: { name: '사모' } } },
+      })
+      .catch(() => {});
+  }
 
   return {
     id: page.id,
@@ -476,7 +486,7 @@ export async function findMemberByEmail(identifier: string) {
       normalizedId,
     passwordHash: props['비밀번호']?.rich_text?.[0]?.plain_text || '',
     phone: props['연락처']?.rich_text?.[0]?.plain_text || '',
-    role: props['직분']?.select?.name || '성도',
+    role: rawRole,
     departments,
     status,
     approved: status === '승인완료',
@@ -610,6 +620,10 @@ export async function getAllMembers() {
     }
 
     const status = extractMemberStatus(props);
+    let rawRole = props['직분']?.select?.name || '성도';
+    if (name.trim() === '박은희' && rawRole === '교역자') {
+      rawRole = '사모';
+    }
 
     return {
       id: page.id,
@@ -619,7 +633,7 @@ export async function getAllMembers() {
         props['이메일']?.rich_text?.[0]?.plain_text ||
         '',
       phone: props['연락처']?.rich_text?.[0]?.plain_text || '',
-      role: props['직분']?.select?.name || '성도',
+      role: rawRole,
       departments,
       joinDate: props['가입일']?.date?.start || page.created_time?.split('T')[0] || '',
       status,
@@ -904,7 +918,8 @@ export async function getMinistryNotices() {
           props['내용']?.rich_text?.map((t: any) => t.plain_text).join('') ||
           props['텍스트']?.rich_text?.map((t: any) => t.plain_text).join('') ||
           '';
-        const author = props['작성자']?.rich_text?.[0]?.plain_text || '주님품교회';
+        const rawAuthor = props['작성자']?.rich_text?.[0]?.plain_text || '주님품교회';
+        const author = rawAuthor.replace('박은희 교역자', '박은희 사모');
         const date = props['날짜']?.date?.start || page.created_time?.split('T')[0] || '';
 
         return {

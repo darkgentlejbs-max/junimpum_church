@@ -79,7 +79,11 @@ export async function POST(request: Request) {
       );
     }
 
-    const author = `${user.name} ${user.role}`;
+    const effectiveRole =
+      user.name === "박은희" && (userRole === "교역자" || !userRole)
+        ? "사모"
+        : userRole || user.role;
+    const author = `${user.name} ${effectiveRole}`;
     const created = await createMinistryNotice({
       title: title.trim(),
       category: targetCategory,

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getCurrentUser, isMasterRole } from '@/lib/auth';
+import { getCurrentUser, isMasterRole, createSessionToken, SESSION_COOKIE_NAME } from '@/lib/auth';
 import { findMemberByEmail } from '@/lib/notion';
 
 export async function GET() {
@@ -14,23 +14,44 @@ export async function GET() {
       if (liveMember.status === '승인대기') {
         return NextResponse.json({ user: null });
       }
-      return NextResponse.json({
+      let resolvedRole = liveMember.role || user.role;
+      if (liveMember.name === '박은희' && resolvedRole === '교역자') {
+        resolvedRole = '사모';
+      }
+      const updatedUser = {
+        ...user,
+        name: liveMember.name || user.name,
+        role: resolvedRole,
+        departments: liveMember.departments || user.departments || [],
+      };
+      const response = NextResponse.json({
         user: {
-          ...user,
-          role: liveMember.role || user.role,
-          departments: liveMember.departments || user.departments || [],
-          isMaster: isMasterRole(liveMember.role || user.role),
+          ...updatedUser,
+          isMaster: isMasterRole(resolvedRole),
         },
       });
+      if (resolvedRole !== user.role || updatedUser.name !== user.name) {
+        const newToken = createSessionToken(updatedUser);
+        response.cookies.set(SESSION_COOKIE_NAME, newToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          path: '/',
+          maxAge: 60 * 60 * 24 * 14,
+        });
+      }
+      return response;
     }
   } catch {
     // Fallback to session user if Notion query fails
   }
 
+  const fallbackRole = user.name === '박은희' && user.role === '교역자' ? '사모' : user.role;
   return NextResponse.json({
     user: {
       ...user,
-      isMaster: isMasterRole(user.role),
+      role: fallbackRole,
+      isMaster: isMasterRole(fallbackRole),
     },
   });
 }

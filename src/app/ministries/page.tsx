@@ -15,6 +15,7 @@ export default async function MinistriesPage() {
 
   let userDepts: string[] = user?.departments || [];
   let userRole: string = user?.role || "";
+  let userName: string = user?.name || "";
   if (user?.email) {
     try {
       const liveMember = await findMemberByEmail(user.email);
@@ -25,13 +26,20 @@ export default async function MinistriesPage() {
         if (liveMember.role) {
           userRole = liveMember.role;
         }
+        if (liveMember.name) {
+          userName = liveMember.name;
+        }
       }
     } catch {
       // ignore
     }
   }
 
-  const currentUserInfo = user ? { name: user.name, role: user.role } : null;
+  if (userName === "박은희" && userRole === "교역자") {
+    userRole = "사모";
+  }
+
+  const currentUserInfo = user ? { name: userName, role: userRole } : null;
 
   const menPhotos = allPhotos.filter((p: any) => p.title?.includes("남선교"));
   const womenPhotos = allPhotos.filter((p: any) => p.title?.includes("여전도"));
