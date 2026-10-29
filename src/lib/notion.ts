@@ -1783,7 +1783,7 @@ export const DEFAULT_SITE_CONFIG = {
     imageCaptionLeft: '대한예수교장로회(통합)',
     imageCaptionRight: '주님품교회 전경',
     headlineLine1: '믿음 · 소망 · 사랑으로',
-    headlineLine2: '세워 가는 따뜻한 공동체',
+    headlineLine2: '세워 가는 주님품 공동체',
     subtitle:
       '하나님의 은혜와 사랑이 머무는 곳,\n주님품처럼 따뜻한 안식과 회복이 있는\n주님품교회에 오신 것을\n진심으로 환영합니다.',
     navItems: [
