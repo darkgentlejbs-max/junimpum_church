@@ -13,7 +13,7 @@ const DEFAULT_HOME = {
   headlineLine1: "믿음 · 소망 · 사랑으로",
   headlineLine2: "세워 가는 따뜻한 공동체",
   subtitle:
-    "하나님의 은혜와 사랑이 머무는 곳,\n주님품처럼 따뜻한 안식과 회복이 있는 주님품교회에 오신 것을\n진심으로 환영합니다.",
+    "하나님의 은혜와 사랑이 머무는 곳,\n주님품처럼 따뜻한 안식과 회복이 있는\n주님품교회에 오신 것을\n진심으로 환영합니다.",
   navItems: [
     {
       no: "01",
@@ -67,7 +67,9 @@ export default function Home() {
           let loadedSubtitle = res.config.home.subtitle || DEFAULT_HOME.subtitle;
           if (
             loadedSubtitle ===
-            "하나님의 은혜와 사랑이 머무는 곳, 주님품처럼 따뜻한 안식과 회복이 있는 주님품교회에 오신 것을 진심으로 환영합니다."
+              "하나님의 은혜와 사랑이 머무는 곳, 주님품처럼 따뜻한 안식과 회복이 있는 주님품교회에 오신 것을 진심으로 환영합니다." ||
+            loadedSubtitle ===
+              "하나님의 은혜와 사랑이 머무는 곳,\n주님품처럼 따뜻한 안식과 회복이 있는 주님품교회에 오신 것을\n진심으로 환영합니다."
           ) {
             loadedSubtitle = DEFAULT_HOME.subtitle;
           }
@@ -204,7 +206,20 @@ export default function Home() {
               </h1>
 
               <p className="text-stone-500 text-sm font-normal leading-relaxed mb-8 max-w-lg whitespace-pre-line break-keep">
-                {homeData.subtitle}
+                {homeData.subtitle
+                  .split(/(주님품교회|환영합니다)/g)
+                  .map((part, idx) =>
+                    part === "주님품교회" || part === "환영합니다" ? (
+                      <strong
+                        key={idx}
+                        className="text-base sm:text-lg font-bold text-stone-800"
+                      >
+                        {part}
+                      </strong>
+                    ) : (
+                      part
+                    )
+                  )}
               </p>
 
               {/* Right Navigation Bar */}
