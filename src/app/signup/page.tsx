@@ -28,7 +28,7 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [role, setRole] = useState("성도");
-  const [organization, setOrganization] = useState("남선교회");
+  const [organization, setOrganization] = useState("");
   const [inPraiseTeam, setInPraiseTeam] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -265,16 +265,7 @@ export default function SignupPage() {
                 />
                 <select
                   value={role}
-                  onChange={(e) => {
-                    const nextRole = e.target.value;
-                    setRole(nextRole);
-                    if (nextRole === "교역자") {
-                      setOrganization("");
-                      setInPraiseTeam(false);
-                    } else if (!organization) {
-                      setOrganization("남선교회");
-                    }
-                  }}
+                  onChange={(e) => setRole(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 text-sm rounded-xl border border-stone-200 bg-stone-50/50 focus:bg-white focus:outline-none focus:border-amber-600 transition-colors"
                 >
                   {ROLES.map((r) => (
@@ -292,13 +283,13 @@ export default function SignupPage() {
             <div className="flex items-center justify-between mb-2">
               <label className="flex items-center gap-1.5 text-xs font-semibold text-stone-700">
                 <Users size={14} className="text-amber-700" />
-                <span>소속기관 {role === "교역자" && <span className="text-stone-400 font-normal">(선택 안 함 가능)</span>}</span>
-              </label>
-              {role === "교역자" && (
-                <span className="text-[11px] font-medium text-amber-800">
-                  * 교역자는 선택하지 않아도 가입됩니다
+                <span>
+                  소속기관 <span className="text-stone-400 font-normal">(선택)</span>
                 </span>
-              )}
+              </label>
+              <span className="text-[11px] text-stone-400">
+                선택하지 않아도 가입 가능합니다
+              </span>
             </div>
             <div className="grid grid-cols-3 gap-2">
               {ORGANIZATIONS.map((org) => {
