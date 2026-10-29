@@ -217,7 +217,7 @@ export default function Home() {
                     part === "주님품교회" || part === "환영합니다" ? (
                       <strong
                         key={idx}
-                        className="text-base sm:text-lg font-bold text-stone-800"
+                        className="text-base sm:text-lg font-semibold text-stone-600"
                       >
                         {part}
                       </strong>
