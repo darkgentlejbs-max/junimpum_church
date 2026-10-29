@@ -124,10 +124,10 @@ export default function AdminMembersPage() {
             <ShieldCheck size={28} />
           </div>
           <h1 className="text-xl font-bold text-stone-900 mb-2">
-            마스터(교역자) 전용 메뉴입니다
+            마스터(담임목사 · 사모) 전용 메뉴입니다
           </h1>
           <p className="text-sm text-stone-500 leading-relaxed mb-6">
-            회원 승인 및 교인 명부 관리는 교역자(마스터) 계정으로 로그인 후 이용하실 수 있습니다.
+            회원 승인 및 교인 명부 관리는 담임목사님 또는 사모님 계정으로 로그인 후 이용하실 수 있습니다.
           </p>
           <div className="flex gap-3">
             <Link

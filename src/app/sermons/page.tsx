@@ -1,10 +1,24 @@
-import { getSermons } from "@/lib/notion";
+import { getSermons, findMemberByEmail } from "@/lib/notion";
+import { getCurrentUser, isMasterRole } from "@/lib/auth";
 import SermonView from "@/components/SermonView";
+import MasterWriteButton from "@/components/MasterWriteModal";
 
 export const dynamic = "force-dynamic";
 
 export default async function SermonsPage() {
-  const sermons = await getSermons();
+  const [sermons, user] = await Promise.all([getSermons(), getCurrentUser()]);
+
+  let canWrite = isMasterRole(user?.role);
+  if (!canWrite && user?.email) {
+    try {
+      const liveMember = await findMemberByEmail(user.email);
+      if (liveMember && isMasterRole(liveMember.role)) {
+        canWrite = true;
+      }
+    } catch {
+      // ignore
+    }
+  }
 
   // 노션에 데이터가 하나도 없을 경우의 기본값
   if (sermons.length === 0) {
@@ -32,9 +46,14 @@ export default async function SermonsPage() {
           <p className="text-sm text-stone-500 mt-2">
             매주 선포되는 하나님의 귀한 말씀을 함께 나눕니다
           </p>
+          {canWrite && (
+            <div className="mt-4">
+              <MasterWriteButton menuType="sermon" buttonLabel="설교 글쓰기" />
+            </div>
+          )}
         </div>
 
-        <SermonView sermons={sermons} />
+        <SermonView sermons={sermons} canWrite={canWrite} />
       </div>
     </div>
   );

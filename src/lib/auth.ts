@@ -17,10 +17,13 @@ export interface SessionUser {
 export function isMasterRole(role?: string): boolean {
   if (!role) return false;
   return (
+    role === '담임목사' ||
+    role === '사모' ||
     role === '교역자' ||
     role === '마스터' ||
     role === '관리자' ||
     role.includes('목사') ||
+    role.includes('사모') ||
     role.includes('전도사')
   );
 }

@@ -17,7 +17,7 @@ import {
   Loader2,
 } from "lucide-react";
 
-const ROLES = ["성도", "새가족", "집사", "권사", "장로", "교역자"];
+const ROLES = ["성도", "새가족", "집사", "권사", "장로", "담임목사", "사모"];
 const ORGANIZATIONS = ["남선교회", "여전도회", "학생부"];
 
 export default function SignupPage() {

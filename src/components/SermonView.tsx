@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { PlayCircle, Calendar, User, X } from "lucide-react";
+import { MasterDeleteButton } from "@/components/MasterWriteModal";
 
 function getYouTubeId(url: string): string | null {
   if (!url) return null;
@@ -11,7 +12,13 @@ function getYouTubeId(url: string): string | null {
   return match ? match[1] : null;
 }
 
-export default function SermonView({ sermons }: { sermons: any[] }) {
+export default function SermonView({
+  sermons,
+  canWrite = false,
+}: {
+  sermons: any[];
+  canWrite?: boolean;
+}) {
   const [activeSermon, setActiveSermon] = useState<any | null>(null);
   const [playingInFeatured, setPlayingInFeatured] = useState(false);
 
@@ -91,10 +98,11 @@ export default function SermonView({ sermons }: { sermons: any[] }) {
                 </p>
               </div>
             </div>
-            <div className="mt-8">
+            <div className="mt-8 flex items-center justify-between gap-2">
               <span className="text-xs font-medium text-amber-700 group-hover:text-amber-800 flex items-center gap-1">
                 {featured.videoUrl ? "설교 영상 시청하기 \u2192" : "영상 준비 중"}
               </span>
+              {canWrite && <MasterDeleteButton id={featured.id} />}
             </div>
           </div>
         </div>
@@ -151,7 +159,10 @@ export default function SermonView({ sermons }: { sermons: any[] }) {
                   <span className="flex items-center gap-1.5">
                     <Calendar size={14} /> {sermon.date}
                   </span>
-                  <span>{sermon.preacher}</span>
+                  <div className="flex items-center gap-2">
+                    <span>{sermon.preacher}</span>
+                    {canWrite && <MasterDeleteButton id={sermon.id} />}
+                  </div>
                 </div>
               </div>
             </div>

@@ -1,7 +1,8 @@
-import { getBulletins } from "@/lib/notion";
-import { getCurrentUser } from "@/lib/auth";
+import { getBulletins, findMemberByEmail } from "@/lib/notion";
+import { getCurrentUser, isMasterRole } from "@/lib/auth";
 import { FileText, Download, Lock, LogIn, UserPlus } from "lucide-react";
 import Link from "next/link";
+import MasterWriteButton, { MasterDeleteButton } from "@/components/MasterWriteModal";
 
 export const dynamic = "force-dynamic";
 
@@ -57,6 +58,18 @@ export default async function BulletinsPage() {
 
   const bulletins = await getBulletins();
 
+  let canWrite = isMasterRole(user.role);
+  if (!canWrite && user.email) {
+    try {
+      const liveMember = await findMemberByEmail(user.email);
+      if (liveMember && isMasterRole(liveMember.role)) {
+        canWrite = true;
+      }
+    } catch {
+      // ignore
+    }
+  }
+
   return (
     <div className="py-8 sm:py-16 bg-[#FAF9F6] min-h-screen text-stone-800">
       <div className="container mx-auto px-3 sm:px-6 max-w-4xl">
@@ -75,11 +88,16 @@ export default async function BulletinsPage() {
 
         {/* Bulletin List */}
         <div className="bg-white p-5 sm:p-9 rounded-2xl sm:rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80">
-          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-stone-100">
-            <div className="w-8 h-8 rounded-lg bg-amber-100/70 text-amber-800 flex items-center justify-center">
-              <FileText size={16} />
+          <div className="flex items-center justify-between gap-3 mb-6 pb-4 border-b border-stone-100">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-amber-100/70 text-amber-800 flex items-center justify-center">
+                <FileText size={16} />
+              </div>
+              <h2 className="text-xl font-semibold text-stone-900">주보 목록</h2>
             </div>
-            <h2 className="text-xl font-semibold text-stone-900">주보 목록</h2>
+            {canWrite && (
+              <MasterWriteButton menuType="bulletin" buttonLabel="주보 글쓰기" />
+            )}
           </div>
 
           <div className="space-y-3">
@@ -97,15 +115,18 @@ export default async function BulletinsPage() {
                       {bulletin.title}
                     </h3>
                   </div>
-                  <a
-                    href={bulletin.fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2 mt-3 sm:mt-0 bg-white border border-stone-200 text-stone-600 rounded-lg text-sm font-medium hover:bg-stone-100 hover:text-stone-900 transition-colors shrink-0"
-                  >
-                    <Download size={16} />
-                    <span>다운로드</span>
-                  </a>
+                  <div className="flex items-center gap-2 mt-3 sm:mt-0 shrink-0">
+                    {canWrite && <MasterDeleteButton id={bulletin.id} />}
+                    <a
+                      href={bulletin.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-4 py-2 bg-white border border-stone-200 text-stone-600 rounded-lg text-sm font-medium hover:bg-stone-100 hover:text-stone-900 transition-colors shrink-0"
+                    >
+                      <Download size={16} />
+                      <span>다운로드</span>
+                    </a>
+                  </div>
                 </div>
               ))
             ) : (

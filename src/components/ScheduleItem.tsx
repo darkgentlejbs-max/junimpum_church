@@ -2,8 +2,15 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { MasterDeleteButton } from "@/components/MasterWriteModal";
 
-export default function ScheduleItem({ item }: { item: any }) {
+export default function ScheduleItem({
+  item,
+  canWrite = false,
+}: {
+  item: any;
+  canWrite?: boolean;
+}) {
   const [isOpen, setIsOpen] = useState(false);
 
   const dateObj = new Date(item.date);
@@ -38,10 +45,11 @@ export default function ScheduleItem({ item }: { item: any }) {
           </h3>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <div className="hidden sm:flex text-sm text-stone-400 font-medium w-auto min-w-[3rem] justify-end whitespace-nowrap">
             {dayName}
           </div>
+          {canWrite && <MasterDeleteButton id={item.id} />}
           {item.content && (
             <ChevronDown
               size={18}

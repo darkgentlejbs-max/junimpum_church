@@ -3,8 +3,15 @@
 import { useState } from "react";
 import Image from "next/image";
 import { BookOpen, X } from "lucide-react";
+import { MasterDeleteButton } from "@/components/MasterWriteModal";
 
-export default function DalDalGallery({ daldals }: { daldals: any[] }) {
+export default function DalDalGallery({
+  daldals,
+  canWrite = false,
+}: {
+  daldals: any[];
+  canWrite?: boolean;
+}) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   if (daldals.length === 0) {
@@ -44,7 +51,10 @@ export default function DalDalGallery({ daldals }: { daldals: any[] }) {
             </div>
             <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
               <div>
-                <span className="text-xs font-mono text-amber-700 font-medium mb-2 block">{item.date}</span>
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <span className="text-xs font-mono text-amber-700 font-medium block">{item.date}</span>
+                  {canWrite && <MasterDeleteButton id={item.id} />}
+                </div>
                 <h3 className="text-sm font-semibold text-stone-800 line-clamp-2">{item.title}</h3>
               </div>
             </div>

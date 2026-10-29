@@ -1,6 +1,8 @@
 import Link from "next/link";
-import { getGallery } from "@/lib/notion";
+import { getGallery, findMemberByEmail } from "@/lib/notion";
+import { getCurrentUser, isMasterRole } from "@/lib/auth";
 import { ImageIcon } from "lucide-react";
+import MasterWriteButton, { MasterDeleteButton } from "@/components/MasterWriteModal";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +13,19 @@ export default async function GalleryPage({
 }) {
   const params = await searchParams;
   const activeCategory = params?.category || "all";
-  const allPhotos = await getGallery();
+  const [allPhotos, user] = await Promise.all([getGallery(), getCurrentUser()]);
+
+  let canWrite = isMasterRole(user?.role);
+  if (!canWrite && user?.email) {
+    try {
+      const liveMember = await findMemberByEmail(user.email);
+      if (liveMember && isMasterRole(liveMember.role)) {
+        canWrite = true;
+      }
+    } catch {
+      // ignore
+    }
+  }
 
   const categories = [
     { key: "all", label: "전체 사진첩" },
@@ -54,6 +68,25 @@ export default async function GalleryPage({
           <p className="text-sm text-stone-500 mt-2">
             주님품교회의 은혜로운 순간들을 나눕니다
           </p>
+          {canWrite && (
+            <div className="mt-4">
+              <MasterWriteButton
+                menuType="gallery"
+                buttonLabel="사진 · 영상 글쓰기"
+                defaultCategory={
+                  activeCategory === "men"
+                    ? "남선교회"
+                    : activeCategory === "women"
+                    ? "여전도회"
+                    : activeCategory === "school"
+                    ? "학생부"
+                    : activeCategory === "worship"
+                    ? "찬양단"
+                    : "전체"
+                }
+              />
+            </div>
+          )}
         </div>
 
         {/* Category Tabs */}
@@ -142,11 +175,14 @@ export default async function GalleryPage({
                       </div>
                     )}
                   </div>
-                  <div className="p-5">
-                    <h3 className="font-semibold text-stone-900 line-clamp-1">
-                      {photo.title}
-                    </h3>
-                    <p className="text-sm text-stone-500 mt-1">{photo.date}</p>
+                  <div className="p-5 flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <h3 className="font-semibold text-stone-900 line-clamp-1">
+                        {photo.title}
+                      </h3>
+                      <p className="text-sm text-stone-500 mt-1">{photo.date}</p>
+                    </div>
+                    {canWrite && <MasterDeleteButton id={photo.pageId || photo.id} />}
                   </div>
                 </a>
               );

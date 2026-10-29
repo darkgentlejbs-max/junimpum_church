@@ -1,15 +1,32 @@
 import Link from "next/link";
 import { Bell, FileText, Image as ImageIcon, Calendar } from "lucide-react";
-import { getNews, getSchedule } from "@/lib/notion";
+import { getNews, getSchedule, findMemberByEmail } from "@/lib/notion";
+import { getCurrentUser, isMasterRole } from "@/lib/auth";
 import NoticeItem from "@/components/NoticeItem";
 import ScheduleItem from "@/components/ScheduleItem";
+import MasterWriteButton from "@/components/MasterWriteModal";
 
 export const dynamic = 'force-dynamic';
 
 export default async function NewsPage() {
-  const rawNotices = await getNews();
+  const [rawNotices, schedules, user] = await Promise.all([
+    getNews(),
+    getSchedule(),
+    getCurrentUser(),
+  ]);
   const notices = rawNotices.filter((n: any) => !n.title?.startsWith("[사역공지:"));
-  const schedules = await getSchedule();
+
+  let canWrite = isMasterRole(user?.role);
+  if (!canWrite && user?.email) {
+    try {
+      const liveMember = await findMemberByEmail(user.email);
+      if (liveMember && isMasterRole(liveMember.role)) {
+        canWrite = true;
+      }
+    } catch {
+      // ignore
+    }
+  }
 
   if (notices.length === 0) {
     notices.push({
@@ -52,12 +69,15 @@ export default async function NewsPage() {
                   </div>
                   <h2 className="text-xl font-semibold text-stone-900">교회 소식</h2>
                 </div>
+                {canWrite && (
+                  <MasterWriteButton menuType="news" buttonLabel="소식 글쓰기" />
+                )}
               </div>
               <p className="text-xs sm:text-sm text-stone-500 pl-0 sm:pl-[44px] mt-1 sm:mt-0">우리는 부드럽고, 따뜻하고, 겸손한 주님품교회의 성도입니다.</p>
             </div>
             <ul className="divide-y divide-stone-100">
               {notices.map((notice: any) => (
-                <NoticeItem key={notice.id} notice={notice} />
+                <NoticeItem key={notice.id} notice={notice} canWrite={canWrite} />
               ))}
             </ul>
           </section>
@@ -65,18 +85,23 @@ export default async function NewsPage() {
           {/* Schedule Section */}
           <section id="schedule" className="bg-white p-5 sm:p-9 rounded-2xl sm:rounded-3xl shadow-[0_2px_16px_rgba(0,0,0,0.03)] border border-stone-200/80">
             <div className="mb-5 sm:mb-6 pb-4 border-b border-stone-100">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-8 rounded-lg bg-amber-100/70 text-amber-800 flex items-center justify-center shrink-0">
-                  <Calendar size={16} />
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-amber-100/70 text-amber-800 flex items-center justify-center shrink-0">
+                    <Calendar size={16} />
+                  </div>
+                  <h2 className="text-xl font-semibold text-stone-900">교회 일정</h2>
                 </div>
-                <h2 className="text-xl font-semibold text-stone-900">교회 일정</h2>
+                {canWrite && (
+                  <MasterWriteButton menuType="schedule" buttonLabel="일정 글쓰기" />
+                )}
               </div>
               <p className="text-xs sm:text-sm text-stone-500 pl-0 sm:pl-[44px] mt-1 sm:mt-0">주님품교회의 다가오는 주요 일정입니다.</p>
             </div>
             
             <div className="space-y-4">
               {schedules.map((item: any) => (
-                <ScheduleItem key={item.id} item={item} />
+                <ScheduleItem key={item.id} item={item} canWrite={canWrite} />
               ))}
             </div>
           </section>

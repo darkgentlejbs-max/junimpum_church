@@ -362,7 +362,7 @@ export default function Header() {
           <div className="pl-4 ml-2 border-l border-stone-200 flex items-center space-x-3">
             {user ? (
               <>
-                {(user.isMaster || user.role === "교역자") && (
+                {(user.isMaster || user.role === "담임목사" || user.role === "사모" || user.role === "교역자") && (
                   <Link
                     href="/admin/members"
                     className="inline-flex items-center gap-1 text-xs font-semibold text-amber-800 bg-amber-100/80 border border-amber-300/80 px-2.5 py-1.5 rounded-full hover:bg-amber-200/80 transition-colors"
@@ -607,7 +607,7 @@ export default function Header() {
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      {(user.isMaster || user.role === "교역자") && (
+                      {(user.isMaster || user.role === "담임목사" || user.role === "사모" || user.role === "교역자") && (
                         <Link
                           href="/admin/members"
                           onClick={() => setMobileMenuOpen(false)}
