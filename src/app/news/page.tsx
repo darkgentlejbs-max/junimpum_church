@@ -14,7 +14,9 @@ export default async function NewsPage() {
     getSchedule(),
     getCurrentUser(),
   ]);
-  const notices = rawNotices.filter((n: any) => !n.title?.startsWith("[사역공지:"));
+  const notices = rawNotices.filter(
+    (n: any) => !n.title?.startsWith("[사역공지:") && !n.title?.startsWith("[사이트설정:")
+  );
 
   let canWrite = isMasterRole(user?.role);
   if (!canWrite && user?.email) {

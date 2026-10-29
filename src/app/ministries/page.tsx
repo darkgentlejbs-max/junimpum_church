@@ -1,17 +1,31 @@
 import Link from "next/link";
 import { Users, Music, BookOpen, ImageIcon, ArrowUpRight } from "lucide-react";
-import { getGallery, getMinistryNotices, findMemberByEmail } from "@/lib/notion";
-import { getCurrentUser, canAccessDepartmentBoard } from "@/lib/auth";
+import {
+  getGallery,
+  getMinistryNotices,
+  findMemberByEmail,
+  getSiteConfig,
+  DEFAULT_SITE_CONFIG,
+} from "@/lib/notion";
+import { getCurrentUser, canAccessDepartmentBoard, isMasterRole } from "@/lib/auth";
 import MinistryNoticeBoard from "@/components/MinistryNoticeBoard";
+import MinistriesEditModal from "@/components/MinistriesEditModal";
+import { MasterEditButton, MasterDeleteButton } from "@/components/MasterWriteModal";
 
 export const dynamic = "force-dynamic";
 
 export default async function MinistriesPage() {
-  const [allPhotos, ministryNotices, user] = await Promise.all([
+  const [allPhotos, ministryNotices, user, siteConfig] = await Promise.all([
     getGallery(),
     getMinistryNotices(),
     getCurrentUser(),
+    getSiteConfig(),
   ]);
+
+  const minCfg = {
+    ...DEFAULT_SITE_CONFIG.ministries,
+    ...(siteConfig?.ministries || {}),
+  };
 
   let userDepts: string[] = user?.departments || [];
   let userRole: string = user?.role || "";
@@ -39,6 +53,7 @@ export default async function MinistriesPage() {
     userRole = "사모";
   }
 
+  const isMaster = isMasterRole(userRole);
   const currentUserInfo = user ? { name: userName, role: userRole } : null;
 
   const menPhotos = allPhotos.filter((p: any) => p.title?.includes("남선교"));
@@ -64,11 +79,14 @@ export default async function MinistriesPage() {
             Community & Ministries
           </span>
           <h1 className="text-2xl sm:text-4xl font-semibold text-stone-900 tracking-tight">
-            사역 및 기관
+            {minCfg.pageTitle}
           </h1>
-          <p className="text-sm text-stone-500 mt-2">
-            각자의 은사대로 교회를 세우고 이웃을 섬기는 사역 공동체입니다
-          </p>
+          <p className="text-sm text-stone-500 mt-2">{minCfg.pageSubtitle}</p>
+          {isMaster && (
+            <div className="mt-4">
+              <MinistriesEditModal initialConfig={minCfg} />
+            </div>
+          )}
         </div>
 
         <div className="space-y-4 sm:space-y-8">
@@ -82,10 +100,10 @@ export default async function MinistriesPage() {
             </div>
             <div className="flex-1 w-full">
               <h2 className="text-lg sm:text-xl font-semibold mb-2 text-stone-900">
-                기관
+                {minCfg.fellowshipsTitle}
               </h2>
-              <p className="text-stone-600 text-sm leading-relaxed mb-5">
-                성도 간의 진실한 교제와 기도를 통해 그리스도의 한 몸을 이루고 사랑을 나누는 기관입니다.
+              <p className="text-stone-600 text-sm leading-relaxed mb-5 whitespace-pre-line">
+                {minCfg.fellowshipsDesc}
               </p>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
@@ -97,7 +115,7 @@ export default async function MinistriesPage() {
                   <div>
                     <div className="flex items-center justify-between gap-2">
                       <h3 className="text-base sm:text-lg font-semibold text-stone-900">
-                        남선교회
+                        {minCfg.menTitle}
                       </h3>
                       <Link
                         href="/gallery?category=men"
@@ -112,27 +130,40 @@ export default async function MinistriesPage() {
                     {menPhotos.length > 0 && (
                       <div className="grid grid-cols-2 gap-2.5 mt-3 pt-3 border-t border-stone-200/60">
                         {menPhotos.slice(0, 4).map((photo: any) => (
-                          <a
+                          <div
                             key={photo.id}
-                            href={photo.imageUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="group rounded-xl overflow-hidden border border-stone-200/80 bg-white block"
+                            className="group rounded-xl overflow-hidden border border-stone-200/80 bg-white flex flex-col"
                           >
-                            <div className="aspect-[4/3] overflow-hidden bg-stone-100">
+                            <a
+                              href={photo.imageUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="aspect-[4/3] overflow-hidden bg-stone-100 block"
+                            >
                               {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
                                 src={photo.imageUrl}
                                 alt={photo.title}
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                               />
-                            </div>
-                            <div className="p-2">
-                              <p className="text-[11px] font-semibold text-stone-800 line-clamp-1">
+                            </a>
+                            <div className="p-2 flex items-center justify-between gap-1">
+                              <a
+                                href={photo.imageUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[11px] font-semibold text-stone-800 line-clamp-1 flex-1"
+                              >
                                 {photo.title}
-                              </p>
+                              </a>
+                              {isMaster && (
+                                <div className="flex items-center gap-1 shrink-0">
+                                  <MasterEditButton menuType="gallery" item={photo} />
+                                  <MasterDeleteButton id={photo.pageId || photo.id} />
+                                </div>
+                              )}
                             </div>
-                          </a>
+                          </div>
                         ))}
                       </div>
                     )}
@@ -154,7 +185,7 @@ export default async function MinistriesPage() {
                   <div>
                     <div className="flex items-center justify-between gap-2">
                       <h3 className="text-base sm:text-lg font-semibold text-stone-900">
-                        여전도회
+                        {minCfg.womenTitle}
                       </h3>
                       <Link
                         href="/gallery?category=women"
@@ -169,27 +200,40 @@ export default async function MinistriesPage() {
                     {womenPhotos.length > 0 && (
                       <div className="grid grid-cols-2 gap-2.5 mt-3 pt-3 border-t border-stone-200/60">
                         {womenPhotos.slice(0, 4).map((photo: any) => (
-                          <a
+                          <div
                             key={photo.id}
-                            href={photo.imageUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="group rounded-xl overflow-hidden border border-stone-200/80 bg-white block"
+                            className="group rounded-xl overflow-hidden border border-stone-200/80 bg-white flex flex-col"
                           >
-                            <div className="aspect-[4/3] overflow-hidden bg-stone-100">
+                            <a
+                              href={photo.imageUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="aspect-[4/3] overflow-hidden bg-stone-100 block"
+                            >
                               {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
                                 src={photo.imageUrl}
                                 alt={photo.title}
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                               />
-                            </div>
-                            <div className="p-2">
-                              <p className="text-[11px] font-semibold text-stone-800 line-clamp-1">
+                            </a>
+                            <div className="p-2 flex items-center justify-between gap-1">
+                              <a
+                                href={photo.imageUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[11px] font-semibold text-stone-800 line-clamp-1 flex-1"
+                              >
                                 {photo.title}
-                              </p>
+                              </a>
+                              {isMaster && (
+                                <div className="flex items-center gap-1 shrink-0">
+                                  <MasterEditButton menuType="gallery" item={photo} />
+                                  <MasterDeleteButton id={photo.pageId || photo.id} />
+                                </div>
+                              )}
                             </div>
-                          </a>
+                          </div>
                         ))}
                       </div>
                     )}
@@ -216,21 +260,19 @@ export default async function MinistriesPage() {
             </div>
             <div className="flex-1 w-full">
               <h2 className="text-lg sm:text-xl font-semibold mb-2 text-stone-900">
-                교회학교
+                {minCfg.schoolTitle}
               </h2>
-              <p className="text-stone-600 text-sm leading-relaxed mb-5">
-                다음 세대를 하나님의 말씀과 사랑으로 양육하는 부서입니다. 아이들의 눈높이에 맞춘 예배와 성경 공부를 통해 신앙의 뿌리를 바르게 내릴 수 있도록 돕습니다.
+              <p className="text-stone-600 text-sm leading-relaxed mb-5 whitespace-pre-line">
+                {minCfg.schoolDesc}
               </p>
 
               <div className="bg-stone-50/80 p-4 sm:p-5 rounded-2xl border border-stone-200/70">
                 <div className="flex items-center justify-between gap-2 mb-1">
                   <div>
                     <h4 className="text-sm sm:text-base font-semibold text-stone-900 mb-0.5">
-                      학생부
+                      {minCfg.schoolSubTitle}
                     </h4>
-                    <p className="text-xs text-stone-500">
-                      주일 오전 11:00 / 본관 1층
-                    </p>
+                    <p className="text-xs text-stone-500">{minCfg.schoolTimePlace}</p>
                   </div>
                   <Link
                     href="/gallery?category=school"
@@ -245,30 +287,45 @@ export default async function MinistriesPage() {
                 {schoolPhotos.length > 0 && (
                   <div className="mt-3 pt-3 border-t border-stone-200/60 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     {schoolPhotos.slice(0, 6).map((photo: any) => (
-                      <a
+                      <div
                         key={photo.id}
-                        href={photo.imageUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group rounded-2xl overflow-hidden border border-stone-200/80 bg-white block"
+                        className="group rounded-2xl overflow-hidden border border-stone-200/80 bg-white flex flex-col"
                       >
-                        <div className="aspect-[4/3] overflow-hidden bg-stone-100">
+                        <a
+                          href={photo.imageUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="aspect-[4/3] overflow-hidden bg-stone-100 block"
+                        >
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={photo.imageUrl}
                             alt={photo.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
+                        </a>
+                        <div className="p-3 flex items-center justify-between gap-1.5">
+                          <a
+                            href={photo.imageUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="min-w-0 flex-1 block"
+                          >
+                            <p className="text-xs font-semibold text-stone-800 line-clamp-1">
+                              {photo.title}
+                            </p>
+                            <p className="text-[11px] text-stone-400 mt-0.5">
+                              {photo.date}
+                            </p>
+                          </a>
+                          {isMaster && (
+                            <div className="flex items-center gap-1 shrink-0">
+                              <MasterEditButton menuType="gallery" item={photo} />
+                              <MasterDeleteButton id={photo.pageId || photo.id} />
+                            </div>
+                          )}
                         </div>
-                        <div className="p-3">
-                          <p className="text-xs font-semibold text-stone-800 line-clamp-1">
-                            {photo.title}
-                          </p>
-                          <p className="text-[11px] text-stone-400 mt-0.5">
-                            {photo.date}
-                          </p>
-                        </div>
-                      </a>
+                      </div>
                     ))}
                   </div>
                 )}
@@ -295,10 +352,10 @@ export default async function MinistriesPage() {
               <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
                 <div>
                   <h2 className="text-lg sm:text-xl font-semibold text-stone-900">
-                    찬양팀(부따겸 찬양단)
+                    {minCfg.worshipTitle}
                   </h2>
-                  <p className="text-stone-600 text-sm leading-relaxed mt-1">
-                    예배 찬양 인도
+                  <p className="text-stone-600 text-sm leading-relaxed mt-1 whitespace-pre-line">
+                    {minCfg.worshipDesc}
                   </p>
                 </div>
                 <Link
@@ -315,30 +372,45 @@ export default async function MinistriesPage() {
                 {worshipPhotos.length > 0 && (
                   <div className="mb-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     {worshipPhotos.slice(0, 6).map((photo: any) => (
-                      <a
+                      <div
                         key={photo.id}
-                        href={photo.imageUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group rounded-2xl overflow-hidden border border-stone-200/80 bg-white block"
+                        className="group rounded-2xl overflow-hidden border border-stone-200/80 bg-white flex flex-col"
                       >
-                        <div className="aspect-[4/3] overflow-hidden bg-stone-100">
+                        <a
+                          href={photo.imageUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="aspect-[4/3] overflow-hidden bg-stone-100 block"
+                        >
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={photo.imageUrl}
                             alt={photo.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
+                        </a>
+                        <div className="p-3 flex items-center justify-between gap-1.5">
+                          <a
+                            href={photo.imageUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="min-w-0 flex-1 block"
+                          >
+                            <p className="text-xs font-semibold text-stone-800 line-clamp-1">
+                              {photo.title}
+                            </p>
+                            <p className="text-[11px] text-stone-400 mt-0.5">
+                              {photo.date}
+                            </p>
+                          </a>
+                          {isMaster && (
+                            <div className="flex items-center gap-1 shrink-0">
+                              <MasterEditButton menuType="gallery" item={photo} />
+                              <MasterDeleteButton id={photo.pageId || photo.id} />
+                            </div>
+                          )}
                         </div>
-                        <div className="p-3">
-                          <p className="text-xs font-semibold text-stone-800 line-clamp-1">
-                            {photo.title}
-                          </p>
-                          <p className="text-[11px] text-stone-400 mt-0.5">
-                            {photo.date}
-                          </p>
-                        </div>
-                      </a>
+                      </div>
                     ))}
                   </div>
                 )}

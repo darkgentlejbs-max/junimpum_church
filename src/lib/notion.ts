@@ -1777,6 +1777,255 @@ export async function updateGalleryItem(params: {
   });
 }
 
+export const DEFAULT_SITE_CONFIG = {
+  home: {
+    badgeText: '대한예수교장로회(통합) 주님품교회',
+    imageCaptionLeft: '대한예수교장로회(통합)',
+    imageCaptionRight: '주님품교회 전경',
+    headlineLine1: '믿음 · 소망 · 사랑으로',
+    headlineLine2: '세워져 가는 따뜻한 공동체',
+    subtitle:
+      '하나님의 은혜와 사랑이 머무는 곳, 주님품처럼 따뜻한 안식과 회복이 있는 주님품교회에 오신 것을 진심으로 환영합니다.',
+    navItems: [
+      {
+        no: '01',
+        title: '교회 소개',
+        desc: '비전, 담임목사 인사말, 예배 시간 및 오시는 길',
+        href: '/about',
+      },
+      {
+        no: '02',
+        title: '예배 · 말씀',
+        desc: '주일 대예배 설교 영상 및 온라인 예배',
+        href: '/sermons',
+      },
+      {
+        no: '03',
+        title: '사역 · 기관',
+        desc: '교회학교, 찬양대, 선교회 및 봉사 부서',
+        href: '/ministries',
+      },
+      {
+        no: '04',
+        title: '소식 · 일정',
+        desc: '교회 소식, 교회 일정, 주보 다운로드',
+        href: '/news',
+      },
+    ],
+    cards: {
+      worshipTitle: '예배 시간 안내',
+      worshipDesc:
+        '주일 대예배(오전 11시), 수요예배, 금요 다함께 기도회, 새벽기도회 안내입니다.',
+      sermonTitle: '말씀 영상',
+      sermonDesc: '주일 예배 설교와 은혜로운 찬양 영상을 온라인으로 나눕니다.',
+      locationTitle: '오시는 길',
+      locationAddress: '전남 여수시 여서동 7길 28',
+      locationSub: '대한예수교장로회(통합) 주님품교회',
+    },
+  },
+  about: {
+    pageTitle: '교회 소개',
+    pageSubtitle: '대한예수교장로회(통합) 주님품교회를 소개합니다',
+    greeting: {
+      sectionTitle: '목회자 인사말',
+      headline: '“평안하시지요?”',
+      bodyText: `주님품교회를 방문해 주신 당신에게
+하나님의 크신 은혜와 평강이 임하기를 축복합니다.
+
+교회의 궁극적인 목적은
+‘하나님이 원하시고, 기뻐하시는 교회를 이루어 가는 것’이며,
+그 중심에는 ‘한 영혼에 대한 소중함’이 있습니다.
+
+그러므로 주님품교회는
+한 영혼을 천하보다 귀하게 여기시는 하나님의 마음을 품고,
+영혼을 귀하게 여기고, 영혼을 살리고, 세우는 사역을 통해서
+행복한 성도들의 삶과 행복한 목회를 지향합니다.
+
+그 아름다운 비전에 함께 동참해 보십시오.
+세상에서 힘들고 지친 당신이
+주님품교회를 통해서 예수님을 만나 참 평안을 누리고,
+참 쉼을 누릴 수 있기를 소망합니다.`,
+      closing: '따뜻하고, 평안한 주님품교회로 오세요.',
+      pastorRole: '주님품교회 담임목사',
+      pastorName: '차 지 명',
+    },
+    history: [
+      {
+        period: '현재',
+        title: '지역 사회를 섬기며 미래로 나아가는 교회',
+        desc: '다음 세대 양육과 선교, 따뜻한 나눔과 구제 사역을 통해 하나님의 나라를 확장해 가고 있습니다.',
+      },
+      {
+        period: '2026년',
+        title: '교회 홈페이지 새단장 및 온라인 사역 확대',
+        desc: '성도들과의 소통 및 말씀 나눔을 위한 반응형 모바일/웹 홈페이지 구축.',
+      },
+      {
+        period: '성전 입당',
+        title: '여서동 성전 입당',
+        desc: '전남 여수시 여서동 7길 28로 입당하여 주님품 안에서 거룩한 예배 공동체로 서다.',
+      },
+    ],
+    worshipTimes: [
+      { name: '주일 대예배', time: '주일 오전 11:00', place: '본당' },
+      { name: '수요예배', time: '수요일 오후 7:30', place: '본당' },
+      { name: '금요 다함께 기도회', time: '금요일 오후 8:30', place: '본당' },
+      { name: '새벽 기도회', time: '월-금 오전 5:30', place: '본당' },
+      { name: '교회학교 예배', time: '주일 오전 11:00', place: '본관 1층' },
+    ],
+    location: {
+      address: '전남 여수시 여서동 7길 28',
+      churchName: '대한예수교장로회(통합) 주님품교회',
+      transport: '여서동 로터리 및 인근 버스정류장 하차 후 여서동 7길 방면 도보 3분',
+      parking: '교회 건물 주변 및 인근 공영주차장을 편리하게 이용하실 수 있습니다.',
+    },
+  },
+  ministries: {
+    pageTitle: '사역 및 기관',
+    pageSubtitle: '각자의 은사대로 교회를 세우고 이웃을 섬기는 사역 공동체입니다',
+    fellowshipsTitle: '기관',
+    fellowshipsDesc:
+      '성도 간의 진실한 교제와 기도를 통해 그리스도의 한 몸을 이루고 사랑을 나누는 기관입니다.',
+    menTitle: '남선교회',
+    womenTitle: '여전도회',
+    schoolTitle: '교회학교',
+    schoolDesc:
+      '다음 세대를 하나님의 말씀과 사랑으로 양육하는 부서입니다. 아이들의 눈높이에 맞춘 예배와 성경 공부를 통해 신앙의 뿌리를 바르게 내릴 수 있도록 돕습니다.',
+    schoolSubTitle: '학생부',
+    schoolTimePlace: '주일 오전 11:00 / 본관 1층',
+    worshipTitle: '찬양팀(부따겸 찬양단)',
+    worshipDesc: '예배 찬양 인도',
+  },
+};
+
+function chunkString(str: string, size = 1800): string[] {
+  const chunks: string[] = [];
+  for (let i = 0; i < str.length; i += size) {
+    chunks.push(str.slice(i, i + size));
+  }
+  return chunks.length > 0 ? chunks : [''];
+}
+
+export async function getSiteConfig() {
+  const config = JSON.parse(JSON.stringify(DEFAULT_SITE_CONFIG));
+  try {
+    const dbId = NEWS_DATABASE_ID || (await resolveMinistryNoticesDbId());
+    if (!dbId) return config;
+
+    const response = await (notion.databases as any).query({
+      database_id: dbId,
+    });
+
+    for (const page of response.results) {
+      const props = page.properties || {};
+      let rawTitle = '';
+      for (const key of Object.keys(props)) {
+        if (props[key]?.type === 'title') {
+          rawTitle = props[key]?.title?.map((t: any) => t.plain_text).join('') || '';
+          break;
+        }
+      }
+      const match = rawTitle.match(/^\[사이트설정:([^\]]+)\]$/);
+      if (!match) continue;
+      const sectionKey = match[1] as 'home' | 'about' | 'ministries';
+      const contentStr =
+        props['내용']?.rich_text?.map((t: any) => t.plain_text).join('') ||
+        props['텍스트']?.rich_text?.map((t: any) => t.plain_text).join('') ||
+        '';
+      if (contentStr && config[sectionKey]) {
+        try {
+          const parsed = JSON.parse(contentStr);
+          config[sectionKey] = {
+            ...config[sectionKey],
+            ...parsed,
+          };
+        } catch {
+          // ignore malformed JSON
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Error loading site config:', err);
+  }
+  return config;
+}
+
+export async function saveSiteConfig(
+  sectionKey: 'home' | 'about' | 'ministries',
+  data: Record<string, any>
+) {
+  const dbId = NEWS_DATABASE_ID || (await resolveMinistryNoticesDbId());
+  if (!dbId) {
+    throw new Error('설정 저장용 데이터베이스를 찾을 수 없습니다.');
+  }
+
+  const { titlePropName, props } = await getTitlePropertyName(dbId);
+  const targetTitle = `[사이트설정:${sectionKey}]`;
+
+  const response = await (notion.databases as any).query({
+    database_id: dbId,
+  });
+
+  let existingPageId = '';
+  let existingData: Record<string, any> = {};
+
+  for (const page of response.results) {
+    const pageProps = page.properties || {};
+    const titleVal =
+      pageProps[titlePropName]?.title?.map((t: any) => t.plain_text).join('') || '';
+    if (titleVal === targetTitle) {
+      existingPageId = page.id;
+      const contentStr =
+        pageProps['내용']?.rich_text?.map((t: any) => t.plain_text).join('') ||
+        pageProps['텍스트']?.rich_text?.map((t: any) => t.plain_text).join('') ||
+        '';
+      if (contentStr) {
+        try {
+          existingData = JSON.parse(contentStr);
+        } catch {
+          existingData = {};
+        }
+      }
+      break;
+    }
+  }
+
+  const merged = {
+    ...(DEFAULT_SITE_CONFIG[sectionKey] || {}),
+    ...existingData,
+    ...data,
+  };
+  const jsonChunks = chunkString(JSON.stringify(merged), 1800);
+  const richTextArr = jsonChunks.map((c) => ({ text: { content: c } }));
+
+  const properties: Record<string, any> = {
+    [titlePropName]: {
+      title: [{ text: { content: targetTitle } }],
+    },
+  };
+
+  if (props['내용']?.type === 'rich_text') {
+    properties['내용'] = { rich_text: richTextArr };
+  } else if (props['텍스트']?.type === 'rich_text') {
+    properties['텍스트'] = { rich_text: richTextArr };
+  }
+
+  if (existingPageId) {
+    await notion.pages.update({
+      page_id: existingPageId,
+      properties,
+    });
+  } else {
+    await notion.pages.create({
+      parent: { database_id: dbId },
+      properties,
+    });
+  }
+
+  return merged;
+}
+
+
 
 
 
