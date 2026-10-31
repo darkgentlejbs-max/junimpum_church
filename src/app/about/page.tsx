@@ -16,6 +16,64 @@ import {
   Loader2,
 } from "lucide-react";
 
+interface HistoryItem {
+  period: string;
+  title: string;
+  desc: string;
+}
+
+// 교회연혁 날짜 파싱 및 최신순 정렬 헬퍼
+function getHistoryItemTimestamp(item: HistoryItem): number {
+  const period = (item.period || "").trim();
+  const title = (item.title || "").trim();
+
+  // '현재' 또는 '진행중' 등은 항상 최신(가장 위)으로 처리
+  if (period.includes("현재") || period.includes("진행") || period.includes("오늘")) {
+    return 99999999;
+  }
+
+  // period 또는 title에서 연/월/일 추출 시도
+  const targetText = `${period} ${title}`;
+
+  // 1. 4자리 연도 매칭 (1900~2099)
+  const yearMatch = targetText.match(/\b(19\d\d|20\d\d)\b/) || targetText.match(/(19\d\d|20\d\d)년?/);
+  if (!yearMatch) {
+    return 0; // 날짜 식별 불가 시 가장 아래로
+  }
+  const year = parseInt(yearMatch[1], 10);
+
+  // 2. 월 매칭 (연도 뒤의 월 또는 . / - 뒤의 숫자)
+  let month = 0;
+  const monthMatch =
+    targetText.match(/(?:19\d\d|20\d\d)[.\-\s년]+(\d{1,2})월?/) ||
+    targetText.match(/(\d{1,2})월/);
+  if (monthMatch) {
+    const m = parseInt(monthMatch[1], 10);
+    if (m >= 1 && m <= 12) month = m;
+  }
+
+  // 3. 일 매칭 (월 뒤의 일 또는 . / - 뒤의 숫자)
+  let day = 0;
+  const dayMatch =
+    targetText.match(/(?:월|[.\-\s]\d{1,2})[.\-\s]+(\d{1,2})일?/) ||
+    targetText.match(/(\d{1,2})일/);
+  if (dayMatch) {
+    const d = parseInt(dayMatch[1], 10);
+    if (d >= 1 && d <= 31) day = d;
+  }
+
+  // YYYYMMDD 형태의 정수 값 계산
+  return year * 10000 + month * 100 + day;
+}
+
+export function sortHistoryItems(items: HistoryItem[]): HistoryItem[] {
+  return [...items].sort((a, b) => {
+    const scoreA = getHistoryItemTimestamp(a);
+    const scoreB = getHistoryItemTimestamp(b);
+    return scoreB - scoreA; // 최신 일자가 위로 (내림차순)
+  });
+}
+
 const DEFAULT_ABOUT = {
   pageTitle: "교회 소개",
   pageSubtitle: "대한예수교장로회(통합) 주님품교회를 소개합니다",
@@ -99,8 +157,8 @@ export default function AboutPage() {
             },
             history:
               Array.isArray(raw.history) && raw.history.length > 0
-                ? raw.history
-                : DEFAULT_ABOUT.history,
+                ? sortHistoryItems(raw.history)
+                : sortHistoryItems(DEFAULT_ABOUT.history),
             worshipTimes:
               Array.isArray(raw.worshipTimes) && raw.worshipTimes.length > 0
                 ? raw.worshipTimes
@@ -152,14 +210,21 @@ export default function AboutPage() {
     e.preventDefault();
     setSaving(true);
     try {
+      // 교회연혁 저장 시 최신 일자가 위로 오도록 자동 정렬
+      const finalFormState = {
+        ...formState,
+        history: sortHistoryItems(formState.history || []),
+      };
+
       const res = await fetch("/api/site-config", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ section: "about", data: formState }),
+        body: JSON.stringify({ section: "about", data: finalFormState }),
       });
       const json = await res.json();
       if (res.ok && json.data) {
-        setAboutData(formState);
+        setAboutData(finalFormState);
+        setFormState(finalFormState);
         setEditSection(null);
       } else {
         alert(json.error || "저장에 실패했습니다.");
@@ -629,6 +694,9 @@ export default function AboutPage() {
 
               {editSection === "history" && (
                 <div className="space-y-3">
+                  <div className="p-3 rounded-xl bg-amber-50/80 border border-amber-200 text-xs text-amber-900 leading-relaxed">
+                    💡 <strong>자동 정렬 안내:</strong> 시기(예: <span className="font-semibold text-amber-800">2026년 10월</span>, <span className="font-semibold text-amber-800">2025.04.15</span>, <span className="font-semibold text-amber-800">현재</span>)를 입력하시면, 저장 시 가장 최근 일자가 자동으로 맨 위에 오도록 정렬됩니다.
+                  </div>
                   {formState.history.map((item, idx) => (
                     <div
                       key={idx}
@@ -688,8 +756,8 @@ export default function AboutPage() {
                       setFormState({
                         ...formState,
                         history: [
+                          { period: "", title: "", desc: "" },
                           ...formState.history,
-                          { period: "연도 입력", title: "연혁 제목", desc: "" },
                         ],
                       })
                     }
