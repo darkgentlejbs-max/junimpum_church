@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
-import { getCurrentUser, isMasterRole } from '@/lib/auth';
+import { getCurrentUser, isMasterRole, hashPassword } from '@/lib/auth';
 import {
   findMemberByEmail,
   getAllMembers,
   updateMemberApproval,
+  updateMemberInfo,
   deleteMember,
 } from '@/lib/notion';
 
@@ -28,7 +29,7 @@ export async function GET() {
     const isMaster = await checkMasterPermission();
     if (!isMaster) {
       return NextResponse.json(
-        { error: '마스터(교역자) 권한이 필요합니다.' },
+        { error: '마스터(담임목사 · 사모) 권한이 필요합니다.' },
         { status: 403 }
       );
     }
@@ -49,27 +50,66 @@ export async function PATCH(request: Request) {
     const isMaster = await checkMasterPermission();
     if (!isMaster) {
       return NextResponse.json(
-        { error: '마스터(교역자) 권한이 필요합니다.' },
+        { error: '마스터(담임목사 · 사모) 권한이 필요합니다.' },
         { status: 403 }
       );
     }
 
     const body = await request.json();
-    const { id, approved } = body;
+    const {
+      id,
+      approved,
+      name,
+      email,
+      phone,
+      role,
+      departments,
+      newPassword,
+    } = body;
 
-    if (!id || typeof approved !== 'boolean') {
+    if (!id) {
       return NextResponse.json(
-        { error: '회원 ID와 승인 상태값이 필요합니다.' },
+        { error: '회원 ID가 필요합니다.' },
         { status: 400 }
       );
     }
 
-    await updateMemberApproval(id, approved);
+    // 단순 승인/승인취소 토글인 경우
+    if (
+      typeof approved === 'boolean' &&
+      name === undefined &&
+      email === undefined &&
+      phone === undefined &&
+      role === undefined &&
+      departments === undefined &&
+      !newPassword
+    ) {
+      await updateMemberApproval(id, approved);
+      return NextResponse.json({ success: true });
+    }
+
+    // 회원 정보 수정인 경우
+    const passwordHash =
+      typeof newPassword === 'string' && newPassword.trim().length > 0
+        ? hashPassword(newPassword.trim())
+        : undefined;
+
+    await updateMemberInfo({
+      id,
+      name,
+      email,
+      phone,
+      role,
+      departments,
+      approved,
+      passwordHash,
+    });
+
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error('Error updating member approval:', error);
+    console.error('Error updating member:', error);
     return NextResponse.json(
-      { error: '승인 상태 변경 중 오류가 발생했습니다.' },
+      { error: '회원 정보 수정 중 오류가 발생했습니다.' },
       { status: 500 }
     );
   }
@@ -80,7 +120,7 @@ export async function DELETE(request: Request) {
     const isMaster = await checkMasterPermission();
     if (!isMaster) {
       return NextResponse.json(
-        { error: '마스터(교역자) 권한이 필요합니다.' },
+        { error: '마스터(담임목사 · 사모) 권한이 필요합니다.' },
         { status: 403 }
       );
     }

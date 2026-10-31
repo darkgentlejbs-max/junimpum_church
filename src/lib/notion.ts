@@ -665,6 +665,100 @@ export async function updateMemberApproval(pageId: string, approved: boolean) {
   });
 }
 
+export async function updateMemberInfo(params: {
+  id: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  role?: string;
+  departments?: string[];
+  approved?: boolean;
+  passwordHash?: string;
+}) {
+  const dbId = await resolveMembersDatabaseId();
+  const db: any = await notion.databases.retrieve({ database_id: dbId });
+  const dbProps = db.properties || {};
+
+  let titlePropName = '이름';
+  for (const [key, val] of Object.entries(dbProps) as any[]) {
+    if (val?.type === 'title') {
+      titlePropName = key;
+      break;
+    }
+  }
+
+  const properties: Record<string, any> = {};
+
+  if (typeof params.name === 'string' && params.name.trim()) {
+    properties[titlePropName] = {
+      title: [{ text: { content: params.name.trim() } }],
+    };
+  }
+
+  if (typeof params.email === 'string') {
+    const cleanEmail = params.email.trim();
+    if (dbProps['아이디']?.type === 'rich_text') {
+      properties['아이디'] = { rich_text: [{ text: { content: cleanEmail } }] };
+    }
+    if (dbProps['이메일']?.type === 'rich_text') {
+      properties['이메일'] = { rich_text: [{ text: { content: cleanEmail } }] };
+    }
+  }
+
+  if (typeof params.phone === 'string' && dbProps['연락처']?.type === 'rich_text') {
+    properties['연락처'] = {
+      rich_text: [{ text: { content: params.phone.trim() } }],
+    };
+  }
+
+  if (typeof params.role === 'string' && params.role.trim()) {
+    if (dbProps['직분']?.type === 'select') {
+      properties['직분'] = { select: { name: params.role.trim() } };
+    } else if (dbProps['직분']?.type === 'rich_text') {
+      properties['직분'] = { rich_text: [{ text: { content: params.role.trim() } }] };
+    }
+  }
+
+  if (Array.isArray(params.departments)) {
+    const depts = params.departments.filter(Boolean);
+    if (dbProps['소속기관']?.type === 'multi_select') {
+      properties['소속기관'] = {
+        multi_select: depts.map((d) => ({ name: d })),
+      };
+    } else if (dbProps['소속기관']?.type === 'select') {
+      properties['소속기관'] = {
+        select: depts.length > 0 ? { name: depts[0] } : null,
+      };
+    } else if (dbProps['소속기관']?.type === 'rich_text') {
+      properties['소속기관'] = {
+        rich_text: [{ text: { content: depts.join(', ') } }],
+      };
+    }
+  }
+
+  if (typeof params.approved === 'boolean') {
+    const targetStatus = params.approved ? '승인완료' : '승인대기';
+    if (dbProps['승인상태']?.type === 'select') {
+      properties['승인상태'] = { select: { name: targetStatus } };
+    } else if (dbProps['승인상태']?.type === 'rich_text') {
+      properties['승인상태'] = {
+        rich_text: [{ text: { content: targetStatus } }],
+      };
+    }
+  }
+
+  if (params.passwordHash && dbProps['비밀번호']?.type === 'rich_text') {
+    properties['비밀번호'] = {
+      rich_text: [{ text: { content: params.passwordHash } }],
+    };
+  }
+
+  await notion.pages.update({
+    page_id: params.id,
+    properties,
+  });
+}
+
 export async function deleteMember(pageId: string) {
   await notion.pages.update({
     page_id: pageId,

@@ -337,6 +337,19 @@ export default function Header() {
           <Link href="/gallery" className="hover:text-amber-700 transition-colors">
             갤러리
           </Link>
+          {user &&
+            (user.isMaster ||
+              user.role === "담임목사" ||
+              user.role === "사모" ||
+              user.role === "교역자") && (
+              <Link
+                href="/admin/members"
+                className="inline-flex items-center gap-1 text-amber-800 font-semibold hover:text-amber-900 transition-colors"
+              >
+                <ShieldCheck size={15} />
+                <span>회원관리</span>
+              </Link>
+            )}
           <div className="flex flex-col items-start justify-center gap-1">
             <a
               href="https://blog.naver.com/jesusbosom"
@@ -367,10 +380,10 @@ export default function Header() {
                   <Link
                     href="/admin/members"
                     className="inline-flex items-center gap-1 text-xs font-semibold text-amber-800 bg-amber-100/80 border border-amber-300/80 px-2.5 py-1.5 rounded-full hover:bg-amber-200/80 transition-colors"
-                    title="회원가입 승인 및 교인 관리"
+                    title="회원 관리 및 가입 승인"
                   >
                     <ShieldCheck size={13} />
-                    <span>회원승인</span>
+                    <span>회원관리</span>
                   </Link>
                 )}
                 <button
@@ -419,7 +432,7 @@ export default function Header() {
                       className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-amber-800 text-white text-[10px] font-semibold leading-none"
                     >
                       <ShieldCheck size={10} />
-                      <span>회원승인</span>
+                      <span>회원관리</span>
                     </Link>
                   )}
                   <button
@@ -624,6 +637,20 @@ export default function Header() {
             >
               갤러리
             </Link>
+            {user &&
+              (user.isMaster ||
+                user.role === "담임목사" ||
+                user.role === "사모" ||
+                user.role === "교역자") && (
+                <Link
+                  href="/admin/members"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-1.5 text-amber-800 font-bold hover:text-amber-900 pt-1"
+                >
+                  <ShieldCheck size={16} />
+                  <span>회원관리 (가입승인 · 수정 · 삭제)</span>
+                </Link>
+              )}
             <div className="space-y-2.5 pt-1">
               <a
                 href="https://blog.naver.com/jesusbosom"
@@ -669,7 +696,7 @@ export default function Header() {
                           className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-800 text-white text-xs font-semibold"
                         >
                           <ShieldCheck size={12} />
-                          <span>회원승인</span>
+                          <span>회원관리</span>
                         </Link>
                       )}
                       <button
