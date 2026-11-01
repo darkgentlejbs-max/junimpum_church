@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { MasterEditButton, MasterDeleteButton } from "@/components/MasterWriteModal";
+import NewBadge, { isNewItem } from "@/components/NewBadge";
 
 export default function NoticeItem({
   notice,
@@ -12,13 +13,14 @@ export default function NoticeItem({
   canWrite?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const isNew = notice.id !== "empty" && isNewItem(notice.date, notice.createdTime, 7);
 
   return (
     <li className="group flex flex-col py-4 hover:bg-stone-50/60 rounded-xl px-3 -mx-3 transition-colors cursor-pointer"
         onClick={() => notice.content && setIsOpen(!isOpen)}>
       <div className="flex items-start sm:items-center flex-col sm:flex-row justify-between w-full">
         <div className="flex flex-col mb-1.5 sm:mb-0 w-full sm:w-auto">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             {notice.type && (
               <span className="bg-amber-100 text-amber-800 border border-amber-200/60 text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0">
                 {notice.type}
@@ -27,6 +29,7 @@ export default function NoticeItem({
             <span className="text-sm text-stone-700 font-medium group-hover:text-amber-800 transition-colors line-clamp-1">
               {notice.title}
             </span>
+            {isNew && <NewBadge size="sm" />}
           </div>
         </div>
         <div className="flex items-center justify-between w-full sm:w-auto sm:justify-end mt-1 sm:mt-0 gap-1.5">

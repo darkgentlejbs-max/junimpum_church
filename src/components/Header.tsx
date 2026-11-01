@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Menu, X, ChevronDown, User as UserIcon, LogOut, Sparkles, Smartphone, Share, MoreVertical, PlusSquare, ShieldCheck } from "lucide-react";
+import NewBadge from "@/components/NewBadge";
 
 export default function Header() {
   const router = useRouter();
@@ -18,6 +19,17 @@ export default function Header() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showShortcutGuide, setShowShortcutGuide] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
+  const [notifications, setNotifications] = useState<{
+    hasNew: boolean;
+    totalNewCount: number;
+    newNoticesCount: number;
+    newSchedulesCount: number;
+  }>({
+    hasNew: false,
+    totalNewCount: 0,
+    newNoticesCount: 0,
+    newSchedulesCount: 0,
+  });
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -71,6 +83,34 @@ export default function Header() {
     window.addEventListener("auth-change", fetchUser);
     return () => window.removeEventListener("auth-change", fetchUser);
   }, []);
+
+  // 로그인 상태일 때 새 소식/일정 확인
+  useEffect(() => {
+    if (!user) {
+      setNotifications({
+        hasNew: false,
+        totalNewCount: 0,
+        newNoticesCount: 0,
+        newSchedulesCount: 0,
+      });
+      return;
+    }
+
+    const checkNotifications = () => {
+      fetch("/api/news/notifications", { cache: "no-store" })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data && typeof data.hasNew === "boolean") {
+            setNotifications(data);
+          }
+        })
+        .catch(() => {});
+    };
+
+    checkNotifications();
+    const interval = setInterval(checkNotifications, 1000 * 60 * 3); // 3분마다 갱신
+    return () => clearInterval(interval);
+  }, [user]);
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -298,6 +338,7 @@ export default function Header() {
               className="inline-flex items-center gap-1.5 hover:text-amber-700 transition-colors py-4"
             >
               <span>소식/일정</span>
+              {user && notifications.hasNew && <NewBadge size="sm" />}
               <ChevronDown
                 size={14}
                 className={`transition-transform duration-200 text-stone-400 ${
@@ -311,17 +352,19 @@ export default function Header() {
               <div className="absolute left-0 top-full -mt-1 w-44 rounded-2xl bg-white p-2 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-stone-200/80 py-2.5 transition-all">
                 <Link
                   href="/news#notices"
-                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  className="flex items-center justify-between px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
                   onClick={() => setNewsDropdownOpen(false)}
                 >
-                  교회 소식
+                  <span>교회 소식</span>
+                  {user && notifications.newNoticesCount > 0 && <NewBadge size="sm" />}
                 </Link>
                 <Link
                   href="/news#schedule"
-                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  className="flex items-center justify-between px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
                   onClick={() => setNewsDropdownOpen(false)}
                 >
-                  교회 일정
+                  <span>교회 일정</span>
+                  {user && notifications.newSchedulesCount > 0 && <NewBadge size="sm" />}
                 </Link>
                 <div className="my-1 border-t border-stone-100"></div>
                 <Link
@@ -376,6 +419,16 @@ export default function Header() {
           <div className="pl-4 ml-2 border-l border-stone-200 flex items-center space-x-3">
             {user ? (
               <>
+                {notifications.hasNew && (
+                  <Link
+                    href="/news"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200/80 px-2.5 py-1.5 rounded-full hover:bg-rose-100 transition-colors shadow-2xs"
+                    title={`새로운 소식/일정이 ${notifications.totalNewCount}건 있습니다`}
+                  >
+                    <NewBadge size="sm" />
+                    <span>새 소식 {notifications.totalNewCount}</span>
+                  </Link>
+                )}
                 {(user.isMaster || user.role === "담임목사" || user.role === "사모" || user.role === "교역자") && (
                   <Link
                     href="/admin/members"
@@ -498,10 +551,13 @@ export default function Header() {
           </div>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-1.5 text-stone-600 hover:text-amber-700 transition-colors"
+            className="relative p-1.5 text-stone-600 hover:text-amber-700 transition-colors cursor-pointer"
             aria-label="메뉴 열기"
           >
             {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+            {user && notifications.hasNew && !mobileMenuOpen && (
+              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full ring-2 ring-white animate-pulse" />
+            )}
           </button>
         </div>
       </div>
@@ -603,23 +659,26 @@ export default function Header() {
               </div>
             </div>
             <div className="pt-2">
-              <div className="text-xs font-semibold text-amber-800 uppercase tracking-wider mb-2">
-                소식/일정
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-800 uppercase tracking-wider mb-2">
+                <span>소식/일정</span>
+                {user && notifications.hasNew && <NewBadge size="sm" />}
               </div>
               <div className="pl-3 space-y-2.5 border-l-2 border-amber-300">
                 <Link
                   href="/news#notices"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                  className="flex items-center justify-between text-sm text-stone-700 hover:text-amber-700 font-medium"
                 >
-                  교회 소식
+                  <span>교회 소식</span>
+                  {user && notifications.newNoticesCount > 0 && <NewBadge size="sm" />}
                 </Link>
                 <Link
                   href="/news#schedule"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                  className="flex items-center justify-between text-sm text-stone-700 hover:text-amber-700 font-medium"
                 >
-                  교회 일정
+                  <span>교회 일정</span>
+                  {user && notifications.newSchedulesCount > 0 && <NewBadge size="sm" />}
                 </Link>
                 <Link
                   href="/bulletins"
@@ -711,6 +770,19 @@ export default function Header() {
                   <p className="text-xs text-amber-900/80 leading-relaxed pl-6">
                     {getTimeGreeting(user.name, user.role).message}
                   </p>
+                  {notifications.hasNew && (
+                    <Link
+                      href="/news"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="mt-2 flex items-center justify-between px-3 py-2 rounded-lg bg-white border border-rose-200 text-xs text-rose-800 font-semibold shadow-2xs hover:bg-rose-50/50 transition-colors"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <NewBadge size="sm" />
+                        <span>새로운 교회 소식과 일정이 있습니다!</span>
+                      </span>
+                      <span className="text-[11px] text-rose-600 font-bold">&rarr;</span>
+                    </Link>
+                  )}
                 </div>
               ) : (
                 <>
@@ -759,9 +831,26 @@ export default function Header() {
               <h3 className="text-xl sm:text-2xl font-bold text-stone-900 mb-3 break-keep">
                 <span className="text-amber-800">{greeting.headline}</span>
               </h3>
-              <p className="text-sm sm:text-base font-medium text-stone-600 leading-relaxed mb-7 break-keep">
+              <p className="text-sm sm:text-base font-medium text-stone-600 leading-relaxed mb-5 break-keep">
                 &ldquo;{greeting.message}&rdquo;
               </p>
+              {notifications.hasNew && (
+                <div className="mb-5 p-3 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-900 flex items-center justify-between gap-2 text-left">
+                  <div className="flex items-center gap-2">
+                    <NewBadge size="sm" />
+                    <span>
+                      최근 등록된 <strong>새로운 소식과 일정</strong>이 있습니다.
+                    </span>
+                  </div>
+                  <Link
+                    href="/news"
+                    onClick={() => setWelcomeUser(null)}
+                    className="font-bold text-rose-700 underline shrink-0 hover:text-rose-900"
+                  >
+                    확인하기 &rarr;
+                  </Link>
+                </div>
+              )}
               <button
                 type="button"
                 onClick={() => setWelcomeUser(null)}

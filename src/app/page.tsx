@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowUpRight, MapPin, Video, Clock, Pencil, X, Loader2 } from "lucide-react";
+import NewBadge from "@/components/NewBadge";
 
 const DEFAULT_HOME = {
   badgeText: "대한예수교장로회(통합) 주님품교회",
@@ -58,8 +59,15 @@ export default function Home() {
   const [editModal, setEditModal] = useState<"hero" | "cards" | null>(null);
   const [formState, setFormState] = useState(DEFAULT_HOME);
   const [saving, setSaving] = useState(false);
+  const [hasNewContent, setHasNewContent] = useState(false);
 
   useEffect(() => {
+    fetch("/api/news/notifications", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((res) => {
+        if (res?.hasNew) setHasNewContent(true);
+      })
+      .catch(() => {});
     fetch("/api/site-config", { cache: "no-store" })
       .then((r) => r.json())
       .then((res) => {
@@ -250,9 +258,14 @@ export default function Home() {
                         {item.no}
                       </span>
                       <div>
-                        <h2 className="text-base font-medium text-stone-800 group-hover:text-amber-800 transition-colors">
-                          {item.title}
-                        </h2>
+                        <div className="flex items-center gap-2">
+                          <h2 className="text-base font-medium text-stone-800 group-hover:text-amber-800 transition-colors">
+                            {item.title}
+                          </h2>
+                          {item.href === "/news" && hasNewContent && (
+                            <NewBadge size="sm" />
+                          )}
+                        </div>
                         <p className="text-xs text-stone-400 mt-0.5">{item.desc}</p>
                       </div>
                     </div>

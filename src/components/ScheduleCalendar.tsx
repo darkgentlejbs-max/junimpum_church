@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from "lucide-react";
 import ScheduleItem from "@/components/ScheduleItem";
 import MasterWriteButton from "@/components/MasterWriteModal";
+import NewBadge, { isNewItem } from "@/components/NewBadge";
 
 interface ScheduleData {
   id: string;
@@ -327,13 +328,15 @@ export default function ScheduleCalendar({
                 <div className="mt-1 space-y-1 overflow-hidden">
                   {daySchedules.slice(0, 2).map((ev) => {
                     const style = getTypeStyle(ev.type);
+                    const isNew = isNewItem(ev.date, (ev as any).createdTime, 7);
                     return (
                       <div
                         key={ev.id}
-                        className={`px-1.5 py-0.5 rounded-md border text-[10px] sm:text-[11px] font-medium truncate leading-tight ${style.pill}`}
+                        className={`px-1.5 py-0.5 rounded-md border text-[10px] sm:text-[11px] font-medium truncate leading-tight flex items-center justify-between gap-1 ${style.pill}`}
                         title={ev.title}
                       >
-                        {ev.title}
+                        <span className="truncate">{ev.title}</span>
+                        {isNew && <NewBadge size="sm" />}
                       </div>
                     );
                   })}

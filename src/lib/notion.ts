@@ -40,6 +40,7 @@ export async function getSchedule() {
         type: typeProp,
         location: locationProp,
         content: page.properties['텍스트']?.rich_text?.[0]?.plain_text || '',
+        createdTime: page.created_time || dateProp || '',
       };
     });
   } catch (error) {
@@ -111,6 +112,7 @@ export async function getNews() {
         date: page.properties['날짜']?.date?.start || '날짜 없음',
         type: typeVal,
         content: contentVal,
+        createdTime: page.created_time || page.properties['날짜']?.date?.start || '',
       };
     });
   } catch (error) {

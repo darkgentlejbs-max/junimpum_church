@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { MasterEditButton, MasterDeleteButton } from "@/components/MasterWriteModal";
+import NewBadge, { isNewItem } from "@/components/NewBadge";
 
 export default function ScheduleItem({
   item,
@@ -12,6 +13,7 @@ export default function ScheduleItem({
   canWrite?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const isNew = item.id !== "empty" && isNewItem(item.date, item.createdTime, 7);
 
   const dateObj = new Date(item.date);
   const isInvalidDate = isNaN(dateObj.getTime());
@@ -40,9 +42,12 @@ export default function ScheduleItem({
             </span>
             <span className="text-xs text-stone-400 font-medium">{item.location}</span>
           </div>
-          <h3 className="text-base font-semibold text-stone-900 group-hover:text-amber-800 transition-colors">
-            {item.title}
-          </h3>
+          <div className="flex items-center gap-2">
+            <h3 className="text-base font-semibold text-stone-900 group-hover:text-amber-800 transition-colors">
+              {item.title}
+            </h3>
+            {isNew && <NewBadge size="sm" />}
+          </div>
         </div>
         
         <div className="flex items-center gap-2">
