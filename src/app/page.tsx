@@ -25,13 +25,13 @@ const DEFAULT_HOME = {
     {
       no: "02",
       title: "예배 · 말씀",
-      desc: "주일 대예배 설교 영상 및 온라인 예배",
+      desc: "주일 대예배 설교 영상",
       href: "/sermons",
     },
     {
       no: "03",
       title: "사역 · 기관",
-      desc: "교회학교, 찬양대, 선교회 및 봉사 부서",
+      desc: "교회학교, 찬양단, 선교회 및 봉사 부서",
       href: "/ministries",
     },
     {
@@ -99,7 +99,26 @@ export default function Home() {
             cards: { ...DEFAULT_HOME.cards, ...(res.config.home.cards || {}) },
             navItems:
               Array.isArray(res.config.home.navItems) && res.config.home.navItems.length > 0
-                ? res.config.home.navItems
+                ? res.config.home.navItems.map((item: any) => {
+                    if (
+                      item.no === "02" &&
+                      (item.desc === "주일 대예배 설교 영상 및 온라인 예배" ||
+                        !item.desc)
+                    ) {
+                      return { ...item, desc: "주일 대예배 설교 영상" };
+                    }
+                    if (
+                      item.no === "03" &&
+                      (item.desc === "교회학교, 찬양대, 선교회 및 봉사 부서" ||
+                        item.desc?.includes("찬양대"))
+                    ) {
+                      return {
+                        ...item,
+                        desc: item.desc.replace("찬양대", "찬양단"),
+                      };
+                    }
+                    return item;
+                  })
                 : DEFAULT_HOME.navItems,
           };
           setHomeData(merged);
