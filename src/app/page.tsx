@@ -165,9 +165,16 @@ export default function Home() {
                 />
               </div>
 
-              <div className="flex items-center justify-between px-2 sm:px-3 pt-2.5 pb-0.5 text-[11px] text-stone-400 font-medium">
-                <span>{homeData.imageCaptionLeft}</span>
-                <span>{homeData.imageCaptionRight}</span>
+              <div className="flex items-center justify-between px-2 sm:px-3 pt-2.5 pb-0.5">
+                <div className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-stone-700">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/images/pck-logo.png"
+                    alt="대한예수교장로회(통합)"
+                    className="h-5 sm:h-5.5 w-auto object-contain shrink-0"
+                  />
+                  <span>{homeData.badgeText || "대한예수교장로회(통합) 주님품교회"}</span>
+                </div>
               </div>
             </motion.div>
           </div>
@@ -179,17 +186,8 @@ export default function Home() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
             >
-              <div className="flex items-center justify-between gap-2 mb-5 flex-wrap">
-                <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-amber-50 border border-amber-200/80 text-amber-900 text-sm sm:text-base font-semibold shadow-2xs">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/images/pck-logo.png"
-                    alt="대한예수교장로회(통합)"
-                    className="h-6 sm:h-7 w-auto object-contain shrink-0"
-                  />
-                  <span>{homeData.badgeText}</span>
-                </div>
-                {canEdit && (
+              {canEdit && (
+                <div className="flex justify-end mb-3">
                   <button
                     type="button"
                     onClick={() => {
@@ -201,31 +199,43 @@ export default function Home() {
                     <Pencil size={12} />
                     <span>메인 문구/메뉴 수정</span>
                   </button>
-                )}
-              </div>
+                </div>
+              )}
 
-              <h1 className="text-2xl sm:text-3xl font-semibold text-stone-900 tracking-tight leading-snug mb-3">
-                {homeData.headlineLine1}
-                <br />
-                <span className="text-amber-800 font-medium">{homeData.headlineLine2}</span>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug mb-3.5">
+                <span className="text-[#F7B118] block">{homeData.headlineLine1}</span>
+                <span className="text-[#F1731C] block mt-1">{homeData.headlineLine2}</span>
               </h1>
 
-              <p className="text-stone-500 text-sm font-normal leading-relaxed mb-8 max-w-lg whitespace-pre-line break-keep">
-                {homeData.subtitle
-                  .split(/(주님품교회|환영합니다)/g)
-                  .map((part, idx) =>
-                    part === "주님품교회" || part === "환영합니다" ? (
-                      <strong
-                        key={idx}
-                        className="text-base sm:text-lg font-semibold text-stone-600"
-                      >
-                        {part}
-                      </strong>
-                    ) : (
-                      part
-                    )
-                  )}
-              </p>
+              <div className="text-stone-500 text-sm leading-relaxed mb-8 max-w-lg whitespace-pre-line break-keep space-y-1">
+                {homeData.subtitle.includes("주님품교회에 오신 것을 진심으로 환영합니다.") ? (
+                  <>
+                    <p className="text-stone-500 text-sm">
+                      {homeData.subtitle.replace("주님품교회에 오신 것을 진심으로 환영합니다.", "").trim()}
+                    </p>
+                    <p className="text-base sm:text-lg font-bold text-stone-700 pt-0.5">
+                      주님품교회에 오신 것을 진심으로 환영합니다.
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-stone-500 text-sm">
+                    {homeData.subtitle
+                      .split(/(주님품교회에 오신 것을.*?환영합니다\.?)/g)
+                      .map((part, idx) =>
+                        part.includes("주님품교회") && part.includes("환영합니다") ? (
+                          <strong
+                            key={idx}
+                            className="block text-base sm:text-lg font-bold text-stone-700 pt-0.5"
+                          >
+                            {part}
+                          </strong>
+                        ) : (
+                          part
+                        )
+                      )}
+                  </p>
+                )}
+              </div>
 
               {/* Right Navigation Bar */}
               <div className="border-t border-stone-200/80 divide-y divide-stone-200/70">
@@ -393,7 +403,7 @@ export default function Home() {
                 <>
                   <div>
                     <label className="block text-xs font-semibold text-stone-600 mb-1">
-                      상단 배지 문구
+                      사진 하단 소속 교단 및 교회명
                     </label>
                     <input
                       type="text"
