@@ -58,7 +58,7 @@ export default function NewBadge({
 
   return (
     <span
-      className={`inline-flex items-center justify-center bg-gradient-to-tr from-red-600 to-rose-500 text-white font-black leading-none rounded-full shadow-2xs select-none shrink-0 animate-in fade-in zoom-in-75 duration-300 ${sizeStyles} ${className}`}
+      className={`inline-flex items-center justify-center bg-[#F1731C] text-white font-black leading-none rounded-full shadow-2xs select-none shrink-0 animate-in fade-in zoom-in-75 duration-300 ${sizeStyles} ${className}`}
       title="새로운 소식/일정 (NEW)"
     >
       N

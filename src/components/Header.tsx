@@ -422,7 +422,7 @@ export default function Header() {
                 {notifications.hasNew && (
                   <Link
                     href="/news"
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200/80 px-2.5 py-1.5 rounded-full hover:bg-rose-100 transition-colors shadow-2xs"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#F1731C] bg-orange-50 border border-orange-200/80 px-2.5 py-1.5 rounded-full hover:bg-orange-100 transition-colors shadow-2xs"
                     title={`새로운 소식/일정이 ${notifications.totalNewCount}건 있습니다`}
                   >
                     <NewBadge size="sm" />
@@ -556,7 +556,7 @@ export default function Header() {
           >
             {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
             {user && notifications.hasNew && !mobileMenuOpen && (
-              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full ring-2 ring-white animate-pulse" />
+              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-[#F1731C] rounded-full ring-2 ring-white animate-pulse" />
             )}
           </button>
         </div>
@@ -774,13 +774,13 @@ export default function Header() {
                     <Link
                       href="/news"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="mt-2 flex items-center justify-between px-3 py-2 rounded-lg bg-white border border-rose-200 text-xs text-rose-800 font-semibold shadow-2xs hover:bg-rose-50/50 transition-colors"
+                      className="mt-2 flex items-center justify-between px-3 py-2 rounded-lg bg-white border border-orange-200 text-xs text-orange-950 font-semibold shadow-2xs hover:bg-orange-50/50 transition-colors"
                     >
                       <span className="flex items-center gap-1.5">
                         <NewBadge size="sm" />
                         <span>새로운 교회 소식과 일정이 있습니다!</span>
                       </span>
-                      <span className="text-[11px] text-rose-600 font-bold">&rarr;</span>
+                      <span className="text-[11px] text-[#F1731C] font-bold">&rarr;</span>
                     </Link>
                   )}
                 </div>
@@ -835,7 +835,7 @@ export default function Header() {
                 &ldquo;{greeting.message}&rdquo;
               </p>
               {notifications.hasNew && (
-                <div className="mb-5 p-3 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-900 flex items-center justify-between gap-2 text-left">
+                <div className="mb-5 p-3 rounded-2xl bg-orange-50 border border-orange-200 text-xs text-orange-950 flex items-center justify-between gap-2 text-left">
                   <div className="flex items-center gap-2">
                     <NewBadge size="sm" />
                     <span>
@@ -845,7 +845,7 @@ export default function Header() {
                   <Link
                     href="/news"
                     onClick={() => setWelcomeUser(null)}
-                    className="font-bold text-rose-700 underline shrink-0 hover:text-rose-900"
+                    className="font-bold text-[#F1731C] underline shrink-0 hover:text-orange-700"
                   >
                     확인하기 &rarr;
                   </Link>
