@@ -255,9 +255,14 @@ export default function Home() {
               <div className="relative mb-8 max-w-lg rounded-2xl bg-gradient-to-br from-amber-50/70 via-white to-stone-50/70 p-4 sm:p-5 border border-amber-200/80 shadow-[0_2px_14px_rgba(241,115,28,0.05)]">
                 {/* 상단 라벨 */}
                 <div className="flex items-center justify-between gap-2 mb-2.5">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-100/90 text-amber-900 text-[11px] font-bold tracking-wide">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#F1731C]" />
-                    {homeData.mottoYear || "2026년 주님품교회 표어"}
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-100/90 text-amber-900 text-[11px] font-bold tracking-wide shadow-2xs">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/icon-192.png?v=2"
+                      alt="주님품교회 로고"
+                      className="w-4 h-4 rounded-md object-cover shrink-0"
+                    />
+                    <span>{homeData.mottoYear || "2026년 주님품교회 표어"}</span>
                   </span>
                   <span className="text-[11px] font-mono font-medium text-stone-400">
                     Psalm 107:30
