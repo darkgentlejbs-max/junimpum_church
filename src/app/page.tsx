@@ -238,10 +238,44 @@ export default function Home() {
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug mb-8 text-stone-900">
                 <span className="text-stone-900 block">{homeData.headlineLine1}</span>
                 <span className="text-stone-900 block mt-1.5 whitespace-pre-line">
-                  {homeData.headlineLine2.includes("오신 것을") &&
-                  !homeData.headlineLine2.includes("오신 것을\n")
-                    ? homeData.headlineLine2.replace(/오신 것을\s*/, "오신 것을\n")
-                    : homeData.headlineLine2}
+                  {(() => {
+                    const line2 =
+                      homeData.headlineLine2.includes("오신 것을") &&
+                      !homeData.headlineLine2.includes("오신 것을\n")
+                        ? homeData.headlineLine2.replace(/오신 것을\s*/, "오신 것을\n")
+                        : homeData.headlineLine2;
+
+                    if (line2.includes("환영합니다")) {
+                      const [before, after] = line2.split("환영합니다");
+                      return (
+                        <>
+                          {before}
+                          <span className="inline-flex items-center align-baseline">
+                            <span>환영합니다</span>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src="/icon-192.png?v=2"
+                              alt="주님품교회 로고"
+                              className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg border border-amber-200/80 shadow-2xs object-cover ml-2 inline-block shrink-0 relative -top-0.5"
+                            />
+                          </span>
+                          {after}
+                        </>
+                      );
+                    }
+
+                    return (
+                      <span className="inline-flex items-center align-baseline">
+                        <span>{line2}</span>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src="/icon-192.png?v=2"
+                          alt="주님품교회 로고"
+                          className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg border border-amber-200/80 shadow-2xs object-cover ml-2 inline-block shrink-0 relative -top-0.5"
+                        />
+                      </span>
+                    );
+                  })()}
                 </span>
               </h1>
 
