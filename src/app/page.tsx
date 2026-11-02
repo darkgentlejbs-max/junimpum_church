@@ -13,7 +13,7 @@ const DEFAULT_HOME = {
   imageCaptionRight: "주님품교회 전경",
   headlineLine1: "믿음 · 소망 · 사랑으로 세워 가는",
   headlineLine2: "주님품교회에 오신 것을\n진심으로 환영합니다",
-  mottoYear: "2026년 주님품교회 표어",
+  mottoYear: "2026년 표어",
   mottoVerse: "그들이 평온함으로 말미암아 기뻐하는 중에\n여호와께서 그들이 바라는 항구로 인도하시는도다",
   mottoRef: "시편 107:30",
   subtitle:
@@ -100,12 +100,17 @@ export default function Home() {
           ) {
             loadedHeadline2 = loadedHeadline2.replace(/오신 것을\s*/, "오신 것을\n");
           }
+          let loadedMottoYear =
+            res.config.home.mottoYear || DEFAULT_HOME.mottoYear;
+          if (loadedMottoYear === "2026년 주님품교회 표어") {
+            loadedMottoYear = "2026년 표어";
+          }
           const merged = {
             ...DEFAULT_HOME,
             ...res.config.home,
             headlineLine2: loadedHeadline2,
             subtitle: loadedSubtitle,
-            mottoYear: res.config.home.mottoYear || DEFAULT_HOME.mottoYear,
+            mottoYear: loadedMottoYear,
             mottoVerse: res.config.home.mottoVerse || DEFAULT_HOME.mottoVerse,
             mottoRef: res.config.home.mottoRef || DEFAULT_HOME.mottoRef,
             cards: { ...DEFAULT_HOME.cards, ...(res.config.home.cards || {}) },
@@ -262,7 +267,11 @@ export default function Home() {
                       alt="주님품교회 로고"
                       className="w-4 h-4 rounded-md object-cover shrink-0"
                     />
-                    <span>{homeData.mottoYear || "2026년 주님품교회 표어"}</span>
+                    <span>
+                      {homeData.mottoYear === "2026년 주님품교회 표어"
+                        ? "2026년 표어"
+                        : homeData.mottoYear || "2026년 표어"}
+                    </span>
                   </span>
                   <span className="text-[11px] font-mono font-medium text-stone-400">
                     Psalm 107:30
@@ -527,7 +536,7 @@ export default function Home() {
                             setFormState({ ...formState, mottoYear: e.target.value })
                           }
                           className="w-full px-3 py-1.5 rounded-lg border border-stone-200 bg-white text-xs"
-                          placeholder="예: 2026년 주님품교회 표어"
+                          placeholder="예: 2026년 표어"
                         />
                       </div>
                       <div>
