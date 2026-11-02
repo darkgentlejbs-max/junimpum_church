@@ -13,8 +13,11 @@ const DEFAULT_HOME = {
   imageCaptionRight: "주님품교회 전경",
   headlineLine1: "믿음 · 소망 · 사랑으로 세워 가는",
   headlineLine2: "주님품교회에 오신 것을\n진심으로 환영합니다",
+  mottoYear: "2026년 주님품교회 표어",
+  mottoVerse: "그들이 평온함으로 말미암아 기뻐하는 중에\n여호와께서 그들이 바라는 항구로 인도하시는도다",
+  mottoRef: "시편 107:30",
   subtitle:
-    "하나님의 은혜와 사랑이 머무는 곳,\n주님품처럼 따뜻한 안식과 회복이 있는\n주님품교회에 오신 것을 진심으로 환영합니다.",
+    "하나님의 은혜와 사랑이 머무는 곳,\n주님품처럼 따뜻한 안식과 회복이 있는 주님품 공동체입니다.",
   navItems: [
     {
       no: "01",
@@ -102,6 +105,9 @@ export default function Home() {
             ...res.config.home,
             headlineLine2: loadedHeadline2,
             subtitle: loadedSubtitle,
+            mottoYear: res.config.home.mottoYear || DEFAULT_HOME.mottoYear,
+            mottoVerse: res.config.home.mottoVerse || DEFAULT_HOME.mottoVerse,
+            mottoRef: res.config.home.mottoRef || DEFAULT_HOME.mottoRef,
             cards: { ...DEFAULT_HOME.cards, ...(res.config.home.cards || {}) },
             navItems:
               Array.isArray(res.config.home.navItems) && res.config.home.navItems.length > 0
@@ -235,7 +241,7 @@ export default function Home() {
                 </div>
               )}
 
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug mb-3.5 text-stone-900">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug mb-5 text-stone-900">
                 <span className="text-stone-900 block">{homeData.headlineLine1}</span>
                 <span className="text-stone-900 block mt-1.5 whitespace-pre-line">
                   {homeData.headlineLine2.includes("오신 것을") &&
@@ -245,35 +251,37 @@ export default function Home() {
                 </span>
               </h1>
 
-              <div className="text-stone-500 text-sm leading-relaxed mb-8 max-w-lg whitespace-pre-line break-keep space-y-1">
-                {homeData.subtitle.includes("주님품교회에 오신 것을 진심으로 환영합니다.") ? (
-                  <>
-                    <p className="text-stone-500 text-sm">
-                      {homeData.subtitle.replace("주님품교회에 오신 것을 진심으로 환영합니다.", "").trim()}
-                    </p>
-                    <p className="text-base sm:text-lg font-bold text-stone-700 pt-0.5">
-                      주님품교회에 오신 것을 진심으로 환영합니다.
-                    </p>
-                  </>
-                ) : (
-                  <p className="text-stone-500 text-sm">
-                    {homeData.subtitle
-                      .split(/(주님품교회에 오신 것을.*?환영합니다\.?)/g)
-                      .map((part, idx) =>
-                        part.includes("주님품교회") && part.includes("환영합니다") ? (
-                          <strong
-                            key={idx}
-                            className="block text-base sm:text-lg font-bold text-stone-700 pt-0.5"
-                          >
-                            {part}
-                          </strong>
-                        ) : (
-                          part
-                        )
-                      )}
+              {/* 2026년 교회 표어 말씀 카드 */}
+              <div className="relative mb-8 max-w-lg rounded-2xl bg-gradient-to-br from-amber-50/70 via-white to-stone-50/70 p-4 sm:p-5 border border-amber-200/80 shadow-[0_2px_14px_rgba(241,115,28,0.05)]">
+                {/* 상단 라벨 */}
+                <div className="flex items-center justify-between gap-2 mb-2.5">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-100/90 text-amber-900 text-[11px] font-bold tracking-wide">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#F1731C]" />
+                    {homeData.mottoYear || "2026년 주님품교회 표어"}
+                  </span>
+                  <span className="text-[11px] font-mono font-medium text-stone-400">
+                    Psalm 107:30
+                  </span>
+                </div>
+
+                {/* 말씀 본문 */}
+                <blockquote className="relative pl-3.5 border-l-2 border-[#F1731C]">
+                  <p className="text-sm sm:text-[15px] font-medium text-stone-800 leading-relaxed break-keep font-serif whitespace-pre-line">
+                    “{homeData.mottoVerse || "그들이 평온함으로 말미암아 기뻐하는 중에\n여호와께서 그들이 바라는 항구로 인도하시는도다"}”
+                  </p>
+                  <cite className="block text-xs font-semibold text-amber-800/85 not-italic mt-2 text-right font-serif">
+                    — {homeData.mottoRef || "시편 107:30"} —
+                  </cite>
+                </blockquote>
+              </div>
+
+              {homeData.subtitle &&
+                !["♡.", "♡", "."].includes(homeData.subtitle.trim()) &&
+                !homeData.subtitle.includes("주님품교회에 오신 것을") && (
+                  <p className="text-stone-500 text-xs sm:text-sm leading-relaxed mb-6 max-w-lg whitespace-pre-line break-keep">
+                    {homeData.subtitle}
                   </p>
                 )}
-              </div>
 
               {/* Right Navigation Bar */}
               <div className="border-t border-stone-200/80 divide-y divide-stone-200/70">
@@ -497,6 +505,55 @@ export default function Home() {
                       }
                       className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:outline-none focus:border-amber-600"
                     />
+                  </div>
+
+                  {/* 2026년 표어 말씀 설정 */}
+                  <div className="p-3.5 rounded-2xl bg-amber-50/60 border border-amber-200/80 space-y-2.5">
+                    <p className="text-xs font-bold text-amber-900">교회 표어 말씀 설정</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <div>
+                        <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                          표어 구분/연도
+                        </label>
+                        <input
+                          type="text"
+                          value={formState.mottoYear || ""}
+                          onChange={(e) =>
+                            setFormState({ ...formState, mottoYear: e.target.value })
+                          }
+                          className="w-full px-3 py-1.5 rounded-lg border border-stone-200 bg-white text-xs"
+                          placeholder="예: 2026년 주님품교회 표어"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                          성경 구절 출처
+                        </label>
+                        <input
+                          type="text"
+                          value={formState.mottoRef || ""}
+                          onChange={(e) =>
+                            setFormState({ ...formState, mottoRef: e.target.value })
+                          }
+                          className="w-full px-3 py-1.5 rounded-lg border border-stone-200 bg-white text-xs"
+                          placeholder="예: 시편 107:30"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-semibold text-stone-600 mb-1">
+                        표어 말씀 본문 (엔터로 줄바꿈 가능)
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={formState.mottoVerse || ""}
+                        onChange={(e) =>
+                          setFormState({ ...formState, mottoVerse: e.target.value })
+                        }
+                        className="w-full px-3 py-1.5 rounded-lg border border-stone-200 bg-white text-xs leading-relaxed"
+                        placeholder="표어 성경 말씀 본문"
+                      />
+                    </div>
                   </div>
                   <div className="pt-2 border-t border-stone-100 space-y-3">
                     <p className="text-xs font-bold text-stone-700">메인 메뉴 항목 (01 ~ 04)</p>
