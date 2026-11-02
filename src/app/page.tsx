@@ -11,8 +11,8 @@ const DEFAULT_HOME = {
   badgeText: "대한예수교장로회(통합) 주님품교회",
   imageCaptionLeft: "대한예수교장로회(통합)",
   imageCaptionRight: "주님품교회 전경",
-  headlineLine1: "믿음 · 소망 · 사랑으로",
-  headlineLine2: "세워 가는 주님품 공동체",
+  headlineLine1: "믿음 · 소망 · 사랑으로 세워 가는",
+  headlineLine2: "주님품교회에 오신 것을\n진심으로 환영합니다",
   subtitle:
     "하나님의 은혜와 사랑이 머무는 곳,\n주님품처럼 따뜻한 안식과 회복이 있는\n주님품교회에 오신 것을 진심으로 환영합니다.",
   navItems: [
@@ -87,9 +87,15 @@ export default function Home() {
             res.config.home.headlineLine2 || DEFAULT_HOME.headlineLine2;
           if (
             loadedHeadline2 === "세워져 가는 따뜻한 공동체" ||
-            loadedHeadline2 === "세워 가는 따뜻한 공동체"
+            loadedHeadline2 === "세워 가는 따뜻한 공동체" ||
+            loadedHeadline2 === "세워 가는 주님품 공동체"
           ) {
-            loadedHeadline2 = "세워 가는 주님품 공동체";
+            loadedHeadline2 = DEFAULT_HOME.headlineLine2;
+          } else if (
+            loadedHeadline2.includes("오신 것을") &&
+            !loadedHeadline2.includes("오신 것을\n")
+          ) {
+            loadedHeadline2 = loadedHeadline2.replace(/오신 것을\s*/, "오신 것을\n");
           }
           const merged = {
             ...DEFAULT_HOME,
@@ -229,9 +235,14 @@ export default function Home() {
                 </div>
               )}
 
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug mb-3.5">
-                <span className="text-[#F7B118] block">{homeData.headlineLine1}</span>
-                <span className="text-[#F1731C] block mt-1">{homeData.headlineLine2}</span>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug mb-3.5 text-stone-900">
+                <span className="text-stone-900 block">{homeData.headlineLine1}</span>
+                <span className="text-stone-900 block mt-1.5 whitespace-pre-line">
+                  {homeData.headlineLine2.includes("오신 것을") &&
+                  !homeData.headlineLine2.includes("오신 것을\n")
+                    ? homeData.headlineLine2.replace(/오신 것을\s*/, "오신 것을\n")
+                    : homeData.headlineLine2}
+                </span>
               </h1>
 
               <div className="text-stone-500 text-sm leading-relaxed mb-8 max-w-lg whitespace-pre-line break-keep space-y-1">
@@ -462,10 +473,10 @@ export default function Home() {
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-stone-600 mb-1">
-                        메인 타이틀 (둘째 줄 강조)
+                        메인 타이틀 (둘째 줄, 엔터로 줄바꿈 가능)
                       </label>
-                      <input
-                        type="text"
+                      <textarea
+                        rows={2}
                         value={formState.headlineLine2}
                         onChange={(e) =>
                           setFormState({ ...formState, headlineLine2: e.target.value })
