@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Menu, X, ChevronDown, User as UserIcon, LogOut, Sparkles, Smartphone, Share, MoreVertical, PlusSquare, ShieldCheck } from "lucide-react";
-import NewBadge from "@/components/NewBadge";
+import NewBadge, { isNoticeReadByUser } from "@/components/NewBadge";
 
 export default function Header() {
   const router = useRouter();
@@ -84,9 +84,12 @@ export default function Header() {
     return () => window.removeEventListener("auth-change", fetchUser);
   }, []);
 
+  const rawNotifsRef = useRef<any>(null);
+
   // 로그인 상태일 때 새 소식/일정 확인
   useEffect(() => {
     if (!user) {
+      rawNotifsRef.current = null;
       setNotifications({
         hasNew: false,
         totalNewCount: 0,
@@ -96,12 +99,30 @@ export default function Header() {
       return;
     }
 
+    const applyReadFilter = (data: any) => {
+      if (!data) return;
+      const unreadNotices = (data.recentNotices || []).filter(
+        (n: any) => !isNoticeReadByUser(n.id, n.createdTime)
+      );
+      const unreadSchedules = (data.recentSchedules || []).filter(
+        (s: any) => !isNoticeReadByUser(s.id, s.createdTime)
+      );
+      const total = unreadNotices.length + unreadSchedules.length;
+      setNotifications({
+        hasNew: total > 0,
+        totalNewCount: total,
+        newNoticesCount: unreadNotices.length,
+        newSchedulesCount: unreadSchedules.length,
+      });
+    };
+
     const checkNotifications = () => {
       fetch("/api/news/notifications", { cache: "no-store" })
         .then((r) => r.json())
         .then((data) => {
           if (data && typeof data.hasNew === "boolean") {
-            setNotifications(data);
+            rawNotifsRef.current = data;
+            applyReadFilter(data);
           }
         })
         .catch(() => {});
@@ -109,7 +130,20 @@ export default function Header() {
 
     checkNotifications();
     const interval = setInterval(checkNotifications, 1000 * 60 * 3); // 3분마다 갱신
-    return () => clearInterval(interval);
+
+    const handleReadStateChange = () => {
+      if (rawNotifsRef.current) {
+        applyReadFilter(rawNotifsRef.current);
+      } else {
+        checkNotifications();
+      }
+    };
+    window.addEventListener("news-read-state-change", handleReadStateChange);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("news-read-state-change", handleReadStateChange);
+    };
   }, [user]);
 
   const handleLogout = async () => {

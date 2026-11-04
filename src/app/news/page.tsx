@@ -5,6 +5,7 @@ import { getCurrentUser, isMasterRole } from "@/lib/auth";
 import NoticeItem from "@/components/NoticeItem";
 import ScheduleCalendar from "@/components/ScheduleCalendar";
 import MasterWriteButton from "@/components/MasterWriteModal";
+import NewsReadTracker from "@/components/NewsReadTracker";
 
 export const dynamic = 'force-dynamic';
 
@@ -51,6 +52,7 @@ export default async function NewsPage() {
 
   return (
     <div className="py-8 sm:py-16 bg-[#FAF9F6] min-h-screen text-stone-800">
+      <NewsReadTracker />
       <div className="container mx-auto px-3 sm:px-6 max-w-5xl">
         {/* Page Header */}
         <div className="text-center mb-8 sm:mb-12">

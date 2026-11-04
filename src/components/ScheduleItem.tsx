@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import { MasterEditButton, MasterDeleteButton } from "@/components/MasterWriteModal";
-import NewBadge, { isNewItem } from "@/components/NewBadge";
+import NewBadge, { isNewItem, markNoticeAsRead, isNoticeReadByUser } from "@/components/NewBadge";
 
 export default function ScheduleItem({
   item,
@@ -13,7 +13,31 @@ export default function ScheduleItem({
   canWrite?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const isNew = item.id !== "empty" && isNewItem(item.date, item.createdTime, 7);
+  const [isRead, setIsRead] = useState(false);
+  const isNew = item.id !== "empty" && isNewItem(item.date, item.createdTime, 3);
+
+  useEffect(() => {
+    const checkRead = () => {
+      if (item.id && item.id !== "empty") {
+        setIsRead(isNoticeReadByUser(item.id, item.createdTime || item.date));
+      }
+    };
+    checkRead();
+    window.addEventListener("news-read-state-change", checkRead);
+    return () => window.removeEventListener("news-read-state-change", checkRead);
+  }, [item.id, item.createdTime, item.date]);
+
+  const handleClick = () => {
+    if (item.content) {
+      setIsOpen(!isOpen);
+    }
+    if (item.id && item.id !== "empty") {
+      markNoticeAsRead(item.id);
+      setIsRead(true);
+    }
+  };
+
+  const showNewBadge = isNew && !isRead;
 
   const dateObj = new Date(item.date);
   const isInvalidDate = isNaN(dateObj.getTime());
@@ -27,7 +51,7 @@ export default function ScheduleItem({
       className={`flex flex-col p-4 rounded-2xl border transition-colors group cursor-pointer ${
         isOpen ? "bg-white border-amber-200/60 shadow-sm" : "border-stone-100 bg-stone-50/50 hover:bg-stone-50 hover:border-amber-200/60"
       }`}
-      onClick={() => item.content && setIsOpen(!isOpen)}
+      onClick={handleClick}
     >
       <div className="flex items-center gap-5">
         <div className="flex flex-col items-center justify-center w-14 h-14 shrink-0 bg-white rounded-xl shadow-sm border border-stone-200/60 group-hover:border-amber-300 transition-colors">
@@ -46,7 +70,7 @@ export default function ScheduleItem({
             <h3 className="text-base font-semibold text-stone-900 group-hover:text-amber-800 transition-colors">
               {item.title}
             </h3>
-            {isNew && <NewBadge size="sm" />}
+            {showNewBadge && <NewBadge size="sm" />}
           </div>
         </div>
         

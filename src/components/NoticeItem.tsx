@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import { MasterEditButton, MasterDeleteButton } from "@/components/MasterWriteModal";
-import NewBadge, { isNewItem } from "@/components/NewBadge";
+import NewBadge, { isNewItem, markNoticeAsRead, isNoticeReadByUser } from "@/components/NewBadge";
 
 export default function NoticeItem({
   notice,
@@ -13,11 +13,39 @@ export default function NoticeItem({
   canWrite?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const isNew = notice.id !== "empty" && isNewItem(notice.date, notice.createdTime, 7);
+  const [isRead, setIsRead] = useState(false);
+
+  // 3일 이내 등록된 글인지 확인
+  const isNew = notice.id !== "empty" && isNewItem(notice.date, notice.createdTime, 3);
+
+  useEffect(() => {
+    const checkRead = () => {
+      if (notice.id && notice.id !== "empty") {
+        setIsRead(isNoticeReadByUser(notice.id, notice.createdTime || notice.date));
+      }
+    };
+    checkRead();
+    window.addEventListener("news-read-state-change", checkRead);
+    return () => window.removeEventListener("news-read-state-change", checkRead);
+  }, [notice.id, notice.createdTime, notice.date]);
+
+  const handleClick = () => {
+    if (notice.content) {
+      setIsOpen(!isOpen);
+    }
+    if (notice.id && notice.id !== "empty") {
+      markNoticeAsRead(notice.id);
+      setIsRead(true);
+    }
+  };
+
+  const showNewBadge = isNew && !isRead;
 
   return (
-    <li className="group flex flex-col py-4 hover:bg-stone-50/60 rounded-xl px-3 -mx-3 transition-colors cursor-pointer"
-        onClick={() => notice.content && setIsOpen(!isOpen)}>
+    <li
+      className="group flex flex-col py-4 hover:bg-stone-50/60 rounded-xl px-3 -mx-3 transition-colors cursor-pointer"
+      onClick={handleClick}
+    >
       <div className="flex items-start sm:items-center flex-col sm:flex-row justify-between w-full">
         <div className="flex flex-col mb-1.5 sm:mb-0 w-full sm:w-auto">
           <div className="flex items-center gap-2">
@@ -29,7 +57,7 @@ export default function NoticeItem({
             <span className="text-sm text-stone-700 font-medium group-hover:text-amber-800 transition-colors line-clamp-1">
               {notice.title}
             </span>
-            {isNew && <NewBadge size="sm" />}
+            {showNewBadge && <NewBadge size="sm" />}
           </div>
         </div>
         <div className="flex items-center justify-between w-full sm:w-auto sm:justify-end mt-1 sm:mt-0 gap-1.5">

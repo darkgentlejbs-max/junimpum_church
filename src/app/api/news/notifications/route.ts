@@ -23,14 +23,14 @@ export async function GET() {
       (s: any) => s.id !== "empty" && s.date && s.date !== "-"
     );
 
-    // 최근 7일 이내 새 소식
+    // 최근 3일 이내 새 소식
     const recentNotices = notices.filter((n: any) =>
-      isNewItem(n.date, n.createdTime, 7)
+      isNewItem(n.date, n.createdTime, 3)
     );
 
-    // 최근 7일 이내 생성되었거나 앞으로 7일 이내의 새 일정
+    // 최근 3일 이내 생성되었거나 앞으로 3일 이내의 새 일정
     const recentSchedules = validSchedules.filter((s: any) =>
-      isNewItem(s.date, s.createdTime, 7)
+      isNewItem(s.date, s.createdTime, 3)
     );
 
     const newNoticesCount = recentNotices.length;
@@ -42,15 +42,17 @@ export async function GET() {
       totalNewCount,
       newNoticesCount,
       newSchedulesCount,
-      recentNotices: recentNotices.slice(0, 3).map((n: any) => ({
+      recentNotices: recentNotices.map((n: any) => ({
         id: n.id,
         title: n.title,
         date: n.date,
+        createdTime: n.createdTime || n.date || "",
       })),
-      recentSchedules: recentSchedules.slice(0, 3).map((s: any) => ({
+      recentSchedules: recentSchedules.map((s: any) => ({
         id: s.id,
         title: s.title,
         date: s.date,
+        createdTime: s.createdTime || s.date || "",
       })),
     });
   } catch (error) {

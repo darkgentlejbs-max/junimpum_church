@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from "lucide-react";
 import ScheduleItem from "@/components/ScheduleItem";
 import MasterWriteButton from "@/components/MasterWriteModal";
-import NewBadge, { isNewItem } from "@/components/NewBadge";
+import NewBadge, { isNewItem, isNoticeReadByUser } from "@/components/NewBadge";
 
 interface ScheduleData {
   id: string;
@@ -68,6 +68,13 @@ export default function ScheduleCalendar({
 
   const [currentYear, setCurrentYear] = useState<number>(now.getFullYear());
   const [currentMonth, setCurrentMonth] = useState<number>(now.getMonth()); // 0-indexed
+  const [, setReadTick] = useState(0);
+
+  useEffect(() => {
+    const handleRead = () => setReadTick((t) => t + 1);
+    window.addEventListener("news-read-state-change", handleRead);
+    return () => window.removeEventListener("news-read-state-change", handleRead);
+  }, []);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   // 날짜별 일정 그룹화
@@ -328,7 +335,9 @@ export default function ScheduleCalendar({
                 <div className="mt-1 space-y-1 overflow-hidden">
                   {daySchedules.slice(0, 2).map((ev) => {
                     const style = getTypeStyle(ev.type);
-                    const isNew = isNewItem(ev.date, (ev as any).createdTime, 7);
+                    const isNew =
+                      isNewItem(ev.date, (ev as any).createdTime, 3) &&
+                      !isNoticeReadByUser(ev.id, (ev as any).createdTime || ev.date);
                     return (
                       <div
                         key={ev.id}
