@@ -143,6 +143,7 @@ export async function getGallery() {
         if (imageUrl) {
           allPhotos.push({
             id: `${page.id}-prop-${imageIndex++}`,
+            pageId: page.id,
             title: titleProp,
             date: dateVal,
             imageUrl: imageUrl,
@@ -161,6 +162,7 @@ export async function getGallery() {
             if (imageUrl) {
               allPhotos.push({
                 id: `${block.id}`,
+                pageId: page.id,
                 title: titleProp,
                 date: dateVal,
                 imageUrl: imageUrl,
