@@ -235,48 +235,50 @@ export default function Home() {
                 </div>
               )}
 
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug mb-8 text-stone-900">
-                <span className="text-stone-900 block">{homeData.headlineLine1}</span>
-                <span className="text-stone-900 block mt-1.5 whitespace-pre-line">
-                  {(() => {
-                    const line2 =
-                      homeData.headlineLine2.includes("오신 것을") &&
-                      !homeData.headlineLine2.includes("오신 것을\n")
-                        ? homeData.headlineLine2.replace(/오신 것을\s*/, "오신 것을\n")
-                        : homeData.headlineLine2;
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-stone-700 leading-normal mb-7 flex flex-col gap-1.5 sm:gap-2">
+                {(() => {
+                  const rawLine2 = homeData.headlineLine2 || "";
+                  let row1 = rawLine2;
+                  let row2 = "";
 
-                    if (line2.includes("환영합니다")) {
-                      const [before, after] = line2.split("환영합니다");
-                      return (
-                        <>
-                          {before}
-                          <span className="inline-flex items-center align-baseline">
-                            <span>환영합니다</span>
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src="/icon-192.png?v=2"
-                              alt="주님품교회 로고"
-                              className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg border border-amber-200/80 shadow-2xs object-cover ml-2 inline-block shrink-0 relative -top-0.5"
-                            />
-                          </span>
-                          {after}
-                        </>
-                      );
-                    }
+                  if (rawLine2.includes("\n")) {
+                    const split = rawLine2.split("\n");
+                    row1 = split[0];
+                    row2 = split.slice(1).join(" ");
+                  } else if (rawLine2.includes("오신 것을")) {
+                    const idx = rawLine2.indexOf("오신 것을") + "오신 것을".length;
+                    row1 = rawLine2.slice(0, idx).trim();
+                    row2 = rawLine2.slice(idx).trim();
+                  }
 
-                    return (
-                      <span className="inline-flex items-center align-baseline">
-                        <span>{line2}</span>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src="/icon-192.png?v=2"
-                          alt="주님품교회 로고"
-                          className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg border border-amber-200/80 shadow-2xs object-cover ml-2 inline-block shrink-0 relative -top-0.5"
-                        />
-                      </span>
-                    );
-                  })()}
-                </span>
+                  return (
+                    <>
+                      <span className="block text-stone-700">{homeData.headlineLine1}</span>
+                      {row1 && <span className="block text-stone-700">{row1}</span>}
+                      {row2 ? (
+                        <span className="inline-flex items-center align-baseline flex-wrap text-stone-700">
+                          <span>{row2}</span>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src="/icon-192.png?v=2"
+                            alt="주님품교회 로고"
+                            className="w-5 h-5 sm:w-6 sm:h-6 rounded-md border border-amber-200/80 shadow-2xs object-cover ml-1.5 inline-block shrink-0 relative -top-0.5"
+                          />
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center align-baseline flex-wrap text-stone-700">
+                          <span>{row1}</span>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src="/icon-192.png?v=2"
+                            alt="주님품교회 로고"
+                            className="w-5 h-5 sm:w-6 sm:h-6 rounded-md border border-amber-200/80 shadow-2xs object-cover ml-1.5 inline-block shrink-0 relative -top-0.5"
+                          />
+                        </span>
+                      )}
+                    </>
+                  );
+                })()}
               </h1>
 
               {homeData.subtitle &&
