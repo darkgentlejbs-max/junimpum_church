@@ -4,9 +4,9 @@ export const notion = new Client({
   auth: process.env.NOTION_SECRET,
 });
 
-export const SERMONS_DATABASE_ID = process.env.NOTION_SERMONS_DB_ID || '';
-export const NEWS_DATABASE_ID = process.env.NOTION_NEWS_DB_ID || '';
-export const GALLERY_DATABASE_ID = process.env.NOTION_GALLERY_DB_ID || '';
+export const SERMONS_DATABASE_ID = (process.env.NOTION_SERMONS_DB_ID || '3e1243467c5a8098889bce40bc2e4590').trim();
+export const NEWS_DATABASE_ID = (process.env.NOTION_NEWS_DB_ID || '3e1243467c5a809db4b3fd6f8fa13497').trim();
+export const GALLERY_DATABASE_ID = (process.env.NOTION_GALLERY_DB_ID || '3e1243467c5a80a2a1b2fec4812832de').trim();
 export const BULLETIN_DATABASE_ID = process.env.NOTION_BULLETIN_DB_ID || '3ee243467c5a80d4b7d4e832bd6f3322';
 export const DALDAL_DATABASE_ID = process.env.NOTION_DALDAL_DB_ID || '3f0243467c5a80ff824eff221d7e7919';
 export const SCHEDULE_DATABASE_ID = process.env.NOTION_SCHEDULE_DB_ID || '3e3243467c5a8059af31dd5aad35473b';
@@ -1395,6 +1395,7 @@ export async function createDalDalItem(params: {
   imageUrl?: string;
   fileUploadId?: string;
   fileName?: string;
+  uploadedFiles?: Array<{ fileUploadId: string; fileName: string }>;
 }) {
   if (!DALDAL_DATABASE_ID) throw new Error('달달바이블 데이터베이스 ID가 설정되지 않았습니다.');
   const { titlePropName, props } = await getTitlePropertyName(DALDAL_DATABASE_ID);
@@ -1411,7 +1412,15 @@ export async function createDalDalItem(params: {
   }
 
   if (props['이미지']?.type === 'files') {
-    if (params.fileUploadId) {
+    if (params.uploadedFiles && params.uploadedFiles.length > 0) {
+      properties['사진'] = {
+        files: params.uploadedFiles.map((f, idx) => ({
+          type: 'file_upload',
+          file_upload: { id: f.fileUploadId },
+          name: f.fileName || `${params.title}_${idx + 1}`,
+        })),
+      };
+    } else if (params.fileUploadId) {
       properties['이미지'] = {
         files: [
           {
@@ -1453,6 +1462,7 @@ export async function createBulletinItem(params: {
   fileUrl?: string;
   fileUploadId?: string;
   fileName?: string;
+  uploadedFiles?: Array<{ fileUploadId: string; fileName: string }>;
 }) {
   if (!BULLETIN_DATABASE_ID) throw new Error('주보 데이터베이스 ID가 설정되지 않았습니다.');
   const { titlePropName, props } = await getTitlePropertyName(BULLETIN_DATABASE_ID);
@@ -1469,7 +1479,15 @@ export async function createBulletinItem(params: {
   }
 
   if (props['파일']?.type === 'files') {
-    if (params.fileUploadId) {
+    if (params.uploadedFiles && params.uploadedFiles.length > 0) {
+      properties['사진'] = {
+        files: params.uploadedFiles.map((f, idx) => ({
+          type: 'file_upload',
+          file_upload: { id: f.fileUploadId },
+          name: f.fileName || `${params.title}_${idx + 1}`,
+        })),
+      };
+    } else if (params.fileUploadId) {
       properties['파일'] = {
         files: [
           {
@@ -1511,6 +1529,7 @@ export async function createGalleryItem(params: {
   imageUrl?: string;
   fileUploadId?: string;
   fileName?: string;
+  uploadedFiles?: Array<{ fileUploadId: string; fileName: string }>;
 }) {
   if (!GALLERY_DATABASE_ID) throw new Error('갤러리 데이터베이스 ID가 설정되지 않았습니다.');
   const { titlePropName, props } = await getTitlePropertyName(GALLERY_DATABASE_ID);
@@ -1527,7 +1546,15 @@ export async function createGalleryItem(params: {
   }
 
   if (props['사진']?.type === 'files') {
-    if (params.fileUploadId) {
+    if (params.uploadedFiles && params.uploadedFiles.length > 0) {
+      properties['사진'] = {
+        files: params.uploadedFiles.map((f, idx) => ({
+          type: 'file_upload',
+          file_upload: { id: f.fileUploadId },
+          name: f.fileName || `${params.title}_${idx + 1}`,
+        })),
+      };
+    } else if (params.fileUploadId) {
       properties['사진'] = {
         files: [
           {
@@ -1725,6 +1752,7 @@ export async function updateDalDalItem(params: {
   imageUrl?: string;
   fileUploadId?: string;
   fileName?: string;
+  uploadedFiles?: Array<{ fileUploadId: string; fileName: string }>;
 }) {
   if (!DALDAL_DATABASE_ID) throw new Error('달달바이블 데이터베이스 ID가 설정되지 않았습니다.');
   const { titlePropName, props } = await getTitlePropertyName(DALDAL_DATABASE_ID);
@@ -1741,7 +1769,15 @@ export async function updateDalDalItem(params: {
   }
 
   if (props['이미지']?.type === 'files') {
-    if (params.fileUploadId) {
+    if (params.uploadedFiles && params.uploadedFiles.length > 0) {
+      properties['사진'] = {
+        files: params.uploadedFiles.map((f, idx) => ({
+          type: 'file_upload',
+          file_upload: { id: f.fileUploadId },
+          name: f.fileName || `${params.title}_${idx + 1}`,
+        })),
+      };
+    } else if (params.fileUploadId) {
       properties['이미지'] = {
         files: [
           {
@@ -1777,6 +1813,7 @@ export async function updateBulletinItem(params: {
   fileUrl?: string;
   fileUploadId?: string;
   fileName?: string;
+  uploadedFiles?: Array<{ fileUploadId: string; fileName: string }>;
 }) {
   if (!BULLETIN_DATABASE_ID) throw new Error('주보 데이터베이스 ID가 설정되지 않았습니다.');
   const { titlePropName, props } = await getTitlePropertyName(BULLETIN_DATABASE_ID);
@@ -1793,7 +1830,15 @@ export async function updateBulletinItem(params: {
   }
 
   if (props['파일']?.type === 'files') {
-    if (params.fileUploadId) {
+    if (params.uploadedFiles && params.uploadedFiles.length > 0) {
+      properties['사진'] = {
+        files: params.uploadedFiles.map((f, idx) => ({
+          type: 'file_upload',
+          file_upload: { id: f.fileUploadId },
+          name: f.fileName || `${params.title}_${idx + 1}`,
+        })),
+      };
+    } else if (params.fileUploadId) {
       properties['파일'] = {
         files: [
           {
@@ -1829,6 +1874,7 @@ export async function updateGalleryItem(params: {
   imageUrl?: string;
   fileUploadId?: string;
   fileName?: string;
+  uploadedFiles?: Array<{ fileUploadId: string; fileName: string }>;
 }) {
   if (!GALLERY_DATABASE_ID) throw new Error('갤러리 데이터베이스 ID가 설정되지 않았습니다.');
   const targetPageId = await resolvePageId(params.id);
@@ -1846,7 +1892,15 @@ export async function updateGalleryItem(params: {
   }
 
   if (props['사진']?.type === 'files') {
-    if (params.fileUploadId) {
+    if (params.uploadedFiles && params.uploadedFiles.length > 0) {
+      properties['사진'] = {
+        files: params.uploadedFiles.map((f, idx) => ({
+          type: 'file_upload',
+          file_upload: { id: f.fileUploadId },
+          name: f.fileName || `${params.title}_${idx + 1}`,
+        })),
+      };
+    } else if (params.fileUploadId) {
       properties['사진'] = {
         files: [
           {

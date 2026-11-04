@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { PenLine, X, Loader2, Upload, Trash2, Pencil } from "lucide-react";
+import { PenLine, X, Loader2, Upload, Trash2, Pencil, Image as ImageIcon } from "lucide-react";
+import { compressImage, compressImages } from "@/lib/imageCompression";
 
 export type MenuType = "sermon" | "daldal" | "news" | "schedule" | "bulletin" | "gallery";
 
@@ -37,6 +38,9 @@ export default function MasterWriteButton({
   const [externalUrl, setExternalUrl] = useState("");
   const [galleryDept, setGalleryDept] = useState(defaultCategory || "전체");
   const [file, setFile] = useState<File | null>(null);
+  const [editProgress, setEditProgress] = useState("");
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
+  const [uploadProgress, setUploadProgress] = useState("");
 
   const resetForm = () => {
     setTitle("");
@@ -49,6 +53,8 @@ export default function MasterWriteButton({
     setContent("");
     setExternalUrl("");
     setFile(null);
+    setGalleryFiles([]);
+    setUploadProgress("");
     setError("");
   };
 
@@ -62,6 +68,7 @@ export default function MasterWriteButton({
     }
 
     setSubmitting(true);
+    setUploadProgress("");
     try {
       let finalTitle = title.trim();
       if (menuType === "gallery" && galleryDept && galleryDept !== "전체") {
@@ -70,13 +77,34 @@ export default function MasterWriteButton({
         }
       }
 
+      const targetFiles: File[] =
+        menuType === "gallery" && galleryFiles.length > 0
+          ? galleryFiles
+          : file
+          ? [file]
+          : [];
+
       let res: Response;
-      if (file && (menuType === "daldal" || menuType === "bulletin" || menuType === "gallery")) {
+      if (targetFiles.length > 0 && (menuType === "daldal" || menuType === "bulletin" || menuType === "gallery")) {
+        setUploadProgress("사진 용량 최적화(압축) 중...");
+        const processedFiles = await compressImages(targetFiles, (curr, total) => {
+          setUploadProgress(`사진 최적화 중... (${curr}/${total})`);
+        });
+
+        setUploadProgress(
+          processedFiles.length > 1
+            ? `사진 ${processedFiles.length}장 저장 중... (잠시만 기다려 주세요)`
+            : "서버에 저장 중..."
+        );
+
         const formData = new FormData();
         formData.append("menuType", menuType);
         formData.append("title", finalTitle);
         formData.append("date", date);
-        formData.append("file", file);
+        for (const pf of processedFiles) {
+          formData.append("files", pf);
+          formData.append("file", pf);
+        }
         if (externalUrl.trim()) {
           formData.append("imageUrl", externalUrl.trim());
           formData.append("fileUrl", externalUrl.trim());
@@ -109,6 +137,7 @@ export default function MasterWriteButton({
       if (!res.ok) {
         setError(data.error || "등록에 실패했습니다.");
         setSubmitting(false);
+        setUploadProgress("");
         return;
       }
 
@@ -119,6 +148,7 @@ export default function MasterWriteButton({
       setError("서버와 통신 중 오류가 발생했습니다.");
     } finally {
       setSubmitting(false);
+      setUploadProgress("");
     }
   };
 
@@ -331,21 +361,92 @@ export default function MasterWriteButton({
               {(menuType === "daldal" || menuType === "bulletin" || menuType === "gallery") && (
                 <>
                   <div>
-                    <label className="block text-xs font-semibold text-stone-700 mb-1.5">
-                      {menuType === "bulletin" ? "주보 파일 첨부 (PDF 또는 이미지)" : "사진 · 이미지 파일 첨부"}
-                    </label>
-                    <label className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl border border-dashed border-amber-300 bg-amber-50/40 hover:bg-amber-50 text-amber-900 text-xs sm:text-sm font-medium cursor-pointer transition-colors">
-                      <Upload size={16} className="text-amber-700" />
-                      <span className="truncate">
-                        {file ? file.name : "스마트폰 · PC에서 파일 선택하기"}
-                      </span>
-                      <input
-                        type="file"
-                        accept={menuType === "bulletin" ? ".pdf,image/*" : "image/*"}
-                        onChange={(e) => setFile(e.target.files?.[0] || null)}
-                        className="hidden"
-                      />
-                    </label>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="block text-xs font-semibold text-stone-700">
+                        {menuType === "bulletin"
+                          ? "주보 파일 첨부 (PDF 또는 이미지)"
+                          : menuType === "gallery"
+                          ? "사진 첨부 (스마트폰 원본 자동 최적화 · 여러 장 선택 가능)"
+                          : "사진 · 이미지 파일 첨부 (자동 최적화)"}
+                      </label>
+                      {menuType === "gallery" && galleryFiles.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => setGalleryFiles([])}
+                          className="text-[11px] text-stone-400 hover:text-red-500 underline cursor-pointer"
+                        >
+                          전체 취소
+                        </button>
+                      )}
+                    </div>
+
+                    {menuType === "gallery" && galleryFiles.length > 0 ? (
+                      <div className="space-y-2">
+                        <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-2.5 bg-stone-50 rounded-xl border border-amber-200">
+                          {galleryFiles.map((f, i) => (
+                            <span
+                              key={i}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-stone-200 rounded-lg text-xs text-stone-700 shadow-2xs"
+                            >
+                              <span className="truncate max-w-[130px] font-medium">{f.name}</span>
+                              <span className="text-[10px] text-stone-400">
+                                ({(f.size / 1024 / 1024).toFixed(1)}MB)
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setGalleryFiles((prev) => prev.filter((_, idx) => idx !== i))
+                                }
+                                className="text-stone-400 hover:text-red-600 font-bold ml-1 cursor-pointer"
+                              >
+                                ×
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                        <label className="inline-flex items-center gap-1.5 text-xs text-amber-800 font-medium cursor-pointer hover:underline">
+                          <Upload size={13} />
+                          <span>사진 더 추가하기...</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={(e) => {
+                              const selected = Array.from(e.target.files || []);
+                              if (selected.length > 0) {
+                                setGalleryFiles((prev) => [...prev, ...selected]);
+                              }
+                            }}
+                            className="hidden"
+                          />
+                        </label>
+                      </div>
+                    ) : (
+                      <label className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl border border-dashed border-amber-300 bg-amber-50/40 hover:bg-amber-50 text-amber-900 text-xs sm:text-sm font-medium cursor-pointer transition-colors">
+                        <Upload size={16} className="text-amber-700" />
+                        <span className="truncate">
+                          {menuType === "gallery"
+                            ? "스마트폰 · PC에서 사진 선택하기 (여러 장 가능)"
+                            : file
+                            ? file.name
+                            : "스마트폰 · PC에서 파일 선택하기"}
+                        </span>
+                        <input
+                          type="file"
+                          accept={menuType === "bulletin" ? ".pdf,image/*" : "image/*"}
+                          multiple={menuType === "gallery"}
+                          onChange={(e) => {
+                            if (menuType === "gallery") {
+                              const selected = Array.from(e.target.files || []);
+                              setGalleryFiles(selected);
+                            } else {
+                              setFile(e.target.files?.[0] || null);
+                            }
+                          }}
+                          className="hidden"
+                        />
+                      </label>
+                    )}
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-stone-700 mb-1.5">
@@ -366,11 +467,19 @@ export default function MasterWriteButton({
                 </>
               )}
 
+              {uploadProgress && (
+                <div className="text-xs text-amber-900 bg-amber-50 border border-amber-200 p-3 rounded-xl flex items-center gap-2">
+                  <Loader2 size={15} className="animate-spin text-amber-700 shrink-0" />
+                  <span className="font-medium">{uploadProgress}</span>
+                </div>
+              )}
+
               <div className="flex justify-end gap-2 pt-2">
                 <button
                   type="button"
+                  disabled={submitting}
                   onClick={() => setOpen(false)}
-                  className="px-4 py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs sm:text-sm font-semibold transition-colors cursor-pointer disabled:opacity-50"
                 >
                   취소
                 </button>
@@ -380,7 +489,7 @@ export default function MasterWriteButton({
                   className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-amber-800 hover:bg-amber-900 disabled:opacity-60 text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
                 >
                   {submitting && <Loader2 size={14} className="animate-spin" />}
-                  <span>등록하기</span>
+                  <span>{submitting ? "처리 중..." : "등록하기"}</span>
                 </button>
               </div>
             </form>
@@ -439,6 +548,7 @@ export function MasterEditButton({ menuType, item }: EditProps) {
         : "")
   );
   const [file, setFile] = useState<File | null>(null);
+  const [editProgress, setEditProgress] = useState("");
 
   if (!targetId || targetId === "empty" || targetId.startsWith("dummy-")) return null;
 
@@ -473,15 +583,21 @@ export function MasterEditButton({ menuType, item }: EditProps) {
     }
 
     setSubmitting(true);
+    setEditProgress("");
     try {
       let res: Response;
       if (file && (menuType === "daldal" || menuType === "bulletin" || menuType === "gallery")) {
+        setEditProgress("사진 용량 최적화 중...");
+        const compressed = await compressImage(file);
+        setEditProgress("서버로 전송 중...");
+
         const formData = new FormData();
         formData.append("menuType", menuType);
         formData.append("id", targetId);
         formData.append("title", title.trim());
         formData.append("date", date);
-        formData.append("file", file);
+        formData.append("file", compressed);
+        formData.append("files", compressed);
         if (externalUrl.trim()) {
           formData.append("imageUrl", externalUrl.trim());
           formData.append("fileUrl", externalUrl.trim());
@@ -524,6 +640,7 @@ export function MasterEditButton({ menuType, item }: EditProps) {
       setError("서버와 통신 중 오류가 발생했습니다.");
     } finally {
       setSubmitting(false);
+      setEditProgress("");
     }
   };
 
@@ -737,14 +854,22 @@ export function MasterEditButton({ menuType, item }: EditProps) {
                 </>
               )}
 
+              {editProgress && (
+                <div className="text-xs text-amber-900 bg-amber-50 border border-amber-200 p-3 rounded-xl flex items-center gap-2">
+                  <Loader2 size={15} className="animate-spin text-amber-700 shrink-0" />
+                  <span className="font-medium">{editProgress}</span>
+                </div>
+              )}
+
               <div className="flex justify-end gap-2 pt-2">
                 <button
                   type="button"
+                  disabled={submitting}
                   onClick={(e) => {
                     e.stopPropagation();
                     setOpen(false);
                   }}
-                  className="px-4 py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs sm:text-sm font-semibold transition-colors cursor-pointer disabled:opacity-50"
                 >
                   취소
                 </button>
@@ -754,7 +879,7 @@ export function MasterEditButton({ menuType, item }: EditProps) {
                   className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-amber-800 hover:bg-amber-900 disabled:opacity-60 text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
                 >
                   {submitting && <Loader2 size={14} className="animate-spin" />}
-                  <span>수정 저장</span>
+                  <span>{submitting ? "처리 중..." : "수정 저장"}</span>
                 </button>
               </div>
             </form>

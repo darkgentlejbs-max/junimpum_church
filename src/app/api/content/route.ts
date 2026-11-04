@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+
+export const maxDuration = 60;
 import { getCurrentUser, isMasterRole } from '@/lib/auth';
 import {
   findMemberByEmail,
@@ -47,12 +49,15 @@ export async function POST(request: Request) {
     const contentType = request.headers.get('content-type') || '';
     let payload: Record<string, any> = {};
     let uploadedFile: { fileUploadId: string; fileName: string } | null = null;
+    const uploadedFiles: Array<{ fileUploadId: string; fileName: string }> = [];
 
     if (contentType.includes('multipart/form-data')) {
       const formData = await request.formData();
       for (const [key, value] of formData.entries()) {
-        if (key === 'file' && value instanceof File && value.size > 0) {
-          uploadedFile = await uploadFileToNotion(value);
+        if ((key === 'file' || key === 'files') && value instanceof File && value.size > 0) {
+          const up = await uploadFileToNotion(value);
+          uploadedFiles.push(up);
+          if (!uploadedFile) uploadedFile = up;
         } else if (typeof value === 'string') {
           payload[key] = value;
         }
@@ -124,6 +129,7 @@ export async function POST(request: Request) {
         imageUrl: payload.imageUrl || '',
         fileUploadId: uploadedFile?.fileUploadId,
         fileName: uploadedFile?.fileName,
+        uploadedFiles: uploadedFiles.length > 0 ? uploadedFiles : undefined,
       });
       return NextResponse.json({ item });
     }
@@ -151,12 +157,15 @@ export async function PATCH(request: Request) {
     const contentType = request.headers.get('content-type') || '';
     let payload: Record<string, any> = {};
     let uploadedFile: { fileUploadId: string; fileName: string } | null = null;
+    const uploadedFiles: Array<{ fileUploadId: string; fileName: string }> = [];
 
     if (contentType.includes('multipart/form-data')) {
       const formData = await request.formData();
       for (const [key, value] of formData.entries()) {
-        if (key === 'file' && value instanceof File && value.size > 0) {
-          uploadedFile = await uploadFileToNotion(value);
+        if ((key === 'file' || key === 'files') && value instanceof File && value.size > 0) {
+          const up = await uploadFileToNotion(value);
+          uploadedFiles.push(up);
+          if (!uploadedFile) uploadedFile = up;
         } else if (typeof value === 'string') {
           payload[key] = value;
         }
@@ -237,6 +246,7 @@ export async function PATCH(request: Request) {
         imageUrl: payload.imageUrl || '',
         fileUploadId: uploadedFile?.fileUploadId,
         fileName: uploadedFile?.fileName,
+        uploadedFiles: uploadedFiles.length > 0 ? uploadedFiles : undefined,
       });
       return NextResponse.json({ ok: true });
     }
