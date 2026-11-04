@@ -243,8 +243,8 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Centered Welcome Card */}
-              <div className="flex flex-col items-center justify-center text-center py-6 px-4 mb-6 rounded-2xl bg-white/80 border border-stone-200/80 shadow-[0_2px_16px_rgba(0,0,0,0.03)]">
+              {/* Centered Welcome */}
+              <div className="flex flex-col items-center justify-center text-center py-3 sm:py-5 px-2 mb-6">
                 <span className="text-stone-400 text-sm select-none leading-none">♡</span>
                 <span className="font-serif tracking-[0.28em] text-[#5C533A] uppercase font-bold text-xs sm:text-sm mt-1.5 mb-3.5">
                   Welcome
