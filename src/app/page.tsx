@@ -11,10 +11,9 @@ const DEFAULT_HOME = {
   badgeText: "대한예수교장로회(통합) 주님품교회",
   imageCaptionLeft: "대한예수교장로회(통합)",
   imageCaptionRight: "주님품교회 전경",
-  headlineLine1: "믿음 · 소망 · 사랑으로 세워 가는",
-  headlineLine2: "주님품교회에 오신 것을\n진심으로 환영합니다",
-  subtitle:
-    "하나님의 은혜와 사랑이 머무는 곳,\n주님품처럼 따뜻한 안식과 회복이 있는 주님품 공동체입니다.",
+  headlineLine1: "당신이 오길~ 기다렸습니다",
+  headlineLine2: "주님품교회가 당신에게\n위로와 소망이 되길 바랍니다",
+  subtitle: "",
   navItems: [
     {
       no: "01",
@@ -72,34 +71,43 @@ export default function Home() {
       .then((r) => r.json())
       .then((res) => {
         if (res?.config?.home) {
-          let loadedSubtitle = res.config.home.subtitle || DEFAULT_HOME.subtitle;
+          let loadedHeadline1 =
+            res.config.home.headlineLine1 || DEFAULT_HOME.headlineLine1;
           if (
-            loadedSubtitle ===
-              "하나님의 은혜와 사랑이 머무는 곳, 주님품처럼 따뜻한 안식과 회복이 있는 주님품교회에 오신 것을 진심으로 환영합니다." ||
-            loadedSubtitle ===
-              "하나님의 은혜와 사랑이 머무는 곳,\n주님품처럼 따뜻한 안식과 회복이 있는 주님품교회에 오신 것을\n진심으로 환영합니다." ||
-            loadedSubtitle ===
-              "하나님의 은혜와 사랑이 머무는 곳,\n주님품처럼 따뜻한 안식과 회복이 있는\n주님품교회에 오신 것을\n진심으로 환영합니다."
+            !loadedHeadline1 ||
+            loadedHeadline1.includes("믿음") ||
+            loadedHeadline1.includes("소망") ||
+            loadedHeadline1.includes("세워")
           ) {
-            loadedSubtitle = DEFAULT_HOME.subtitle;
+            loadedHeadline1 = DEFAULT_HOME.headlineLine1;
           }
+
           let loadedHeadline2 =
             res.config.home.headlineLine2 || DEFAULT_HOME.headlineLine2;
           if (
-            loadedHeadline2 === "세워져 가는 따뜻한 공동체" ||
-            loadedHeadline2 === "세워 가는 따뜻한 공동체" ||
-            loadedHeadline2 === "세워 가는 주님품 공동체"
+            !loadedHeadline2 ||
+            loadedHeadline2.includes("오신 것을") ||
+            loadedHeadline2.includes("환영합니다") ||
+            loadedHeadline2.includes("따뜻한 공동체") ||
+            loadedHeadline2.includes("주님품 공동체")
           ) {
             loadedHeadline2 = DEFAULT_HOME.headlineLine2;
-          } else if (
-            loadedHeadline2.includes("오신 것을") &&
-            !loadedHeadline2.includes("오신 것을\n")
-          ) {
-            loadedHeadline2 = loadedHeadline2.replace(/오신 것을\s*/, "오신 것을\n");
           }
+
+          let loadedSubtitle = res.config.home.subtitle || DEFAULT_HOME.subtitle;
+          if (
+            !loadedSubtitle ||
+            loadedSubtitle.includes("하나님의 은혜와 사랑이 머무는 곳") ||
+            loadedSubtitle.includes("주님품교회에 오신 것을") ||
+            ["♡.", "♡", ".", ""].includes(loadedSubtitle.trim())
+          ) {
+            loadedSubtitle = "";
+          }
+
           const merged = {
             ...DEFAULT_HOME,
             ...res.config.home,
+            headlineLine1: loadedHeadline1,
             headlineLine2: loadedHeadline2,
             subtitle: loadedSubtitle,
             cards: { ...DEFAULT_HOME.cards, ...(res.config.home.cards || {}) },
@@ -235,56 +243,55 @@ export default function Home() {
                 </div>
               )}
 
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-stone-700 leading-normal mb-7 flex flex-col gap-1.5 sm:gap-2">
+              {/* Centered Welcome Card */}
+              <div className="flex flex-col items-center justify-center text-center py-6 px-4 mb-6 rounded-2xl bg-white/80 border border-stone-200/80 shadow-[0_2px_16px_rgba(0,0,0,0.03)]">
+                <span className="text-stone-400 text-sm select-none leading-none">♡</span>
+                <span className="font-serif tracking-[0.28em] text-[#5C533A] uppercase font-bold text-xs sm:text-sm mt-1.5 mb-3.5">
+                  Welcome
+                </span>
+
                 {(() => {
-                  const rawLine2 = homeData.headlineLine2 || "";
-                  let row1 = rawLine2;
-                  let row2 = "";
+                  const line1 = homeData.headlineLine1 || "당신이 오길~ 기다렸습니다";
+                  const rawLine2 =
+                    homeData.headlineLine2 ||
+                    "주님품교회가 당신에게\n위로와 소망이 되길 바랍니다";
+                  let line2 = rawLine2;
+                  let line3 = "";
 
                   if (rawLine2.includes("\n")) {
                     const split = rawLine2.split("\n");
-                    row1 = split[0];
-                    row2 = split.slice(1).join(" ");
-                  } else if (rawLine2.includes("오신 것을")) {
-                    const idx = rawLine2.indexOf("오신 것을") + "오신 것을".length;
-                    row1 = rawLine2.slice(0, idx).trim();
-                    row2 = rawLine2.slice(idx).trim();
+                    line2 = split[0];
+                    line3 = split.slice(1).join(" ");
+                  } else if (rawLine2.includes("주님품교회가 당신에게")) {
+                    line2 = "주님품교회가 당신에게";
+                    line3 = rawLine2.replace("주님품교회가 당신에게", "").trim();
                   }
 
                   return (
-                    <>
-                      <span className="block text-stone-700">{homeData.headlineLine1}</span>
-                      {row1 && <span className="block text-stone-700">{row1}</span>}
-                      {row2 ? (
-                        <span className="inline-flex items-center align-baseline flex-wrap text-stone-700">
-                          <span>{row2}</span>
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src="/icon-192.png?v=2"
-                            alt="주님품교회 로고"
-                            className="w-5 h-5 sm:w-6 sm:h-6 rounded-md border border-amber-200/80 shadow-2xs object-cover ml-1.5 inline-block shrink-0 relative -top-0.5"
-                          />
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center align-baseline flex-wrap text-stone-700">
-                          <span>{row1}</span>
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src="/icon-192.png?v=2"
-                            alt="주님품교회 로고"
-                            className="w-5 h-5 sm:w-6 sm:h-6 rounded-md border border-amber-200/80 shadow-2xs object-cover ml-1.5 inline-block shrink-0 relative -top-0.5"
-                          />
-                        </span>
+                    <div className="flex flex-col items-center gap-1.5 sm:gap-2">
+                      <h1 className="text-base sm:text-xl font-bold text-stone-800 tracking-tight leading-snug whitespace-nowrap">
+                        {line1}
+                      </h1>
+                      <p className="text-xs sm:text-base font-medium text-stone-600 tracking-tight leading-snug whitespace-nowrap">
+                        {line2}
+                      </p>
+                      {line3 && (
+                        <p className="text-xs sm:text-base font-medium text-stone-600 tracking-tight leading-snug whitespace-nowrap">
+                          {line3}
+                        </p>
                       )}
-                    </>
+                    </div>
                   );
                 })()}
-              </h1>
+
+                <span className="text-stone-400 text-sm select-none leading-none mt-3.5">♡</span>
+              </div>
 
               {homeData.subtitle &&
                 !["♡.", "♡", ".", ""].includes(homeData.subtitle.trim()) &&
-                !homeData.subtitle.includes("주님품교회에 오신 것을") && (
-                  <p className="text-stone-500 text-xs sm:text-sm leading-relaxed mb-6 max-w-lg whitespace-pre-line break-keep">
+                !homeData.subtitle.includes("주님품교회에 오신 것을") &&
+                !homeData.subtitle.includes("하나님의 은혜와 사랑이 머무는 곳") && (
+                  <p className="text-stone-500 text-xs sm:text-sm leading-relaxed mb-6 max-w-lg whitespace-pre-line break-keep text-center mx-auto">
                     {homeData.subtitle}
                   </p>
                 )}
@@ -474,7 +481,7 @@ export default function Home() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-semibold text-stone-600 mb-1">
-                        메인 타이틀 (첫째 줄)
+                        환영 문구 (첫째 줄)
                       </label>
                       <input
                         type="text"
@@ -482,12 +489,13 @@ export default function Home() {
                         onChange={(e) =>
                           setFormState({ ...formState, headlineLine1: e.target.value })
                         }
+                        placeholder="당신이 오길~ 기다렸습니다"
                         className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:outline-none focus:border-amber-600"
                       />
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-stone-600 mb-1">
-                        메인 타이틀 (둘째 줄, 엔터로 줄바꿈 가능)
+                        축복 문구 (둘째·셋째 줄, 엔터로 줄바꿈)
                       </label>
                       <textarea
                         rows={2}
@@ -495,6 +503,7 @@ export default function Home() {
                         onChange={(e) =>
                           setFormState({ ...formState, headlineLine2: e.target.value })
                         }
+                        placeholder="주님품교회가 당신에게&#10;위로와 소망이 되길 바랍니다"
                         className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:outline-none focus:border-amber-600"
                       />
                     </div>
