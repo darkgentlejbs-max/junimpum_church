@@ -129,7 +129,12 @@ export async function POST(request: Request) {
         imageUrl: payload.imageUrl || '',
         fileUploadId: uploadedFile?.fileUploadId,
         fileName: uploadedFile?.fileName,
-        uploadedFiles: uploadedFiles.length > 0 ? uploadedFiles : undefined,
+        uploadedFiles:
+          uploadedFiles.length > 0
+            ? uploadedFiles
+            : Array.isArray(payload.uploadedFiles)
+            ? payload.uploadedFiles
+            : undefined,
       });
       return NextResponse.json({ item });
     }
@@ -246,7 +251,12 @@ export async function PATCH(request: Request) {
         imageUrl: payload.imageUrl || '',
         fileUploadId: uploadedFile?.fileUploadId,
         fileName: uploadedFile?.fileName,
-        uploadedFiles: uploadedFiles.length > 0 ? uploadedFiles : undefined,
+        uploadedFiles:
+          uploadedFiles.length > 0
+            ? uploadedFiles
+            : Array.isArray(payload.uploadedFiles)
+            ? payload.uploadedFiles
+            : undefined,
       });
       return NextResponse.json({ ok: true });
     }

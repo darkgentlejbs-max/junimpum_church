@@ -84,68 +84,100 @@ export default function MasterWriteButton({
           ? [file]
           : [];
 
-      let res: Response;
-      if (targetFiles.length > 0 && (menuType === "daldal" || menuType === "bulletin" || menuType === "gallery")) {
-        setUploadProgress("사진 용량 최적화(압축) 중...");
-        const processedFiles = await compressImages(targetFiles, (curr, total) => {
-          setUploadProgress(`사진 최적화 중... (${curr}/${total})`);
-        });
+      const uploadedFiles: Array<{ fileUploadId: string; fileName: string }> = [];
 
-        setUploadProgress(
-          processedFiles.length > 1
-            ? `사진 ${processedFiles.length}장 저장 중... (잠시만 기다려 주세요)`
-            : "서버에 저장 중..."
-        );
+      // 1. 첨부 파일이 있는 경우: 각 파일을 개별 압축 후 개별 업로드 (Vercel 4.5MB 한도 완벽 방지)
+      if (targetFiles.length > 0) {
+        const total = targetFiles.length;
+        for (let i = 0; i < total; i++) {
+          const rawFile = targetFiles[i];
 
-        const formData = new FormData();
-        formData.append("menuType", menuType);
-        formData.append("title", finalTitle);
-        formData.append("date", date);
-        for (const pf of processedFiles) {
-          formData.append("files", pf);
-          formData.append("file", pf);
+          // 클라이언트 측 고화질 압축 (스마트폰 10MB 원본 -> 400KB~700KB)
+          setUploadProgress(
+            total > 1
+              ? `사진 최적화 중... (${i + 1}/${total})`
+              : "사진 최적화 중..."
+          );
+          const compressed = await compressImage(rawFile, 1920, 1920, 0.82);
+
+          // 단일 파일 업로드 전송
+          setUploadProgress(
+            total > 1
+              ? `사진 서버 업로드 중... (${i + 1}/${total})`
+              : "서버로 사진 업로드 중..."
+          );
+
+          const fileFormData = new FormData();
+          fileFormData.append("file", compressed);
+
+          const upRes = await fetch("/api/content/upload", {
+            method: "POST",
+            body: fileFormData,
+          });
+
+          let upData: any = {};
+          try {
+            upData = await upRes.json();
+          } catch {
+            const errText = await upRes.text().catch(() => "");
+            throw new Error(`파일 전송 실패 (${upRes.status}): ${errText.slice(0, 80)}`);
+          }
+
+          if (!upRes.ok || !upData.fileUploadId) {
+            throw new Error(upData.error || `${rawFile.name} 업로드에 실패했습니다.`);
+          }
+
+          uploadedFiles.push({
+            fileUploadId: upData.fileUploadId,
+            fileName: upData.fileName || rawFile.name,
+          });
         }
-        if (externalUrl.trim()) {
-          formData.append("imageUrl", externalUrl.trim());
-          formData.append("fileUrl", externalUrl.trim());
-        }
-        res = await fetch("/api/content", {
-          method: "POST",
-          body: formData,
-        });
-      } else {
-        res = await fetch("/api/content", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            menuType,
-            title: finalTitle,
-            date,
-            passage,
-            preacher,
-            videoUrl,
-            type,
-            location,
-            content,
-            imageUrl: externalUrl.trim(),
-            fileUrl: externalUrl.trim(),
-          }),
-        });
       }
 
-      const data = await res.json();
+      // 2. 모든 파일 업로드 완료 후, 가벼운 JSON 요청으로 노션에 페이지 생성
+      setUploadProgress("게시글 정보 저장 중...");
+
+      const payloadBody = {
+        menuType,
+        title: finalTitle,
+        date,
+        passage,
+        preacher,
+        videoUrl,
+        type,
+        location,
+        content,
+        imageUrl: externalUrl.trim(),
+        fileUrl: externalUrl.trim(),
+        fileUploadId: uploadedFiles[0]?.fileUploadId,
+        fileName: uploadedFiles[0]?.fileName,
+        uploadedFiles: uploadedFiles.length > 0 ? uploadedFiles : undefined,
+      };
+
+      const res = await fetch("/api/content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payloadBody),
+      });
+
+      let data: any = {};
+      try {
+        data = await res.json();
+      } catch {
+        const errText = await res.text().catch(() => "");
+        throw new Error(`게시글 등록 실패 (${res.status}): ${errText.slice(0, 80)}`);
+      }
+
       if (!res.ok) {
-        setError(data.error || "등록에 실패했습니다.");
-        setSubmitting(false);
-        setUploadProgress("");
-        return;
+        throw new Error(data.error || "등록에 실패했습니다.");
       }
 
       resetForm();
       setOpen(false);
       router.refresh();
-    } catch {
-      setError("서버와 통신 중 오류가 발생했습니다.");
+    } catch (err: any) {
+      console.error("Write error:", err);
+      setError(err?.message || "서버와 통신 중 오류가 발생했습니다.");
     } finally {
       setSubmitting(false);
       setUploadProgress("");
@@ -585,59 +617,80 @@ export function MasterEditButton({ menuType, item }: EditProps) {
     setSubmitting(true);
     setEditProgress("");
     try {
-      let res: Response;
+      let uploadedFileId: string | undefined;
+      let uploadedFileName: string | undefined;
+
       if (file && (menuType === "daldal" || menuType === "bulletin" || menuType === "gallery")) {
         setEditProgress("사진 용량 최적화 중...");
-        const compressed = await compressImage(file);
-        setEditProgress("서버로 전송 중...");
+        const compressed = await compressImage(file, 1920, 1920, 0.82);
+        setEditProgress("서버로 파일 업로드 중...");
 
-        const formData = new FormData();
-        formData.append("menuType", menuType);
-        formData.append("id", targetId);
-        formData.append("title", title.trim());
-        formData.append("date", date);
-        formData.append("file", compressed);
-        formData.append("files", compressed);
-        if (externalUrl.trim()) {
-          formData.append("imageUrl", externalUrl.trim());
-          formData.append("fileUrl", externalUrl.trim());
+        const fileFormData = new FormData();
+        fileFormData.append("file", compressed);
+
+        const upRes = await fetch("/api/content/upload", {
+          method: "POST",
+          body: fileFormData,
+        });
+
+        let upData: any = {};
+        try {
+          upData = await upRes.json();
+        } catch {
+          const errText = await upRes.text().catch(() => "");
+          throw new Error(`파일 전송 실패 (${upRes.status}): ${errText.slice(0, 80)}`);
         }
-        res = await fetch("/api/content", {
-          method: "PATCH",
-          body: formData,
-        });
-      } else {
-        res = await fetch("/api/content", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            menuType,
-            id: targetId,
-            title: title.trim(),
-            date,
-            passage,
-            preacher,
-            videoUrl,
-            type,
-            location,
-            content,
-            imageUrl: externalUrl.trim(),
-            fileUrl: externalUrl.trim(),
-          }),
-        });
+
+        if (!upRes.ok || !upData.fileUploadId) {
+          throw new Error(upData.error || `${file.name} 업로드에 실패했습니다.`);
+        }
+
+        uploadedFileId = upData.fileUploadId;
+        uploadedFileName = upData.fileName || file.name;
       }
 
-      const data = await res.json();
+      setEditProgress("수정 사항 저장 중...");
+
+      const payloadBody = {
+        menuType,
+        id: targetId,
+        title: title.trim(),
+        date,
+        passage,
+        preacher,
+        videoUrl,
+        type,
+        location,
+        content,
+        imageUrl: externalUrl.trim(),
+        fileUrl: externalUrl.trim(),
+        fileUploadId: uploadedFileId,
+        fileName: uploadedFileName,
+      };
+
+      const res = await fetch("/api/content", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payloadBody),
+      });
+
+      let data: any = {};
+      try {
+        data = await res.json();
+      } catch {
+        const errText = await res.text().catch(() => "");
+        throw new Error(`게시글 수정 실패 (${res.status}): ${errText.slice(0, 80)}`);
+      }
+
       if (!res.ok) {
-        setError(data.error || "수정에 실패했습니다.");
-        setSubmitting(false);
-        return;
+        throw new Error(data.error || "수정에 실패했습니다.");
       }
 
       setOpen(false);
       router.refresh();
-    } catch {
-      setError("서버와 통신 중 오류가 발생했습니다.");
+    } catch (err: any) {
+      console.error("Edit error:", err);
+      setError(err?.message || "서버와 통신 중 오류가 발생했습니다.");
     } finally {
       setSubmitting(false);
       setEditProgress("");
