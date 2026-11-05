@@ -11,7 +11,7 @@ const DEFAULT_HOME = {
   badgeText: "대한예수교장로회(통합) 주님품교회",
   imageCaptionLeft: "대한예수교장로회(통합)",
   imageCaptionRight: "주님품교회 전경",
-  headlineLine1: "당신이 오길~ 기다렸습니다",
+  headlineLine1: "당신이 오길 기다렸습니다~",
   headlineLine2: "주님품교회가 당신에게\n위로와 소망이 되길 바랍니다",
   subtitle: "",
   navItems: [
@@ -77,7 +77,8 @@ export default function Home() {
             !loadedHeadline1 ||
             loadedHeadline1.includes("믿음") ||
             loadedHeadline1.includes("소망") ||
-            loadedHeadline1.includes("세워")
+            loadedHeadline1.includes("세워") ||
+            loadedHeadline1 === "당신이 오길~ 기다렸습니다"
           ) {
             loadedHeadline1 = DEFAULT_HOME.headlineLine1;
           }
@@ -244,14 +245,14 @@ export default function Home() {
               )}
 
               {/* Centered Welcome */}
-              <div className="flex flex-col items-center justify-center text-center py-3 sm:py-5 px-2 mb-6">
-                <span className="text-stone-400 text-sm select-none leading-none">♡</span>
-                <span className="font-serif tracking-[0.28em] text-[#5C533A] uppercase font-bold text-xs sm:text-sm mt-1.5 mb-3.5">
+              <div className="flex flex-col items-center justify-center text-center py-2.5 sm:py-4 px-2 mb-6">
+                <span className="text-stone-400 text-sm sm:text-base select-none leading-none">♡</span>
+                <span className="font-serif tracking-[0.28em] text-[#5C533A] uppercase font-bold text-[13px] sm:text-[15px] mt-1 mb-2.5">
                   Welcome
                 </span>
 
                 {(() => {
-                  const line1 = homeData.headlineLine1 || "당신이 오길~ 기다렸습니다";
+                  const line1 = homeData.headlineLine1 || "당신이 오길 기다렸습니다~";
                   const rawLine2 =
                     homeData.headlineLine2 ||
                     "주님품교회가 당신에게\n위로와 소망이 되길 바랍니다";
@@ -268,15 +269,15 @@ export default function Home() {
                   }
 
                   return (
-                    <div className="flex flex-col items-center gap-1.5 sm:gap-2">
-                      <h1 className="text-base sm:text-xl font-bold text-stone-800 tracking-tight leading-snug whitespace-nowrap">
+                    <div className="flex flex-col items-center gap-1 sm:gap-1.5">
+                      <h1 className="text-[17.5px] sm:text-[23px] font-bold text-stone-800 tracking-tight leading-tight whitespace-nowrap">
                         {line1}
                       </h1>
-                      <p className="text-xs sm:text-base font-medium text-stone-600 tracking-tight leading-snug whitespace-nowrap">
+                      <p className="text-[13.5px] sm:text-[17px] font-medium text-stone-600 tracking-tight leading-tight whitespace-nowrap">
                         {line2}
                       </p>
                       {line3 && (
-                        <p className="text-xs sm:text-base font-medium text-stone-600 tracking-tight leading-snug whitespace-nowrap">
+                        <p className="text-[13.5px] sm:text-[17px] font-medium text-stone-600 tracking-tight leading-tight whitespace-nowrap">
                           {line3}
                         </p>
                       )}
@@ -284,7 +285,7 @@ export default function Home() {
                   );
                 })()}
 
-                <span className="text-stone-400 text-sm select-none leading-none mt-3.5">♡</span>
+                <span className="text-stone-400 text-sm sm:text-base select-none leading-none mt-2.5">♡</span>
               </div>
 
               {homeData.subtitle &&
@@ -489,7 +490,7 @@ export default function Home() {
                         onChange={(e) =>
                           setFormState({ ...formState, headlineLine1: e.target.value })
                         }
-                        placeholder="당신이 오길~ 기다렸습니다"
+                        placeholder="당신이 오길 기다렸습니다~"
                         className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:outline-none focus:border-amber-600"
                       />
                     </div>
