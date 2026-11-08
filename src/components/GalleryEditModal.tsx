@@ -13,9 +13,22 @@ import {
   ImageIcon,
   Check,
   Camera,
+  Play,
 } from "lucide-react";
 import { compressImage } from "@/lib/imageCompression";
 import type { GalleryAlbum, GalleryPhoto } from "./GalleryView";
+
+function isVideoMedia(url?: string, fileName?: string): boolean {
+  if (!url && !fileName) return false;
+  const str = `${fileName || ""} ${url || ""}`.toLowerCase();
+  return (
+    str.includes(".mp4") ||
+    str.includes(".mov") ||
+    str.includes(".webm") ||
+    str.includes(".m4v") ||
+    str.includes(".ogg")
+  );
+}
 
 interface ExistingPhotoItem {
   id: string;
@@ -196,17 +209,18 @@ export default function GalleryEditModal({
         const total = newFiles.length;
         for (let i = 0; i < total; i++) {
           const rawFile = newFiles[i];
+          const isVideo = rawFile.type.startsWith("video/");
           setProgressMsg(
             total > 1
-              ? `새 사진 최적화 중... (${i + 1}/${total})`
-              : "사진 용량 최적화 중..."
+              ? `${isVideo ? "동영상" : "사진"} 최적화 중... (${i + 1}/${total})`
+              : `${isVideo ? "동영상" : "사진"} 최적화 중...`
           );
           const compressed = await compressImage(rawFile, 1920, 1920, 0.82);
 
           setProgressMsg(
             total > 1
-              ? `새 사진 업로드 중... (${i + 1}/${total})`
-              : "서버로 사진 업로드 중..."
+              ? `${isVideo ? "동영상" : "사진"} 업로드 중... (${i + 1}/${total})`
+              : `서버로 ${isVideo ? "동영상" : "사진"} 업로드 중...`
           );
           const fd = new FormData();
           fd.append("file", compressed);
@@ -421,68 +435,90 @@ export default function GalleryEditModal({
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-60 overflow-y-auto p-2.5 bg-stone-50 rounded-2xl border border-stone-200">
-                  {photosState.map((photo, idx) => (
-                    <div
-                      key={photo.id}
-                      className={`relative rounded-xl overflow-hidden border transition-all ${
-                        photo.isDeleted
-                          ? "border-red-300 bg-red-50/70 opacity-60"
-                          : "border-stone-200 bg-white shadow-2xs hover:border-amber-400"
-                      }`}
-                    >
-                      <div className="aspect-[4/3] bg-stone-100 relative overflow-hidden flex items-center justify-center">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={photo.imageUrl}
-                          alt={photo.fileName}
-                          className={`w-full h-full object-cover ${
-                            photo.isDeleted ? "grayscale" : ""
-                          }`}
-                        />
+                  {photosState.map((photo, idx) => {
+                    const isVideo = isVideoMedia(photo.imageUrl, photo.fileName);
 
-                        {photo.isDeleted && (
-                          <div className="absolute inset-0 bg-red-900/60 flex flex-col items-center justify-center text-white text-[11px] font-bold">
-                            <span>삭제 예정</span>
-                            {photo.overwrittenBy && (
-                              <span className="text-[9px] text-amber-200 mt-0.5 px-1 truncate max-w-full">
-                                ({photo.overwrittenBy}로 교체)
+                    return (
+                      <div
+                        key={photo.id}
+                        className={`relative rounded-xl overflow-hidden border transition-all ${
+                          photo.isDeleted
+                            ? "border-red-300 bg-red-50/70 opacity-60"
+                            : "border-stone-200 bg-white shadow-2xs hover:border-amber-400"
+                        }`}
+                      >
+                        <div className="aspect-[4/3] bg-stone-100 relative overflow-hidden flex items-center justify-center">
+                          {isVideo ? (
+                            <video
+                              src={photo.imageUrl}
+                              preload="metadata"
+                              muted
+                              playsInline
+                              className={`w-full h-full object-cover ${
+                                photo.isDeleted ? "grayscale" : ""
+                              }`}
+                            />
+                          ) : (
+                            /* eslint-disable-next-line @next/next/no-img-element */
+                            <img
+                              src={photo.imageUrl}
+                              alt={photo.fileName}
+                              className={`w-full h-full object-cover ${
+                                photo.isDeleted ? "grayscale" : ""
+                              }`}
+                            />
+                          )}
+
+                          {isVideo && (
+                            <div className="absolute bottom-1.5 left-1.5 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded-full flex items-center gap-0.5 font-medium">
+                              <Play size={8} className="fill-current" /> 동영상
+                            </div>
+                          )}
+
+                          {photo.isDeleted && (
+                            <div className="absolute inset-0 bg-red-900/60 flex flex-col items-center justify-center text-white text-[11px] font-bold">
+                              <span>삭제 예정</span>
+                              {photo.overwrittenBy && (
+                                <span className="text-[9px] text-amber-200 mt-0.5 px-1 truncate max-w-full">
+                                  ({photo.overwrittenBy}로 교체)
+                                </span>
+                              )}
+                            </div>
+                          )}
+
+                          <div className="absolute top-1.5 left-1.5 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded-full font-mono">
+                            #{idx + 1}
+                          </div>
+                        </div>
+
+                        <div className="p-2 flex items-center justify-between gap-1">
+                          <span className="text-[11px] text-stone-700 truncate font-medium" title={photo.fileName}>
+                            {photo.fileName}
+                          </span>
+
+                          <button
+                            type="button"
+                            onClick={() => toggleDeletePhoto(idx)}
+                            className={`px-2 py-0.5 rounded text-[10px] font-bold shrink-0 transition-colors cursor-pointer ${
+                              photo.isDeleted
+                                ? "bg-stone-200 hover:bg-stone-300 text-stone-700"
+                                : "bg-red-50 hover:bg-red-100 text-red-600 border border-red-200"
+                            }`}
+                          >
+                            {photo.isDeleted ? (
+                              <span className="inline-flex items-center gap-0.5">
+                                <RotateCcw size={10} /> 복구
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-0.5">
+                                <Trash2 size={10} /> 삭제
                               </span>
                             )}
-                          </div>
-                        )}
-
-                        <div className="absolute top-1.5 left-1.5 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded-full font-mono">
-                          #{idx + 1}
+                          </button>
                         </div>
                       </div>
-
-                      <div className="p-2 flex items-center justify-between gap-1">
-                        <span className="text-[11px] text-stone-700 truncate font-medium">
-                          {photo.fileName}
-                        </span>
-
-                        <button
-                          type="button"
-                          onClick={() => toggleDeletePhoto(idx)}
-                          className={`px-2 py-0.5 rounded text-[10px] font-bold shrink-0 transition-colors cursor-pointer ${
-                            photo.isDeleted
-                              ? "bg-stone-200 hover:bg-stone-300 text-stone-700"
-                              : "bg-red-50 hover:bg-red-100 text-red-600 border border-red-200"
-                          }`}
-                        >
-                          {photo.isDeleted ? (
-                            <span className="inline-flex items-center gap-0.5">
-                              <RotateCcw size={10} /> 복구
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-0.5">
-                              <Trash2 size={10} /> 삭제
-                            </span>
-                          )}
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
@@ -528,17 +564,17 @@ export default function GalleryEditModal({
 
                 <label className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl border border-dashed border-amber-300 bg-amber-50/40 hover:bg-amber-50 text-amber-900 text-xs sm:text-sm font-semibold cursor-pointer transition-colors">
                   <Upload size={16} className="text-amber-700" />
-                  <span>스마트폰 · PC에서 새 사진 추가하기...</span>
+                  <span>스마트폰 · PC에서 새 사진 · 동영상 추가하기...</span>
                   <input
                     type="file"
-                    accept="image/*"
+                    accept="image/*,video/*"
                     multiple
                     onChange={handleSelectNewFiles}
                     className="hidden"
                   />
                 </label>
                 <p className="text-[11px] text-stone-400 mt-1">
-                  * 이미 등록된 이름과 동일한 사진을 추가할 경우 덮어쓰기 여부를 확인합니다.
+                  * 사진 및 짧은 동영상(mp4, mov 등) 첨부 가능 · 이미 등록된 이름과 동일한 파일은 덮어쓰기 여부를 확인합니다.
                 </p>
               </div>
 

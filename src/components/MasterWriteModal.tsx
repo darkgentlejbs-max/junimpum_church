@@ -114,20 +114,25 @@ export default function MasterWriteButton({
         const total = targetFiles.length;
         for (let i = 0; i < total; i++) {
           const rawFile = targetFiles[i];
+          const isVideo = rawFile.type.startsWith("video/");
 
-          // 클라이언트 측 고화질 압축 (스마트폰 10MB 원본 -> 400KB~700KB)
+          if (rawFile.size > 50 * 1024 * 1024) {
+            throw new Error(`'${rawFile.name}' 파일이 너무 큽니다(50MB 초과). 짧은 동영상 또는 고화질 압축 영상을 올려주세요.`);
+          }
+
+          // 클라이언트 측 고화질 압축 (스마트폰 10MB 원본 -> 400KB~700KB, 영상은 원본 유지)
           setUploadProgress(
             total > 1
-              ? `사진 최적화 중... (${i + 1}/${total})`
-              : "사진 최적화 중..."
+              ? `${isVideo ? "동영상" : "사진"} 최적화 중... (${i + 1}/${total})`
+              : `${isVideo ? "동영상" : "사진"} 최적화 중...`
           );
           const compressed = await compressImage(rawFile, 1920, 1920, 0.82);
 
           // 단일 파일 업로드 전송
           setUploadProgress(
             total > 1
-              ? `사진 서버 업로드 중... (${i + 1}/${total})`
-              : "서버로 사진 업로드 중..."
+              ? `${isVideo ? "동영상" : "사진"} 서버 업로드 중... (${i + 1}/${total})`
+              : `서버로 ${isVideo ? "동영상" : "사진"} 업로드 중...`
           );
 
           const fileFormData = new FormData();
@@ -200,7 +205,8 @@ export default function MasterWriteButton({
       router.refresh();
     } catch (err: any) {
       console.error("Write error:", err);
-      setError(err?.message || "서버와 통신 중 오류가 발생했습니다.");
+      const msg = err?.message || (typeof err === "string" ? err : "");
+      setError(msg || "등록 중 오류가 발생했습니다. 다시 시도해 주세요.");
     } finally {
       setSubmitting(false);
       setUploadProgress("");
@@ -421,7 +427,7 @@ export default function MasterWriteButton({
                         {menuType === "bulletin"
                           ? "주보 파일 첨부 (PDF 또는 이미지)"
                           : menuType === "gallery"
-                          ? "사진 첨부 (스마트폰 원본 자동 최적화 · 여러 장 선택 가능)"
+                          ? "사진 · 짧은 동영상 첨부 (여러 개 선택 가능)"
                           : "사진 · 이미지 파일 첨부 (자동 최적화)"}
                       </label>
                       {menuType === "gallery" && galleryFiles.length > 0 && (
@@ -461,10 +467,10 @@ export default function MasterWriteButton({
                         </div>
                         <label className="inline-flex items-center gap-1.5 text-xs text-amber-800 font-medium cursor-pointer hover:underline">
                           <Upload size={13} />
-                          <span>사진 더 추가하기...</span>
+                          <span>사진 · 동영상 더 추가하기...</span>
                           <input
                             type="file"
-                            accept="image/*"
+                            accept={menuType === "gallery" ? "image/*,video/*" : "image/*"}
                             multiple
                             onChange={(e) => {
                               const selected = Array.from(e.target.files || []);
@@ -482,14 +488,20 @@ export default function MasterWriteButton({
                         <Upload size={16} className="text-amber-700" />
                         <span className="truncate">
                           {menuType === "gallery"
-                            ? "스마트폰 · PC에서 사진 선택하기 (여러 장 가능)"
+                            ? "스마트폰 · PC에서 사진 · 동영상 선택하기 (여러 개 가능)"
                             : file
                             ? file.name
                             : "스마트폰 · PC에서 파일 선택하기"}
                         </span>
                         <input
                           type="file"
-                          accept={menuType === "bulletin" ? ".pdf,image/*" : "image/*"}
+                          accept={
+                            menuType === "bulletin"
+                              ? ".pdf,image/*"
+                              : menuType === "gallery"
+                              ? "image/*,video/*"
+                              : "image/*"
+                          }
                           multiple={menuType === "gallery"}
                           onChange={(e) => {
                             if (menuType === "gallery") {
@@ -715,7 +727,8 @@ export function MasterEditButton({ menuType, item }: EditProps) {
       router.refresh();
     } catch (err: any) {
       console.error("Edit error:", err);
-      setError(err?.message || "서버와 통신 중 오류가 발생했습니다.");
+      const msg = err?.message || (typeof err === "string" ? err : "");
+      setError(msg || "수정 중 오류가 발생했습니다. 다시 시도해 주세요.");
     } finally {
       setSubmitting(false);
       setEditProgress("");

@@ -1419,7 +1419,7 @@ export async function createDalDalItem(params: {
 
   if (props['이미지']?.type === 'files') {
     if (params.uploadedFiles && params.uploadedFiles.length > 0) {
-      properties['사진'] = {
+      properties['이미지'] = {
         files: params.uploadedFiles.map((f, idx) => ({
           type: 'file_upload',
           file_upload: { id: f.fileUploadId },
@@ -1486,7 +1486,7 @@ export async function createBulletinItem(params: {
 
   if (props['파일']?.type === 'files') {
     if (params.uploadedFiles && params.uploadedFiles.length > 0) {
-      properties['사진'] = {
+      properties['파일'] = {
         files: params.uploadedFiles.map((f, idx) => ({
           type: 'file_upload',
           file_upload: { id: f.fileUploadId },
@@ -1551,9 +1551,16 @@ export async function createGalleryItem(params: {
     properties['날짜'] = { date: { start: dateVal } };
   }
 
-  if (props['사진']?.type === 'files') {
+  const filesPropKey =
+    Object.keys(props).find(
+      (k) =>
+        props[k]?.type === 'files' &&
+        (k === '사진' || k === '파일' || k.toLowerCase().includes('file') || k.toLowerCase().includes('image'))
+    ) || Object.keys(props).find((k) => props[k]?.type === 'files') || '사진';
+
+  if (props[filesPropKey]?.type === 'files') {
     if (params.uploadedFiles && params.uploadedFiles.length > 0) {
-      properties['사진'] = {
+      properties[filesPropKey] = {
         files: params.uploadedFiles.map((f, idx) => ({
           type: 'file_upload',
           file_upload: { id: f.fileUploadId },
@@ -1561,7 +1568,7 @@ export async function createGalleryItem(params: {
         })),
       };
     } else if (params.fileUploadId) {
-      properties['사진'] = {
+      properties[filesPropKey] = {
         files: [
           {
             type: 'file_upload',
@@ -1571,7 +1578,7 @@ export async function createGalleryItem(params: {
         ],
       };
     } else if (params.imageUrl) {
-      properties['사진'] = {
+      properties[filesPropKey] = {
         files: [
           {
             type: 'external',
@@ -1852,7 +1859,7 @@ export async function updateDalDalItem(params: {
 
   if (props['이미지']?.type === 'files') {
     if (params.uploadedFiles && params.uploadedFiles.length > 0) {
-      properties['사진'] = {
+      properties['이미지'] = {
         files: params.uploadedFiles.map((f, idx) => ({
           type: 'file_upload',
           file_upload: { id: f.fileUploadId },
@@ -1913,7 +1920,7 @@ export async function updateBulletinItem(params: {
 
   if (props['파일']?.type === 'files') {
     if (params.uploadedFiles && params.uploadedFiles.length > 0) {
-      properties['사진'] = {
+      properties['파일'] = {
         files: params.uploadedFiles.map((f, idx) => ({
           type: 'file_upload',
           file_upload: { id: f.fileUploadId },
@@ -1974,7 +1981,14 @@ export async function updateGalleryItem(params: {
     properties['날짜'] = { date: { start: dateVal } };
   }
 
-  if (props['사진']?.type === 'files') {
+  const filesPropKey =
+    Object.keys(props).find(
+      (k) =>
+        props[k]?.type === 'files' &&
+        (k === '사진' || k === '파일' || k.toLowerCase().includes('file') || k.toLowerCase().includes('image'))
+    ) || Object.keys(props).find((k) => props[k]?.type === 'files') || '사진';
+
+  if (props[filesPropKey]?.type === 'files') {
     let newUploadObjects: any[] = [];
     if (params.uploadedFiles && params.uploadedFiles.length > 0) {
       newUploadObjects = params.uploadedFiles.map((f, idx) => ({
@@ -2003,14 +2017,14 @@ export async function updateGalleryItem(params: {
     if (Array.isArray(params.keptPhotoIndices)) {
       // User explicitly specified which existing photos to keep
       const page: any = await notion.pages.retrieve({ page_id: targetPageId });
-      const currentFiles = page.properties?.['사진']?.files || [];
+      const currentFiles = page.properties?.[filesPropKey]?.files || [];
       const keptFiles = currentFiles.filter((_: any, idx: number) =>
         params.keptPhotoIndices!.includes(idx)
       );
       const combinedFiles = [...keptFiles, ...newUploadObjects];
-      properties['사진'] = { files: combinedFiles };
+      properties[filesPropKey] = { files: combinedFiles };
     } else if (newUploadObjects.length > 0) {
-      properties['사진'] = { files: newUploadObjects };
+      properties[filesPropKey] = { files: newUploadObjects };
     }
   }
 
@@ -2022,13 +2036,12 @@ export async function updateGalleryItem(params: {
 
 export const DEFAULT_SITE_CONFIG = {
   home: {
-    badgeText: '대한예수교장로회(통합) 주님품교회',
-    imageCaptionLeft: '대한예수교장로회(통합)',
-    imageCaptionRight: '주님품교회 전경',
-    headlineLine1: '믿음 · 소망 · 사랑으로',
-    headlineLine2: '세워 가는 주님품 공동체',
-    subtitle:
-      '하나님의 은혜와 사랑이 머무는 곳,\n주님품처럼 따뜻한 안식과 회복이 있는\n주님품교회에 오신 것을 진심으로 환영합니다.',
+    badgeText: '대한예수교장로회(합동) 주님품교회',
+    imageCaptionLeft: '대한예수교장로회(합동)',
+    imageCaptionRight: '주님품교회 본당',
+    headlineLine1: '당신이 오길~ 기다렸습니다',
+    headlineLine2: '주님품교회가 당신에게\n위로와 소망이 되길 바랍니다',
+    subtitle: '',
     navItems: [
       {
         no: '01',

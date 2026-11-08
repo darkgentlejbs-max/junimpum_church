@@ -55,6 +55,18 @@ function getDisplayImageUrl(imageUrl: string): string {
   return imageUrl;
 }
 
+function isVideoMedia(url?: string, fileName?: string): boolean {
+  if (!url && !fileName) return false;
+  const str = `${fileName || ""} ${url || ""}`.toLowerCase();
+  return (
+    str.includes(".mp4") ||
+    str.includes(".mov") ||
+    str.includes(".webm") ||
+    str.includes(".m4v") ||
+    str.includes(".ogg")
+  );
+}
+
 export default function GalleryView({
   photos,
   canWrite = false,
@@ -398,6 +410,8 @@ export default function GalleryView({
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6">
           {selectedAlbum.photos.map((photo, idx) => {
             const isYt = Boolean(getYoutubeVideoId(photo.imageUrl));
+            const isDirectVideo = isVideoMedia(photo.imageUrl, photo.fileName);
+            const isAnyVideo = isYt || isDirectVideo;
             const displayImg = getDisplayImageUrl(photo.imageUrl);
             const isSelected = selectedPhotoIds.has(photo.id);
 
@@ -418,7 +432,17 @@ export default function GalleryView({
                 }`}
               >
                 <div className="aspect-[4/3] bg-stone-100 relative overflow-hidden flex items-center justify-center">
-                  {displayImg ? (
+                  {isDirectVideo ? (
+                    <video
+                      src={photo.imageUrl}
+                      preload="metadata"
+                      muted
+                      playsInline
+                      className={`w-full h-full object-cover transition-transform duration-500 ${
+                        isSelectMode ? "" : "group-hover:scale-106"
+                      }`}
+                    />
+                  ) : displayImg ? (
                     /* eslint-disable-next-line @next/next/no-img-element */
                     <img
                       src={displayImg}
@@ -451,10 +475,10 @@ export default function GalleryView({
                     </div>
                   )}
 
-                  {/* 유튜브 영상인 경우 재생 아이콘 */}
-                  {isYt && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/10 transition-colors">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-600 rounded-full flex items-center justify-center text-white shadow-lg">
+                  {/* 동영상 / 유튜브 영상인 경우 재생 아이콘 */}
+                  {isAnyVideo && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/10 transition-colors pointer-events-none">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-800/90 text-white rounded-full flex items-center justify-center shadow-lg">
                         <Play size={20} className="ml-0.5 fill-current" />
                       </div>
                     </div>
@@ -564,7 +588,7 @@ export default function GalleryView({
                 </button>
               )}
 
-              {/* 이미지 또는 유튜브 영상 */}
+              {/* 이미지, 유튜브 영상 또는 직접 업로드된 동영상 */}
               {currentYtId ? (
                 <div className="w-full max-w-4xl aspect-video rounded-2xl overflow-hidden shadow-2xl">
                   <iframe
@@ -573,6 +597,16 @@ export default function GalleryView({
                     className="w-full h-full"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
+                  />
+                </div>
+              ) : currentPhoto && isVideoMedia(currentPhoto.imageUrl, currentPhoto.fileName) ? (
+                <div className="w-full max-w-4xl max-h-[82vh] aspect-video rounded-2xl overflow-hidden shadow-2xl bg-black flex items-center justify-center">
+                  <video
+                    src={currentPhoto.imageUrl}
+                    controls
+                    autoPlay
+                    playsInline
+                    className="max-w-full max-h-[82vh] object-contain rounded-2xl"
                   />
                 </div>
               ) : (
@@ -647,6 +681,8 @@ export default function GalleryView({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
         {albums.map((album) => {
           const isYt = Boolean(getYoutubeVideoId(album.coverImage));
+          const isDirectVideo = isVideoMedia(album.coverImage, album.photos[0]?.fileName);
+          const isAnyVideo = isYt || isDirectVideo;
           const displayImg = getDisplayImageUrl(album.coverImage);
           const photoCount = album.photos.length;
 
@@ -658,7 +694,15 @@ export default function GalleryView({
             >
               {/* 대표 사진 영역 */}
               <div className="aspect-[4/3] bg-stone-100 relative overflow-hidden flex items-center justify-center">
-                {displayImg ? (
+                {isDirectVideo ? (
+                  <video
+                    src={album.coverImage}
+                    preload="metadata"
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover group-hover:scale-106 transition-transform duration-500"
+                  />
+                ) : displayImg ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
                     src={displayImg}
@@ -675,10 +719,10 @@ export default function GalleryView({
                   <span>{photoCount}장</span>
                 </div>
 
-                {/* 유튜브 영상일 때 재생 아이콘 */}
-                {isYt && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/10 transition-colors">
-                    <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white shadow-lg">
+                {/* 동영상 / 유튜브 영상일 때 재생 아이콘 */}
+                {isAnyVideo && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/10 transition-colors pointer-events-none">
+                    <div className="w-12 h-12 bg-amber-800/90 text-white rounded-full flex items-center justify-center shadow-lg">
                       <Play size={22} className="ml-0.5 fill-current" />
                     </div>
                   </div>

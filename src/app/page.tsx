@@ -8,10 +8,10 @@ import { ArrowUpRight, MapPin, Video, Clock, Pencil, X, Loader2 } from "lucide-r
 import NewBadge from "@/components/NewBadge";
 
 const DEFAULT_HOME = {
-  badgeText: "대한예수교장로회(통합) 주님품교회",
-  imageCaptionLeft: "대한예수교장로회(통합)",
-  imageCaptionRight: "주님품교회 전경",
-  headlineLine1: "당신이 오길 기다렸습니다~",
+  badgeText: "대한예수교장로회(합동) 주님품교회",
+  imageCaptionLeft: "대한예수교장로회(합동)",
+  imageCaptionRight: "주님품교회 본당",
+  headlineLine1: "당신이 오길~ 기다렸습니다",
   headlineLine2: "주님품교회가 당신에게\n위로와 소망이 되길 바랍니다",
   subtitle: "",
   navItems: [
@@ -76,11 +76,13 @@ export default function Home() {
           if (
             !loadedHeadline1 ||
             loadedHeadline1.includes("믿음") ||
-            loadedHeadline1.includes("소망") ||
+            loadedHeadline1.includes("소망으로") ||
             loadedHeadline1.includes("세워") ||
-            loadedHeadline1 === "당신이 오길~ 기다렸습니다"
+            loadedHeadline1 === "당신이 오길 기다렸습니다~" ||
+            loadedHeadline1 === "당신이 오길 기다렸습니다" ||
+            loadedHeadline1 === "당신이 오길~기다렸습니다"
           ) {
-            loadedHeadline1 = DEFAULT_HOME.headlineLine1;
+            loadedHeadline1 = "당신이 오길~ 기다렸습니다";
           }
 
           let loadedHeadline2 =
@@ -247,37 +249,53 @@ export default function Home() {
               {/* Centered Welcome */}
               <div className="flex flex-col items-center justify-center text-center py-2.5 sm:py-4 px-2 mb-6">
                 <span className="text-stone-400 text-sm sm:text-base select-none leading-none">♡</span>
-                <span className="font-serif tracking-[0.28em] text-[#5C533A] uppercase font-bold text-[13px] sm:text-[15px] mt-1 mb-2.5">
-                  Welcome
+                <span className="font-serif tracking-[0.34em] text-[#5C533A] uppercase font-bold text-[12px] sm:text-[14px] mt-1.5 mb-2.5 select-none">
+                  W E L C O M E
                 </span>
 
                 {(() => {
-                  const line1 = homeData.headlineLine1 || "당신이 오길 기다렸습니다~";
-                  const rawLine2 =
-                    homeData.headlineLine2 ||
-                    "주님품교회가 당신에게\n위로와 소망이 되길 바랍니다";
-                  let line2 = rawLine2;
-                  let line3 = "";
+                  let line1 = (homeData.headlineLine1 || "당신이 오길~ 기다렸습니다")
+                    .replace(/\r?\n/g, " ")
+                    .replace(/\s+/g, " ")
+                    .trim();
+                  if (
+                    line1 === "당신이 오길 기다렸습니다~" ||
+                    line1 === "당신이 오길 기다렸습니다" ||
+                    line1 === "당신이 오길~기다렸습니다"
+                  ) {
+                    line1 = "당신이 오길~ 기다렸습니다";
+                  }
 
-                  if (rawLine2.includes("\n")) {
-                    const split = rawLine2.split("\n");
-                    line2 = split[0];
-                    line3 = split.slice(1).join(" ");
-                  } else if (rawLine2.includes("주님품교회가 당신에게")) {
+                  const rawLine2 = (
+                    homeData.headlineLine2 ||
+                    "주님품교회가 당신에게\n위로와 소망이 되길 바랍니다"
+                  ).replace(/\r/g, "");
+
+                  let line2 = "주님품교회가 당신에게";
+                  let line3 = "위로와 소망이 되길 바랍니다";
+
+                  if (rawLine2.includes("주님품교회가") && (rawLine2.includes("위로") || rawLine2.includes("소망"))) {
                     line2 = "주님품교회가 당신에게";
-                    line3 = rawLine2.replace("주님품교회가 당신에게", "").trim();
+                    line3 = "위로와 소망이 되길 바랍니다";
+                  } else if (rawLine2.includes("\n")) {
+                    const split = rawLine2.split("\n").map((s) => s.trim()).filter(Boolean);
+                    line2 = split[0] || line2;
+                    line3 = split.slice(1).join(" ") || line3;
+                  } else {
+                    line2 = rawLine2;
+                    line3 = "";
                   }
 
                   return (
-                    <div className="flex flex-col items-center gap-1 sm:gap-1.5">
-                      <h1 className="text-[17.5px] sm:text-[23px] font-bold text-stone-800 tracking-tight leading-tight whitespace-nowrap">
+                    <div className="flex flex-col items-center gap-1 sm:gap-1.5 w-full">
+                      <h1 className="text-[16px] sm:text-[23px] font-bold text-stone-800 tracking-tight leading-snug whitespace-nowrap text-center">
                         {line1}
                       </h1>
-                      <p className="text-[13.5px] sm:text-[17px] font-medium text-stone-600 tracking-tight leading-tight whitespace-nowrap">
+                      <p className="text-[13px] sm:text-[17px] font-medium text-stone-600 tracking-tight leading-snug whitespace-nowrap text-center">
                         {line2}
                       </p>
                       {line3 && (
-                        <p className="text-[13.5px] sm:text-[17px] font-medium text-stone-600 tracking-tight leading-tight whitespace-nowrap">
+                        <p className="text-[13px] sm:text-[17px] font-medium text-stone-600 tracking-tight leading-snug whitespace-nowrap text-center">
                           {line3}
                         </p>
                       )}
@@ -490,7 +508,7 @@ export default function Home() {
                         onChange={(e) =>
                           setFormState({ ...formState, headlineLine1: e.target.value })
                         }
-                        placeholder="당신이 오길 기다렸습니다~"
+                        placeholder="당신이 오길~ 기다렸습니다"
                         className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:outline-none focus:border-amber-600"
                       />
                     </div>

@@ -106,8 +106,8 @@ export async function POST(request: Request) {
         title: payload.title || '',
         date: payload.date || '',
         imageUrl: payload.imageUrl || '',
-        fileUploadId: uploadedFile?.fileUploadId,
-        fileName: uploadedFile?.fileName,
+        fileUploadId: uploadedFile?.fileUploadId || payload.fileUploadId,
+        fileName: uploadedFile?.fileName || payload.fileName,
       });
       return NextResponse.json({ item });
     }
@@ -117,8 +117,8 @@ export async function POST(request: Request) {
         title: payload.title || '',
         date: payload.date || '',
         fileUrl: payload.fileUrl || '',
-        fileUploadId: uploadedFile?.fileUploadId,
-        fileName: uploadedFile?.fileName,
+        fileUploadId: uploadedFile?.fileUploadId || payload.fileUploadId,
+        fileName: uploadedFile?.fileName || payload.fileName,
       });
       return NextResponse.json({ item });
     }
@@ -128,8 +128,8 @@ export async function POST(request: Request) {
         title: payload.title || '',
         date: payload.date || '',
         imageUrl: payload.imageUrl || '',
-        fileUploadId: uploadedFile?.fileUploadId,
-        fileName: uploadedFile?.fileName,
+        fileUploadId: uploadedFile?.fileUploadId || payload.fileUploadId,
+        fileName: uploadedFile?.fileName || payload.fileName,
         uploadedFiles:
           uploadedFiles.length > 0
             ? uploadedFiles
@@ -226,8 +226,8 @@ export async function PATCH(request: Request) {
         title: payload.title || '',
         date: payload.date || '',
         imageUrl: payload.imageUrl || '',
-        fileUploadId: uploadedFile?.fileUploadId,
-        fileName: uploadedFile?.fileName,
+        fileUploadId: uploadedFile?.fileUploadId || payload.fileUploadId,
+        fileName: uploadedFile?.fileName || payload.fileName,
       });
       return NextResponse.json({ ok: true });
     }
@@ -238,8 +238,8 @@ export async function PATCH(request: Request) {
         title: payload.title || '',
         date: payload.date || '',
         fileUrl: payload.fileUrl || '',
-        fileUploadId: uploadedFile?.fileUploadId,
-        fileName: uploadedFile?.fileName,
+        fileUploadId: uploadedFile?.fileUploadId || payload.fileUploadId,
+        fileName: uploadedFile?.fileName || payload.fileName,
       });
       return NextResponse.json({ ok: true });
     }
@@ -250,8 +250,8 @@ export async function PATCH(request: Request) {
         title: payload.title || '',
         date: payload.date || '',
         imageUrl: payload.imageUrl || '',
-        fileUploadId: uploadedFile?.fileUploadId,
-        fileName: uploadedFile?.fileName,
+        fileUploadId: uploadedFile?.fileUploadId || payload.fileUploadId,
+        fileName: uploadedFile?.fileName || payload.fileName,
         uploadedFiles:
           uploadedFiles.length > 0
             ? uploadedFiles
