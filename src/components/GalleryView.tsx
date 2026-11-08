@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   ArrowLeft,
@@ -12,15 +13,23 @@ import {
   ExternalLink,
   ImageIcon,
   Play,
+  Trash2,
+  CheckSquare,
+  Square,
+  Check,
+  Loader2,
 } from "lucide-react";
-import { MasterEditButton, MasterDeleteButton } from "@/components/MasterWriteModal";
+import { MasterDeleteButton } from "@/components/MasterWriteModal";
+import GalleryEditModal from "@/components/GalleryEditModal";
 
 export interface GalleryPhoto {
   id: string;
   pageId?: string;
+  index?: number;
   title: string;
   date: string;
   imageUrl: string;
+  fileName?: string;
 }
 
 export interface GalleryAlbum {
@@ -57,6 +66,8 @@ export default function GalleryView({
   activeCategoryLabel?: string;
   isAllCategory?: boolean;
 }) {
+  const router = useRouter();
+
   // 등록된 이름(title)을 기준으로 사진들을 앨범 형태로 그룹화
   const albums = useMemo(() => {
     const map = new Map<string, GalleryAlbum>();
@@ -89,6 +100,11 @@ export default function GalleryView({
   const [selectedAlbumTitle, setSelectedAlbumTitle] = useState<string | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
+  // Selection mode state for multi-photo deletion
+  const [isSelectMode, setIsSelectMode] = useState(false);
+  const [selectedPhotoIds, setSelectedPhotoIds] = useState<Set<string>>(new Set());
+  const [deleting, setDeleting] = useState(false);
+
   // URL query parameter (?album=...) 연동 및 브라우저 뒤로가기 지원
   useEffect(() => {
     const applyFromUrl = () => {
@@ -113,6 +129,8 @@ export default function GalleryView({
 
   const handleOpenAlbum = (album: GalleryAlbum) => {
     setSelectedAlbumTitle(album.title);
+    setIsSelectMode(false);
+    setSelectedPhotoIds(new Set());
     const url = new URL(window.location.href);
     url.searchParams.set("album", album.title);
     window.history.pushState({}, "", url.toString());
@@ -122,9 +140,102 @@ export default function GalleryView({
   const handleCloseAlbum = () => {
     setSelectedAlbumTitle(null);
     setLightboxIndex(null);
+    setIsSelectMode(false);
+    setSelectedPhotoIds(new Set());
     const url = new URL(window.location.href);
     url.searchParams.delete("album");
     window.history.pushState({}, "", url.toString());
+  };
+
+  // Toggle selection on a photo
+  const handleToggleSelect = (photoId: string) => {
+    setSelectedPhotoIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(photoId)) {
+        next.delete(photoId);
+      } else {
+        next.add(photoId);
+      }
+      return next;
+    });
+  };
+
+  // Select all or deselect all
+  const handleToggleSelectAll = () => {
+    if (!selectedAlbum) return;
+    if (selectedPhotoIds.size === selectedAlbum.photos.length) {
+      setSelectedPhotoIds(new Set());
+    } else {
+      setSelectedPhotoIds(new Set(selectedAlbum.photos.map((p) => p.id)));
+    }
+  };
+
+  // Delete selected photos
+  const handleDeleteSelected = async () => {
+    if (selectedPhotoIds.size === 0 || !selectedAlbum) return;
+    const count = selectedPhotoIds.size;
+    const ok = window.confirm(`선택한 ${count}장의 사진을 삭제하시겠습니까?`);
+    if (!ok) return;
+
+    setDeleting(true);
+    try {
+      const res = await fetch("/api/content", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          photoIds: Array.from(selectedPhotoIds),
+          pageId: selectedAlbum.photos[0]?.pageId,
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error || "삭제에 실패했습니다.");
+        return;
+      }
+
+      setSelectedPhotoIds(new Set());
+      setIsSelectMode(false);
+      router.refresh();
+    } catch {
+      alert("삭제 중 오류가 발생했습니다.");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  // Delete a single photo
+  const handleDeleteSingle = async (photo: GalleryPhoto) => {
+    const photoName = photo.fileName || "선택한 사진";
+    const ok = window.confirm(`'${photoName}' 사진을 삭제하시겠습니까?`);
+    if (!ok) return;
+
+    setDeleting(true);
+    try {
+      const res = await fetch("/api/content", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          photoIds: [photo.id],
+          pageId: photo.pageId,
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error || "삭제에 실패했습니다.");
+        return;
+      }
+
+      if (lightboxIndex !== null) {
+        setLightboxIndex(null);
+      }
+      router.refresh();
+    } catch {
+      alert("삭제 중 오류가 발생했습니다.");
+    } finally {
+      setDeleting(false);
+    }
   };
 
   // Lightbox 이전/다음 네비게이션
@@ -183,7 +294,7 @@ export default function GalleryView({
       <div className="space-y-6">
         {/* 상단: 목록으로 돌아가기 버튼 & 앨범 헤더 */}
         <div className="bg-white p-5 sm:p-7 rounded-3xl border border-stone-200/80 shadow-[0_2px_16px_rgba(0,0,0,0.03)]">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
             <button
               onClick={handleCloseAlbum}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 hover:text-stone-900 font-medium text-xs sm:text-sm transition-all shadow-2xs group cursor-pointer"
@@ -193,10 +304,33 @@ export default function GalleryView({
             </button>
 
             {canWrite && selectedAlbum.photos[0] && (
-              <div className="flex items-center gap-2">
-                <MasterEditButton menuType="gallery" item={selectedAlbum.photos[0]} />
+              <div className="flex flex-wrap items-center gap-2">
+                {/* 사진 선택 삭제 모드 토글 */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSelectMode(!isSelectMode);
+                    setSelectedPhotoIds(new Set());
+                  }}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                    isSelectMode
+                      ? "bg-amber-800 text-white shadow-xs"
+                      : "bg-white border border-stone-200 text-stone-700 hover:border-amber-300 hover:text-amber-800"
+                  }`}
+                >
+                  <CheckSquare size={13} />
+                  <span>{isSelectMode ? "선택 모드 닫기" : "사진 선택 삭제"}</span>
+                </button>
+
+                {/* 앨범 전체 수정 모달 */}
+                <GalleryEditModal album={selectedAlbum} />
+
+                {/* 앨범 전체 삭제 */}
                 <MasterDeleteButton
                   id={selectedAlbum.photos[0].pageId || selectedAlbum.photos[0].id}
+                  label="앨범 전체 삭제"
+                  confirmMessage={`'${selectedAlbum.title}' 앨범과 등록된 사진 ${selectedAlbum.photos.length}장을 모두 삭제하시겠습니까?`}
+                  deleteFullPage={true}
                 />
               </div>
             )}
@@ -220,34 +354,102 @@ export default function GalleryView({
           </div>
         </div>
 
+        {/* 선택 모드 시 나타나는 액션 바 */}
+        {isSelectMode && canWrite && (
+          <div className="p-3.5 sm:p-4 bg-amber-50 border border-amber-300 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow-xs animate-in fade-in duration-150">
+            <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-stone-800">
+              <CheckSquare size={16} className="text-amber-800" />
+              <span>
+                선택됨: <strong className="text-amber-900 text-sm">{selectedPhotoIds.size}장</strong> / 총 {selectedAlbum.photos.length}장
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleToggleSelectAll}
+                className="px-3 py-1.5 bg-white border border-stone-200 hover:border-amber-400 rounded-xl text-xs font-semibold text-stone-700 cursor-pointer shadow-2xs"
+              >
+                {selectedPhotoIds.size === selectedAlbum.photos.length
+                  ? "선택 해제"
+                  : "전체 선택"}
+              </button>
+
+              <button
+                type="button"
+                disabled={selectedPhotoIds.size === 0 || deleting}
+                onClick={handleDeleteSelected}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-red-600 hover:bg-red-700 disabled:opacity-40 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-2xs"
+              >
+                {deleting ? (
+                  <Loader2 size={13} className="animate-spin" />
+                ) : (
+                  <Trash2 size={13} />
+                )}
+                <span>
+                  {deleting ? "삭제 중..." : `선택한 ${selectedPhotoIds.size}장 삭제`}
+                </span>
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* 앨범 전체 사진 그리드 */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6">
           {selectedAlbum.photos.map((photo, idx) => {
             const isYt = Boolean(getYoutubeVideoId(photo.imageUrl));
             const displayImg = getDisplayImageUrl(photo.imageUrl);
+            const isSelected = selectedPhotoIds.has(photo.id);
 
             return (
               <div
                 key={photo.id}
-                onClick={() => setLightboxIndex(idx)}
-                className="group relative bg-white rounded-2xl sm:rounded-3xl overflow-hidden border border-stone-200/80 hover:border-amber-400 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col"
+                onClick={() => {
+                  if (isSelectMode) {
+                    handleToggleSelect(photo.id);
+                  } else {
+                    setLightboxIndex(idx);
+                  }
+                }}
+                className={`group relative bg-white rounded-2xl sm:rounded-3xl overflow-hidden border shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-all duration-200 cursor-pointer flex flex-col ${
+                  isSelected
+                    ? "border-amber-600 ring-2 ring-amber-500/40 shadow-md"
+                    : "border-stone-200/80 hover:border-amber-400 hover:shadow-lg"
+                }`}
               >
                 <div className="aspect-[4/3] bg-stone-100 relative overflow-hidden flex items-center justify-center">
                   {displayImg ? (
                     /* eslint-disable-next-line @next/next/no-img-element */
                     <img
                       src={displayImg}
-                      alt={`${selectedAlbum.title} 사진 ${idx + 1}`}
-                      className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
+                      alt={photo.fileName || `${selectedAlbum.title} 사진 ${idx + 1}`}
+                      className={`w-full h-full object-cover transition-transform duration-500 ${
+                        isSelectMode ? "" : "group-hover:scale-106"
+                      }`}
                     />
                   ) : (
                     <ImageIcon className="text-stone-300" size={32} />
                   )}
 
-                  {/* 사진 번호 배지 */}
-                  <div className="absolute top-2.5 left-2.5 bg-black/55 backdrop-blur-md text-white text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded-full">
-                    {idx + 1} / {selectedAlbum.photos.length}
-                  </div>
+                  {/* 선택 모드 체크박스 */}
+                  {isSelectMode ? (
+                    <div className="absolute top-2.5 left-2.5 z-10">
+                      <div
+                        className={`w-6 h-6 rounded-lg flex items-center justify-center transition-colors shadow-md ${
+                          isSelected
+                            ? "bg-amber-800 text-white"
+                            : "bg-white/90 text-transparent border border-stone-300 hover:border-amber-500"
+                        }`}
+                      >
+                        <Check size={14} className="stroke-[3]" />
+                      </div>
+                    </div>
+                  ) : (
+                    /* 일반 모드 사진 번호 배지 */
+                    <div className="absolute top-2.5 left-2.5 bg-black/55 backdrop-blur-md text-white text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded-full">
+                      {idx + 1} / {selectedAlbum.photos.length}
+                    </div>
+                  )}
 
                   {/* 유튜브 영상인 경우 재생 아이콘 */}
                   {isYt && (
@@ -259,25 +461,36 @@ export default function GalleryView({
                   )}
 
                   {/* 호버 오버레이 */}
-                  <div className="absolute inset-0 bg-stone-900/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-medium">
-                    클릭하여 크게보기
-                  </div>
+                  {!isSelectMode && (
+                    <div className="absolute inset-0 bg-stone-900/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-medium">
+                      클릭하여 크게보기
+                    </div>
+                  )}
                 </div>
 
-                {canWrite && (
-                  <div
-                    className="p-2.5 bg-white border-t border-stone-100 flex items-center justify-between text-xs"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <span className="text-stone-400 text-[11px] font-mono truncate">
-                      {photo.date}
-                    </span>
-                    <div className="flex items-center gap-1 shrink-0">
-                      <MasterEditButton menuType="gallery" item={photo} />
-                      <MasterDeleteButton id={photo.pageId || photo.id} />
+                {/* 개별 사진 카드 하단 바 */}
+                <div
+                  className="p-2.5 bg-white border-t border-stone-100 flex items-center justify-between text-xs"
+                  onClick={(e) => isSelectMode && e.stopPropagation()}
+                >
+                  <span className="text-stone-600 text-[11px] truncate font-medium max-w-[140px]" title={photo.fileName}>
+                    {photo.fileName || photo.date}
+                  </span>
+
+                  {canWrite && !isSelectMode && (
+                    <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteSingle(photo)}
+                        title="이 사진 삭제"
+                        className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 border border-red-200/80 text-[10px] font-semibold transition-colors cursor-pointer"
+                      >
+                        <Trash2 size={10} />
+                        <span>삭제</span>
+                      </button>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             );
           })}
@@ -299,11 +512,23 @@ export default function GalleryView({
                   {lightboxIndex + 1} / {selectedAlbum.photos.length}
                 </span>
                 <h3 className="text-xs sm:text-sm font-semibold truncate max-w-[200px] sm:max-w-md text-stone-200">
-                  {selectedAlbum.title}
+                  {currentPhoto.fileName || selectedAlbum.title}
                 </h3>
               </div>
 
               <div className="flex items-center gap-2">
+                {canWrite && (
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteSingle(currentPhoto)}
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-red-600/80 hover:bg-red-600 text-white text-xs font-semibold transition-colors cursor-pointer"
+                    title="이 사진 삭제"
+                  >
+                    <Trash2 size={14} />
+                    <span>사진 삭제</span>
+                  </button>
+                )}
+
                 <a
                   href={currentPhoto.imageUrl}
                   target="_blank"
@@ -487,9 +712,12 @@ export default function GalleryView({
                     className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-end gap-1.5"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <MasterEditButton menuType="gallery" item={album.photos[0]} />
+                    <GalleryEditModal album={album} />
                     <MasterDeleteButton
                       id={album.photos[0].pageId || album.photos[0].id}
+                      label="삭제"
+                      confirmMessage={`'${album.title}' 앨범과 등록된 사진 ${photoCount}장을 모두 삭제하시겠습니까?`}
+                      deleteFullPage={true}
                     />
                   </div>
                 )}

@@ -18,6 +18,7 @@ import {
   updateBulletinItem,
   updateGalleryItem,
   deleteContentPage,
+  deleteGalleryPhotos,
 } from '@/lib/notion';
 
 async function verifyMasterAccess(): Promise<boolean> {
@@ -257,6 +258,9 @@ export async function PATCH(request: Request) {
             : Array.isArray(payload.uploadedFiles)
             ? payload.uploadedFiles
             : undefined,
+        keptPhotoIndices: Array.isArray(payload.keptPhotoIndices)
+          ? payload.keptPhotoIndices
+          : undefined,
       });
       return NextResponse.json({ ok: true });
     }
@@ -282,12 +286,20 @@ export async function DELETE(request: Request) {
     }
 
     const body = await request.json();
-    const { id } = body;
-    if (!id) {
+    const { id, ids, photoIds, pageId, deleteFullPage } = body;
+
+    if (photoIds || ids || (id && id.includes('-prop-'))) {
+      const targetIds = photoIds || ids || [id];
+      await deleteGalleryPhotos({ photoIds: targetIds, pageId, deleteFullPage });
+      return NextResponse.json({ ok: true });
+    }
+
+    const targetPageId = pageId || id;
+    if (!targetPageId) {
       return NextResponse.json({ error: '삭제할 ID가 필요합니다.' }, { status: 400 });
     }
 
-    await deleteContentPage(id);
+    await deleteContentPage(targetPageId);
     return NextResponse.json({ ok: true });
   } catch (error: any) {
     console.error('Error deleting content:', error);

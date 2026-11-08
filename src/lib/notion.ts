@@ -141,12 +141,16 @@ export async function getGallery() {
       files.forEach((fileProp: any) => {
         const imageUrl = fileProp?.file?.url || fileProp?.external?.url || '';
         if (imageUrl) {
+          const currIdx = imageIndex++;
+          const rawName = fileProp?.name || '';
           allPhotos.push({
-            id: `${page.id}-prop-${imageIndex++}`,
+            id: `${page.id}-prop-${currIdx}`,
             pageId: page.id,
+            index: currIdx,
             title: titleProp,
             date: dateVal,
             imageUrl: imageUrl,
+            fileName: rawName || `사진_${currIdx + 1}.jpg`,
           });
         }
       });
@@ -160,12 +164,14 @@ export async function getGallery() {
           if (block.type === 'image') {
             const imageUrl = block.image?.file?.url || block.image?.external?.url || '';
             if (imageUrl) {
+              const captionText = block.image?.caption?.[0]?.plain_text || '';
               allPhotos.push({
                 id: `${block.id}`,
                 pageId: page.id,
                 title: titleProp,
                 date: dateVal,
                 imageUrl: imageUrl,
+                fileName: captionText || '본문_사진.jpg',
               });
             }
           }
@@ -1591,8 +1597,84 @@ export async function createGalleryItem(params: {
   };
 }
 
+export async function deleteGalleryPhotos(params: {
+  photoIds?: string[];
+  pageId?: string;
+  deleteFullPage?: boolean;
+}) {
+  if (params.deleteFullPage && params.pageId) {
+    const cleanId = params.pageId.includes('-prop-') ? params.pageId.split('-prop-')[0] : params.pageId;
+    await notion.pages.update({
+      page_id: cleanId,
+      archived: true,
+    });
+    return;
+  }
+
+  const photoIds = params.photoIds || [];
+  if (photoIds.length === 0) return;
+
+  const propMap = new Map<string, number[]>();
+  const blockIds: string[] = [];
+
+  for (const id of photoIds) {
+    if (id.includes('-prop-')) {
+      const parts = id.split('-prop-');
+      const pageId = parts[0];
+      const idx = parseInt(parts[1], 10);
+      if (!propMap.has(pageId)) {
+        propMap.set(pageId, []);
+      }
+      if (!isNaN(idx)) {
+        propMap.get(pageId)!.push(idx);
+      }
+    } else {
+      blockIds.push(id);
+    }
+  }
+
+  for (const blockId of blockIds) {
+    try {
+      await notion.blocks.delete({ block_id: blockId });
+    } catch {
+      try {
+        await notion.pages.update({ page_id: blockId, archived: true });
+      } catch (e) {
+        console.error('Failed to delete block or page:', blockId, e);
+      }
+    }
+  }
+
+  for (const [pageId, indicesToDelete] of propMap.entries()) {
+    try {
+      const page: any = await notion.pages.retrieve({ page_id: pageId });
+      const currentFiles = page?.properties?.['사진']?.files || [];
+      const deleteSet = new Set(indicesToDelete);
+      const remainingFiles = currentFiles.filter((_: any, idx: number) => !deleteSet.has(idx));
+
+      if (remainingFiles.length === 0) {
+        await notion.pages.update({ page_id: pageId, archived: true });
+      } else {
+        await notion.pages.update({
+          page_id: pageId,
+          properties: {
+            '사진': { files: remainingFiles },
+          },
+        });
+      }
+    } catch (err) {
+      console.error('Failed to delete photos from page:', pageId, err);
+      throw err;
+    }
+  }
+}
+
 export async function deleteContentPage(pageId: string) {
-  const cleanId = pageId.includes('-prop-') ? pageId.split('-prop-')[0] : pageId;
+  if (pageId.includes('-prop-')) {
+    await deleteGalleryPhotos({ photoIds: [pageId] });
+    return;
+  }
+  const cleanId = pageId;
   try {
     await notion.pages.update({
       page_id: cleanId,
@@ -1875,6 +1957,7 @@ export async function updateGalleryItem(params: {
   fileUploadId?: string;
   fileName?: string;
   uploadedFiles?: Array<{ fileUploadId: string; fileName: string }>;
+  keptPhotoIndices?: number[];
 }) {
   if (!GALLERY_DATABASE_ID) throw new Error('갤러리 데이터베이스 ID가 설정되지 않았습니다.');
   const targetPageId = await resolvePageId(params.id);
@@ -1892,34 +1975,42 @@ export async function updateGalleryItem(params: {
   }
 
   if (props['사진']?.type === 'files') {
+    let newUploadObjects: any[] = [];
     if (params.uploadedFiles && params.uploadedFiles.length > 0) {
-      properties['사진'] = {
-        files: params.uploadedFiles.map((f, idx) => ({
-          type: 'file_upload',
-          file_upload: { id: f.fileUploadId },
-          name: f.fileName || `${params.title}_${idx + 1}`,
-        })),
-      };
+      newUploadObjects = params.uploadedFiles.map((f, idx) => ({
+        type: 'file_upload',
+        file_upload: { id: f.fileUploadId },
+        name: f.fileName || `${params.title}_${idx + 1}`,
+      }));
     } else if (params.fileUploadId) {
-      properties['사진'] = {
-        files: [
-          {
-            type: 'file_upload',
-            file_upload: { id: params.fileUploadId },
-            name: params.fileName || params.title,
-          },
-        ],
-      };
+      newUploadObjects = [
+        {
+          type: 'file_upload',
+          file_upload: { id: params.fileUploadId },
+          name: params.fileName || params.title,
+        },
+      ];
     } else if (params.imageUrl && !params.imageUrl.includes('amazonaws.com')) {
-      properties['사진'] = {
-        files: [
-          {
-            type: 'external',
-            external: { url: params.imageUrl },
-            name: params.title,
-          },
-        ],
-      };
+      newUploadObjects = [
+        {
+          type: 'external',
+          external: { url: params.imageUrl },
+          name: params.title,
+        },
+      ];
+    }
+
+    if (Array.isArray(params.keptPhotoIndices)) {
+      // User explicitly specified which existing photos to keep
+      const page: any = await notion.pages.retrieve({ page_id: targetPageId });
+      const currentFiles = page.properties?.['사진']?.files || [];
+      const keptFiles = currentFiles.filter((_: any, idx: number) =>
+        params.keptPhotoIndices!.includes(idx)
+      );
+      const combinedFiles = [...keptFiles, ...newUploadObjects];
+      properties['사진'] = { files: combinedFiles };
+    } else if (newUploadObjects.length > 0) {
+      properties['사진'] = { files: newUploadObjects };
     }
   }
 

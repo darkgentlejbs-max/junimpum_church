@@ -42,6 +42,29 @@ export default function MasterWriteButton({
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [uploadProgress, setUploadProgress] = useState("");
 
+  const handleAppendGalleryFiles = (selected: File[]) => {
+    if (selected.length === 0) return;
+    setGalleryFiles((prev) => {
+      let current = [...prev];
+      for (const newFile of selected) {
+        const existingIdx = current.findIndex(
+          (f) => f.name.toLowerCase() === newFile.name.toLowerCase()
+        );
+        if (existingIdx !== -1) {
+          const overwrite = window.confirm(
+            `이미 첨부된 파일 '${newFile.name}'이(가) 있습니다. 덮어쓰시겠습니까?`
+          );
+          if (overwrite) {
+            current[existingIdx] = newFile;
+          }
+        } else {
+          current.push(newFile);
+        }
+      }
+      return current;
+    });
+  };
+
   const resetForm = () => {
     setTitle("");
     setDate(defaultDate || today);
@@ -446,8 +469,9 @@ export default function MasterWriteButton({
                             onChange={(e) => {
                               const selected = Array.from(e.target.files || []);
                               if (selected.length > 0) {
-                                setGalleryFiles((prev) => [...prev, ...selected]);
+                                handleAppendGalleryFiles(selected);
                               }
+                              e.target.value = "";
                             }}
                             className="hidden"
                           />
@@ -470,7 +494,8 @@ export default function MasterWriteButton({
                           onChange={(e) => {
                             if (menuType === "gallery") {
                               const selected = Array.from(e.target.files || []);
-                              setGalleryFiles(selected);
+                              handleAppendGalleryFiles(selected);
+                              e.target.value = "";
                             } else {
                               setFile(e.target.files?.[0] || null);
                             }
@@ -943,7 +968,17 @@ export function MasterEditButton({ menuType, item }: EditProps) {
   );
 }
 
-export function MasterDeleteButton({ id }: { id: string }) {
+export function MasterDeleteButton({
+  id,
+  label = "삭제",
+  confirmMessage,
+  deleteFullPage = false,
+}: {
+  id: string;
+  label?: string;
+  confirmMessage?: string;
+  deleteFullPage?: boolean;
+}) {
   const router = useRouter();
   const [confirming, setConfirming] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -954,12 +989,17 @@ export function MasterDeleteButton({ id }: { id: string }) {
     e.preventDefault();
     e.stopPropagation();
 
+    if (confirmMessage) {
+      const ok = window.confirm(confirmMessage);
+      if (!ok) return;
+    }
+
     setDeleting(true);
     try {
       const res = await fetch("/api/content", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
+        body: JSON.stringify({ id, pageId: id, deleteFullPage }),
       });
       if (res.ok) {
         setConfirming(false);
@@ -1011,13 +1051,17 @@ export function MasterDeleteButton({ id }: { id: string }) {
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        setConfirming(true);
+        if (confirmMessage) {
+          handleConfirmDelete(e);
+        } else {
+          setConfirming(true);
+        }
       }}
       title="게시물 삭제"
       className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 border border-red-200/80 text-[11px] font-semibold transition-colors cursor-pointer shrink-0"
     >
       <Trash2 size={11} />
-      <span>삭제</span>
+      <span>{label}</span>
     </button>
   );
 }
