@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getGallery, findMemberByEmail } from "@/lib/notion";
 import { getCurrentUser, isMasterRole } from "@/lib/auth";
 import MasterWriteButton from "@/components/MasterWriteModal";
-import GalleryView from "@/components/GalleryView";
+import GalleryView, { isVideoMedia } from "@/components/GalleryView";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +29,7 @@ export default async function GalleryPage({
 
   const categories = [
     { key: "all", label: "전체 사진첩" },
+    { key: "video", label: "영상" },
     { key: "men", label: "남선교회" },
     { key: "women", label: "여전도회" },
     { key: "school", label: "학생부" },
@@ -37,6 +38,15 @@ export default async function GalleryPage({
 
   const photos = allPhotos.filter((photo: any) => {
     const title = photo.title || "";
+    if (activeCategory === "video") {
+      return (
+        title.includes("영상") ||
+        title.includes("[영상]") ||
+        title.includes("동영상") ||
+        title.includes("비디오") ||
+        isVideoMedia(photo.imageUrl, photo.fileName)
+      );
+    }
     if (activeCategory === "worship") {
       return title.includes("찬양") || title.includes("부따겸");
     }
@@ -63,18 +73,26 @@ export default async function GalleryPage({
             Gallery
           </span>
           <h1 className="text-2xl sm:text-4xl font-semibold text-stone-900 tracking-tight">
-            {activeCategory === "all" ? "교회 사진첩" : `${activeCategoryObj.label} 갤러리`}
+            {activeCategory === "all"
+              ? "교회 사진첩"
+              : activeCategory === "video"
+              ? "교회 영상 갤러리"
+              : `${activeCategoryObj.label} 갤러리`}
           </h1>
           <p className="text-sm text-stone-500 mt-2">
-            주님품교회의 은혜로운 순간들을 나눕니다
+            {activeCategory === "video"
+              ? "주님품교회의 은혜로운 영상과 순간들을 나눕니다"
+              : "주님품교회의 은혜로운 순간들을 나눕니다"}
           </p>
           {canWrite && (
             <div className="mt-4">
               <MasterWriteButton
                 menuType="gallery"
-                buttonLabel="사진 · 영상 글쓰기"
+                buttonLabel={activeCategory === "video" ? "동영상 등록" : "사진 · 영상 글쓰기"}
                 defaultCategory={
-                  activeCategory === "men"
+                  activeCategory === "video"
+                    ? "영상"
+                    : activeCategory === "men"
                     ? "남선교회"
                     : activeCategory === "women"
                     ? "여전도회"

@@ -55,7 +55,7 @@ function getDisplayImageUrl(imageUrl: string): string {
   return imageUrl;
 }
 
-function isVideoMedia(url?: string, fileName?: string): boolean {
+export function isVideoMedia(url?: string, fileName?: string): boolean {
   if (!url && !fileName) return false;
   const str = `${fileName || ""} ${url || ""}`.toLowerCase();
   return (

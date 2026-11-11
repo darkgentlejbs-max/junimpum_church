@@ -44,9 +44,24 @@ export default function MasterWriteButton({
 
   const handleAppendGalleryFiles = (selected: File[]) => {
     if (selected.length === 0) return;
+
+    let filesToProcess = selected;
+    if (galleryDept === "영상") {
+      const nonVideos = selected.filter(
+        (f) => !f.type.startsWith("video/") && !/\.(mp4|mov|webm|m4v|ogg)$/i.test(f.name)
+      );
+      if (nonVideos.length > 0) {
+        alert("영상 항목에는 동영상 파일(.mp4, .mov 등)만 첨부하실 수 있습니다.");
+        filesToProcess = selected.filter(
+          (f) => f.type.startsWith("video/") || /\.(mp4|mov|webm|m4v|ogg)$/i.test(f.name)
+        );
+      }
+    }
+    if (filesToProcess.length === 0) return;
+
     setGalleryFiles((prev) => {
       let current = [...prev];
-      for (const newFile of selected) {
+      for (const newFile of filesToProcess) {
         const existingIdx = current.findIndex(
           (f) => f.name.toLowerCase() === newFile.name.toLowerCase()
         );
@@ -106,6 +121,18 @@ export default function MasterWriteButton({
           : file
           ? [file]
           : [];
+
+      if (menuType === "gallery" && galleryDept === "영상") {
+        const hasExternalVideo = externalUrl.trim().length > 0;
+        const hasVideoFile = targetFiles.some(
+          (f) => f.type.startsWith("video/") || /\.(mp4|mov|webm|m4v|ogg)$/i.test(f.name)
+        );
+        if (!hasExternalVideo && !hasVideoFile) {
+          setError("영상 항목에는 동영상 파일(.mp4, .mov 등) 또는 유튜브 영상 링크를 등록해 주세요.");
+          setSubmitting(false);
+          return;
+        }
+      }
 
       const uploadedFiles: Array<{ fileUploadId: string; fileName: string }> = [];
 
@@ -282,6 +309,7 @@ export default function MasterWriteButton({
                     className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-stone-200 bg-stone-50/60 focus:bg-white focus:outline-none focus:border-amber-600"
                   >
                     <option value="전체">전체 사진첩</option>
+                    <option value="영상">영상 (동영상 전용)</option>
                     <option value="남선교회">남선교회</option>
                     <option value="여전도회">여전도회</option>
                     <option value="학생부">학생부</option>
@@ -427,7 +455,9 @@ export default function MasterWriteButton({
                         {menuType === "bulletin"
                           ? "주보 파일 첨부 (PDF 또는 이미지)"
                           : menuType === "gallery"
-                          ? "사진 · 짧은 동영상 첨부 (여러 개 선택 가능)"
+                          ? galleryDept === "영상"
+                            ? "동영상 첨부 (스마트폰 영상 · PC 영상 파일)"
+                            : "사진 · 짧은 동영상 첨부 (여러 개 선택 가능)"
                           : "사진 · 이미지 파일 첨부 (자동 최적화)"}
                       </label>
                       {menuType === "gallery" && galleryFiles.length > 0 && (
@@ -467,10 +497,20 @@ export default function MasterWriteButton({
                         </div>
                         <label className="inline-flex items-center gap-1.5 text-xs text-amber-800 font-medium cursor-pointer hover:underline">
                           <Upload size={13} />
-                          <span>사진 · 동영상 더 추가하기...</span>
+                          <span>
+                            {galleryDept === "영상"
+                              ? "동영상 더 추가하기..."
+                              : "사진 · 동영상 더 추가하기..."}
+                          </span>
                           <input
                             type="file"
-                            accept={menuType === "gallery" ? "image/*,video/*" : "image/*"}
+                            accept={
+                              menuType === "gallery"
+                                ? galleryDept === "영상"
+                                  ? "video/*,.mp4,.mov,.webm,.m4v,.ogg"
+                                  : "image/*,video/*"
+                                : "image/*"
+                            }
                             multiple
                             onChange={(e) => {
                               const selected = Array.from(e.target.files || []);
@@ -488,7 +528,9 @@ export default function MasterWriteButton({
                         <Upload size={16} className="text-amber-700" />
                         <span className="truncate">
                           {menuType === "gallery"
-                            ? "스마트폰 · PC에서 사진 · 동영상 선택하기 (여러 개 가능)"
+                            ? galleryDept === "영상"
+                              ? "스마트폰 · PC에서 동영상 파일 선택하기 (여러 개 가능)"
+                              : "스마트폰 · PC에서 사진 · 동영상 선택하기 (여러 개 가능)"
                             : file
                             ? file.name
                             : "스마트폰 · PC에서 파일 선택하기"}
@@ -499,7 +541,9 @@ export default function MasterWriteButton({
                             menuType === "bulletin"
                               ? ".pdf,image/*"
                               : menuType === "gallery"
-                              ? "image/*,video/*"
+                              ? galleryDept === "영상"
+                                ? "video/*,.mp4,.mov,.webm,.m4v,.ogg"
+                                : "image/*,video/*"
                               : "image/*"
                           }
                           multiple={menuType === "gallery"}

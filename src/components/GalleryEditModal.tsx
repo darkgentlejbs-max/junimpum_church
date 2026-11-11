@@ -125,8 +125,22 @@ export default function GalleryEditModal({
     if (selected.length === 0) return;
     e.target.value = ""; // reset input
 
+    let filesToProcess = selected;
+    if (category === "영상") {
+      const nonVideos = selected.filter(
+        (f) => !f.type.startsWith("video/") && !/\.(mp4|mov|webm|m4v|ogg)$/i.test(f.name)
+      );
+      if (nonVideos.length > 0) {
+        alert("영상 항목에는 동영상 파일(.mp4, .mov 등)만 첨부하실 수 있습니다.");
+        filesToProcess = selected.filter(
+          (f) => f.type.startsWith("video/") || /\.(mp4|mov|webm|m4v|ogg)$/i.test(f.name)
+        );
+      }
+    }
+    if (filesToProcess.length === 0) return;
+
     // Process each file sequentially
-    for (const file of selected) {
+    for (const file of filesToProcess) {
       // 1. Check if matches existing photo (not marked deleted)
       const existingIdx = photosState.findIndex(
         (p) => !p.isDeleted && p.fileName.toLowerCase() === file.name.toLowerCase()
@@ -364,6 +378,7 @@ export default function GalleryEditModal({
                     className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-stone-200 bg-stone-50/60 focus:bg-white focus:outline-none focus:border-amber-600"
                   >
                     <option value="전체">전체 사진첩</option>
+                    <option value="영상">영상 (동영상 전용)</option>
                     <option value="남선교회">남선교회</option>
                     <option value="여전도회">여전도회</option>
                     <option value="학생부">학생부</option>
@@ -564,17 +579,27 @@ export default function GalleryEditModal({
 
                 <label className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl border border-dashed border-amber-300 bg-amber-50/40 hover:bg-amber-50 text-amber-900 text-xs sm:text-sm font-semibold cursor-pointer transition-colors">
                   <Upload size={16} className="text-amber-700" />
-                  <span>스마트폰 · PC에서 새 사진 · 동영상 추가하기...</span>
+                  <span>
+                    {category === "영상"
+                      ? "스마트폰 · PC에서 새 동영상 추가하기..."
+                      : "스마트폰 · PC에서 새 사진 · 동영상 추가하기..."}
+                  </span>
                   <input
                     type="file"
-                    accept="image/*,video/*"
+                    accept={
+                      category === "영상"
+                        ? "video/*,.mp4,.mov,.webm,.m4v,.ogg"
+                        : "image/*,video/*"
+                    }
                     multiple
                     onChange={handleSelectNewFiles}
                     className="hidden"
                   />
                 </label>
                 <p className="text-[11px] text-stone-400 mt-1">
-                  * 사진 및 짧은 동영상(mp4, mov 등) 첨부 가능 · 이미 등록된 이름과 동일한 파일은 덮어쓰기 여부를 확인합니다.
+                  {category === "영상"
+                    ? "* 짧은 동영상(mp4, mov 등) 첨부 가능 · 이미 등록된 이름과 동일한 파일은 덮어쓰기 여부를 확인합니다."
+                    : "* 사진 및 짧은 동영상(mp4, mov 등) 첨부 가능 · 이미 등록된 이름과 동일한 파일은 덮어쓰기 여부를 확인합니다."}
                 </p>
               </div>
 
