@@ -16,19 +16,8 @@ import {
   Play,
 } from "lucide-react";
 import { compressImage } from "@/lib/imageCompression";
+import { isVideoMedia } from "@/lib/media";
 import type { GalleryAlbum, GalleryPhoto } from "./GalleryView";
-
-function isVideoMedia(url?: string, fileName?: string): boolean {
-  if (!url && !fileName) return false;
-  const str = `${fileName || ""} ${url || ""}`.toLowerCase();
-  return (
-    str.includes(".mp4") ||
-    str.includes(".mov") ||
-    str.includes(".webm") ||
-    str.includes(".m4v") ||
-    str.includes(".ogg")
-  );
-}
 
 interface ExistingPhotoItem {
   id: string;

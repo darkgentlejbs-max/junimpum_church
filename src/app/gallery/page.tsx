@@ -2,7 +2,8 @@ import Link from "next/link";
 import { getGallery, findMemberByEmail } from "@/lib/notion";
 import { getCurrentUser, isMasterRole } from "@/lib/auth";
 import MasterWriteButton from "@/components/MasterWriteModal";
-import GalleryView, { isVideoMedia } from "@/components/GalleryView";
+import GalleryView from "@/components/GalleryView";
+import { isAnyVideoMedia } from "@/lib/media";
 
 export const dynamic = "force-dynamic";
 
@@ -44,7 +45,7 @@ export default async function GalleryPage({
         title.includes("[영상]") ||
         title.includes("동영상") ||
         title.includes("비디오") ||
-        isVideoMedia(photo.imageUrl, photo.fileName)
+        isAnyVideoMedia(photo.imageUrl, photo.fileName)
       );
     }
     if (activeCategory === "worship") {
