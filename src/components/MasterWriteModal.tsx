@@ -57,6 +57,23 @@ export default function MasterWriteButton({
         );
       }
     }
+
+    // 서버 직접 업로드 4.5MB 한도 초과 체크
+    const oversizedVideos = filesToProcess.filter(
+      (f) =>
+        (f.type.startsWith("video/") || /\.(mp4|mov|webm|m4v|ogg)$/i.test(f.name)) &&
+        f.size > 4.2 * 1024 * 1024
+    );
+    if (oversizedVideos.length > 0) {
+      const names = oversizedVideos
+        .map((f) => `'${f.name}' (${(f.size / (1024 * 1024)).toFixed(1)}MB)`)
+        .join(", ");
+      alert(
+        `[동영상 용량 제한 안내]\n\n${names}\n\n서버 직접 파일 첨부는 4MB 이하의 짧은 영상(약 5~15초)만 지원됩니다(서버 전송 용량 제한).\n\n스마트폰으로 촬영한 4MB 초과 영상은 하단의 [유튜브 영상 주소]에 링크를 등록해 주시면 용량 제한 없이 원본 고화질로 바로 등록하실 수 있습니다!`
+      );
+      filesToProcess = filesToProcess.filter((f) => !oversizedVideos.includes(f));
+    }
+
     if (filesToProcess.length === 0) return;
 
     setGalleryFiles((prev) => {
@@ -141,7 +158,16 @@ export default function MasterWriteButton({
         const total = targetFiles.length;
         for (let i = 0; i < total; i++) {
           const rawFile = targetFiles[i];
-          const isVideo = rawFile.type.startsWith("video/");
+          const isVideo =
+            rawFile.type.startsWith("video/") ||
+            /\.(mp4|mov|webm|m4v|ogg)$/i.test(rawFile.name);
+
+          // 서버 직접 업로드 4.2MB 한도 초과 체크
+          if (isVideo && rawFile.size > 4.2 * 1024 * 1024) {
+            throw new Error(
+              `'${rawFile.name}' 동영상 용량(${(rawFile.size / (1024 * 1024)).toFixed(1)}MB)이 서버 전송 한도(4MB)를 초과합니다. 4MB 이하의 짧은 영상을 첨부하시거나, 아래 '유튜브 영상 주소'에 링크를 등록해 주세요.`
+            );
+          }
 
           if (rawFile.size > 50 * 1024 * 1024) {
             throw new Error(`'${rawFile.name}' 파일이 너무 큽니다(50MB 초과). 짧은 동영상 또는 고화질 압축 영상을 올려주세요.`);
@@ -169,6 +195,12 @@ export default function MasterWriteButton({
             method: "POST",
             body: fileFormData,
           });
+
+          if (upRes.status === 413) {
+            throw new Error(
+              `'${rawFile.name}' 파일 용량(${(rawFile.size / (1024 * 1024)).toFixed(1)}MB)이 서버 전송 한도(4MB)를 초과하여 전송에 실패했습니다(413). 4MB 이하의 짧은 영상으로 첨부하시거나, 아래 '유튜브 영상 주소'에 링크를 입력해 주세요.`
+            );
+          }
 
           let upData: any = {};
           try {
@@ -559,6 +591,21 @@ export default function MasterWriteButton({
                           className="hidden"
                         />
                       </label>
+                    )}
+
+                    {menuType === "gallery" && galleryDept === "영상" && (
+                      <div className="p-3.5 rounded-xl bg-amber-50/90 border border-amber-200/90 text-xs text-amber-950 leading-relaxed space-y-1.5 mt-2">
+                        <p className="font-bold flex items-center gap-1.5 text-amber-900">
+                          <span>💡</span>
+                          <span>동영상 등록 안내</span>
+                        </p>
+                        <p className="text-stone-700">
+                          • <strong>직접 파일 첨부:</strong> <strong>4MB 이하</strong>의 짧은 동영상(약 5~15초)을 직접 등록하실 수 있습니다 (서버 용량 제한).
+                        </p>
+                        <p className="text-stone-700">
+                          • <strong>4MB 초과 고화질 영상:</strong> 스마트폰으로 촬영한 긴 영상이나 고화질 영상은 유튜브(일부공개로 설정 시 링크를 아는 성도만 시청 가능)에 올리신 후, 아래 <strong>[유튜브 영상 주소]</strong>에 링크를 입력해 주시면 용량 제한 없이 원본 고화질로 등록됩니다!
+                        </p>
+                      </div>
                     )}
                   </div>
                   <div>
