@@ -2068,6 +2068,12 @@ export const DEFAULT_SITE_CONFIG = {
         desc: '교회 소식, 교회 일정, 주보 다운로드',
         href: '/news',
       },
+      {
+        no: '05',
+        title: '갤러리',
+        desc: '전체 사진첩, 영상, 남선교회, 여전도회, 학생부, 찬양팀',
+        href: '/gallery',
+      },
     ],
     cards: {
       worshipTitle: '예배 시간 안내',

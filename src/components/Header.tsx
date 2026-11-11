@@ -14,6 +14,7 @@ export default function Header() {
   const [worshipDropdownOpen, setWorshipDropdownOpen] = useState(false);
   const [ministryDropdownOpen, setMinistryDropdownOpen] = useState(false);
   const [newsDropdownOpen, setNewsDropdownOpen] = useState(false);
+  const [galleryDropdownOpen, setGalleryDropdownOpen] = useState(false);
   const [user, setUser] = useState<{ name: string; email: string; role: string; isMaster?: boolean } | null>(null);
   const [welcomeUser, setWelcomeUser] = useState<{ name: string; role: string } | null>(null);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -452,9 +453,74 @@ export default function Header() {
               </div>
             )}
           </div>
-          <Link href="/gallery" className="hover:text-amber-700 transition-colors">
-            갤러리
-          </Link>
+          {/* Dropdown Menu for 갤러리 */}
+          <div
+            className="relative"
+            onMouseEnter={() => setGalleryDropdownOpen(true)}
+            onMouseLeave={() => setGalleryDropdownOpen(false)}
+          >
+            <Link
+              href="/gallery"
+              className="inline-flex items-center gap-1.5 hover:text-amber-700 transition-colors py-4"
+            >
+              <span>갤러리</span>
+              <ChevronDown
+                size={14}
+                className={`transition-transform duration-200 text-stone-400 ${
+                  galleryDropdownOpen ? "rotate-180 text-amber-700" : ""
+                }`}
+              />
+            </Link>
+
+            {/* Dropdown Menu Box */}
+            {galleryDropdownOpen && (
+              <div className="absolute left-0 top-full -mt-1 w-44 rounded-2xl bg-white p-2 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-stone-200/80 py-2.5 transition-all">
+                <Link
+                  href="/gallery"
+                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  onClick={() => setGalleryDropdownOpen(false)}
+                >
+                  전체 사진첩
+                </Link>
+                <Link
+                  href="/gallery?category=video"
+                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  onClick={() => setGalleryDropdownOpen(false)}
+                >
+                  영상
+                </Link>
+                <div className="my-1 border-t border-stone-100"></div>
+                <Link
+                  href="/gallery?category=men"
+                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  onClick={() => setGalleryDropdownOpen(false)}
+                >
+                  남선교회
+                </Link>
+                <Link
+                  href="/gallery?category=women"
+                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  onClick={() => setGalleryDropdownOpen(false)}
+                >
+                  여전도회
+                </Link>
+                <Link
+                  href="/gallery?category=school"
+                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  onClick={() => setGalleryDropdownOpen(false)}
+                >
+                  학생부
+                </Link>
+                <Link
+                  href="/gallery?category=worship"
+                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  onClick={() => setGalleryDropdownOpen(false)}
+                >
+                  찬양팀
+                </Link>
+              </div>
+            )}
+          </div>
           {user &&
             (user.isMaster ||
               user.role === "담임목사" ||
@@ -769,13 +835,55 @@ export default function Header() {
                 </Link>
               </div>
             </div>
-            <Link
-              href="/gallery"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block hover:text-amber-700"
-            >
-              갤러리
-            </Link>
+            <div className="pt-2">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-800 uppercase tracking-wider mb-2">
+                <span>갤러리</span>
+              </div>
+              <div className="pl-3 space-y-2.5 border-l-2 border-amber-300">
+                <Link
+                  href="/gallery"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                >
+                  전체 사진첩
+                </Link>
+                <Link
+                  href="/gallery?category=video"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                >
+                  영상
+                </Link>
+                <Link
+                  href="/gallery?category=men"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                >
+                  남선교회
+                </Link>
+                <Link
+                  href="/gallery?category=women"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                >
+                  여전도회
+                </Link>
+                <Link
+                  href="/gallery?category=school"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                >
+                  학생부
+                </Link>
+                <Link
+                  href="/gallery?category=worship"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                >
+                  찬양팀
+                </Link>
+              </div>
+            </div>
             {user &&
               (user.isMaster ||
                 user.role === "담임목사" ||
