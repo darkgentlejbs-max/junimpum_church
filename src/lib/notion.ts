@@ -2039,7 +2039,7 @@ export const DEFAULT_SITE_CONFIG = {
     badgeText: '대한예수교장로회(합동) 주님품교회',
     imageCaptionLeft: '대한예수교장로회(합동)',
     imageCaptionRight: '주님품교회 본당',
-    headlineLine1: '당신이 오길~ 기다렸습니다',
+    headlineLine1: '당신이 오길 기다렸습니다~',
     headlineLine2: '주님품교회가 당신에게\n위로와 소망이 되길 바랍니다',
     subtitle: '',
     navItems: [

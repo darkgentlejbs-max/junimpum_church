@@ -11,7 +11,7 @@ const DEFAULT_HOME = {
   badgeText: "대한예수교장로회(합동) 주님품교회",
   imageCaptionLeft: "대한예수교장로회(합동)",
   imageCaptionRight: "주님품교회 본당",
-  headlineLine1: "당신이 오길~ 기다렸습니다",
+  headlineLine1: "당신이 오길 기다렸습니다~",
   headlineLine2: "주님품교회가 당신에게\n위로와 소망이 되길 바랍니다",
   subtitle: "",
   navItems: [
@@ -78,11 +78,11 @@ export default function Home() {
             loadedHeadline1.includes("믿음") ||
             loadedHeadline1.includes("소망으로") ||
             loadedHeadline1.includes("세워") ||
-            loadedHeadline1 === "당신이 오길 기다렸습니다~" ||
+            loadedHeadline1 === "당신이 오길~ 기다렸습니다" ||
             loadedHeadline1 === "당신이 오길 기다렸습니다" ||
             loadedHeadline1 === "당신이 오길~기다렸습니다"
           ) {
-            loadedHeadline1 = "당신이 오길~ 기다렸습니다";
+            loadedHeadline1 = "당신이 오길 기다렸습니다~";
           }
 
           let loadedHeadline2 =
@@ -254,16 +254,16 @@ export default function Home() {
                 </span>
 
                 {(() => {
-                  let line1 = (homeData.headlineLine1 || "당신이 오길~ 기다렸습니다")
+                  let line1 = (homeData.headlineLine1 || "당신이 오길 기다렸습니다~")
                     .replace(/\r?\n/g, " ")
                     .replace(/\s+/g, " ")
                     .trim();
                   if (
-                    line1 === "당신이 오길 기다렸습니다~" ||
+                    line1 === "당신이 오길~ 기다렸습니다" ||
                     line1 === "당신이 오길 기다렸습니다" ||
                     line1 === "당신이 오길~기다렸습니다"
                   ) {
-                    line1 = "당신이 오길~ 기다렸습니다";
+                    line1 = "당신이 오길 기다렸습니다~";
                   }
 
                   const rawLine2 = (
@@ -508,7 +508,7 @@ export default function Home() {
                         onChange={(e) =>
                           setFormState({ ...formState, headlineLine1: e.target.value })
                         }
-                        placeholder="당신이 오길~ 기다렸습니다"
+                        placeholder="당신이 오길 기다렸습니다~"
                         className="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:outline-none focus:border-amber-600"
                       />
                     </div>
