@@ -59,12 +59,14 @@ export default function Home() {
   const [formState, setFormState] = useState(DEFAULT_HOME);
   const [saving, setSaving] = useState(false);
   const [hasNewContent, setHasNewContent] = useState(false);
+  const [hasNewMinistries, setHasNewMinistries] = useState(false);
 
   useEffect(() => {
     fetch("/api/news/notifications", { cache: "no-store" })
       .then((r) => r.json())
       .then((res) => {
         if (res?.hasNew) setHasNewContent(true);
+        if (res?.hasNewMinistries) setHasNewMinistries(true);
       })
       .catch(() => {});
     fetch("/api/site-config", { cache: "no-store" })
@@ -333,6 +335,9 @@ export default function Home() {
                             {item.title}
                           </h2>
                           {item.href === "/news" && hasNewContent && (
+                            <NewBadge size="sm" />
+                          )}
+                          {item.href === "/ministries" && hasNewMinistries && (
                             <NewBadge size="sm" />
                           )}
                         </div>

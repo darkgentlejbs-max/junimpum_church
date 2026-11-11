@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Megaphone,
@@ -13,6 +13,7 @@ import {
   Trash2,
   Check,
 } from "lucide-react";
+import NewBadge, { isNewItem, markNoticeAsRead, isNoticeReadByUser } from "@/components/NewBadge";
 
 export interface MinistryNotice {
   id: string;
@@ -21,6 +22,7 @@ export interface MinistryNotice {
   content: string;
   author: string;
   date: string;
+  createdTime?: string;
 }
 
 interface Props {
@@ -39,6 +41,23 @@ export default function MinistryNoticeBoard({
   const [notices, setNotices] = useState<MinistryNotice[]>(initialNotices);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [isWriting, setIsWriting] = useState(false);
+  const [readNotices, setReadNotices] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    const updateReadSet = () => {
+      const readSet = new Set<string>();
+      notices.forEach((n) => {
+        if (isNoticeReadByUser(n.id, n.createdTime || n.date)) {
+          readSet.add(n.id);
+        }
+      });
+      setReadNotices(readSet);
+    };
+
+    updateReadSet();
+    window.addEventListener("news-read-state-change", updateReadSet);
+    return () => window.removeEventListener("news-read-state-change", updateReadSet);
+  }, [notices]);
 
   // 새 글 작성 상태
   const [title, setTitle] = useState("");
@@ -88,6 +107,10 @@ export default function MinistryNoticeBoard({
       setContent("");
       setIsWriting(false);
       setExpandedId(data.notice.id);
+      if (data.notice?.id) {
+        markNoticeAsRead(data.notice.id);
+        setReadNotices((prev) => new Set([...prev, data.notice.id]));
+      }
     } catch {
       setError("서버와 통신 중 오류가 발생했습니다.");
     } finally {
@@ -177,6 +200,13 @@ export default function MinistryNoticeBoard({
     }
   };
 
+  const hasNewInDept = notices.some(
+    (n) =>
+      isNewItem(n.date, n.createdTime, 3) &&
+      !readNotices.has(n.id) &&
+      !isNoticeReadByUser(n.id, n.createdTime || n.date)
+  );
+
   return (
     <div className="mt-4 pt-4 border-t border-stone-200/70">
       {/* Header */}
@@ -186,6 +216,7 @@ export default function MinistryNoticeBoard({
           <h4 className="text-xs sm:text-sm font-semibold text-stone-800">
             게시판
           </h4>
+          {hasNewInDept && <NewBadge size="sm" />}
           {notices.length > 0 && (
             <span className="text-[11px] font-mono text-amber-800 bg-amber-50 border border-amber-200/60 px-1.5 py-0.2 rounded-full">
               {notices.length}
@@ -292,6 +323,11 @@ export default function MinistryNoticeBoard({
             const isEditing = editingId === notice.id;
             const isConfirmingDelete = confirmDeleteId === notice.id;
             const isDeleting = deletingId === notice.id;
+            const isNew = isNewItem(notice.date, notice.createdTime, 3);
+            const isRead =
+              readNotices.has(notice.id) ||
+              isNoticeReadByUser(notice.id, notice.createdTime || notice.date);
+            const showNewBadge = isNew && !isRead;
 
             return (
               <li key={notice.id} className="py-2.5">
@@ -304,13 +340,18 @@ export default function MinistryNoticeBoard({
                       setConfirmDeleteId(null);
                     } else {
                       setExpandedId(notice.id);
+                      markNoticeAsRead(notice.id);
+                      setReadNotices((prev) => new Set([...prev, notice.id]));
                     }
                   }}
                   className="w-full text-left flex items-center justify-between gap-2 group cursor-pointer"
                 >
-                  <span className="text-xs sm:text-sm font-medium text-stone-800 group-hover:text-amber-800 transition-colors break-keep line-clamp-1">
-                    {notice.title}
-                  </span>
+                  <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                    <span className="text-xs sm:text-sm font-medium text-stone-800 group-hover:text-amber-800 transition-colors break-keep line-clamp-1">
+                      {notice.title}
+                    </span>
+                    {showNewBadge && <NewBadge size="sm" />}
+                  </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <span className="hidden sm:inline text-[11px] text-stone-400">
                       {notice.author}

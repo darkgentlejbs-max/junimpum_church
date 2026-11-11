@@ -21,14 +21,26 @@ export default function Header() {
   const [isIOS, setIsIOS] = useState(false);
   const [notifications, setNotifications] = useState<{
     hasNew: boolean;
+    hasNewMinistries: boolean;
     totalNewCount: number;
     newNoticesCount: number;
     newSchedulesCount: number;
+    newMinistriesCount: number;
+    menNoticesCount: number;
+    womenNoticesCount: number;
+    schoolNoticesCount: number;
+    worshipNoticesCount: number;
   }>({
     hasNew: false,
+    hasNewMinistries: false,
     totalNewCount: 0,
     newNoticesCount: 0,
     newSchedulesCount: 0,
+    newMinistriesCount: 0,
+    menNoticesCount: 0,
+    womenNoticesCount: 0,
+    schoolNoticesCount: 0,
+    worshipNoticesCount: 0,
   });
 
   useEffect(() => {
@@ -92,9 +104,15 @@ export default function Header() {
       rawNotifsRef.current = null;
       setNotifications({
         hasNew: false,
+        hasNewMinistries: false,
         totalNewCount: 0,
         newNoticesCount: 0,
         newSchedulesCount: 0,
+        newMinistriesCount: 0,
+        menNoticesCount: 0,
+        womenNoticesCount: 0,
+        schoolNoticesCount: 0,
+        worshipNoticesCount: 0,
       });
       return;
     }
@@ -107,12 +125,30 @@ export default function Header() {
       const unreadSchedules = (data.recentSchedules || []).filter(
         (s: any) => !isNoticeReadByUser(s.id, s.createdTime)
       );
-      const total = unreadNotices.length + unreadSchedules.length;
+      const unreadMinistries = (data.recentMinistries || []).filter(
+        (m: any) => !isNoticeReadByUser(m.id, m.createdTime)
+      );
+
+      const unreadMen = unreadMinistries.filter((m: any) => m.category === "남선교회");
+      const unreadWomen = unreadMinistries.filter((m: any) => m.category === "여전도회");
+      const unreadSchool = unreadMinistries.filter((m: any) => m.category === "교회학교");
+      const unreadWorship = unreadMinistries.filter((m: any) => m.category === "찬양팀");
+
+      const newsTotal = unreadNotices.length + unreadSchedules.length;
+      const ministriesTotal = unreadMinistries.length;
+      const total = newsTotal + ministriesTotal;
+
       setNotifications({
-        hasNew: total > 0,
+        hasNew: newsTotal > 0,
+        hasNewMinistries: ministriesTotal > 0,
         totalNewCount: total,
         newNoticesCount: unreadNotices.length,
         newSchedulesCount: unreadSchedules.length,
+        newMinistriesCount: ministriesTotal,
+        menNoticesCount: unreadMen.length,
+        womenNoticesCount: unreadWomen.length,
+        schoolNoticesCount: unreadSchool.length,
+        worshipNoticesCount: unreadWorship.length,
       });
     };
 
@@ -318,6 +354,7 @@ export default function Header() {
               className="inline-flex items-center gap-1.5 hover:text-amber-700 transition-colors py-4"
             >
               <span>사역/기관</span>
+              {user && notifications.hasNewMinistries && <NewBadge size="sm" />}
               <ChevronDown
                 size={14}
                 className={`transition-transform duration-200 text-stone-400 ${
@@ -331,32 +368,36 @@ export default function Header() {
               <div className="absolute left-0 top-full -mt-1 w-44 rounded-2xl bg-white p-2 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-stone-200/80 py-2.5 transition-all">
                 <Link
                   href="/ministries#men"
-                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  className="flex items-center justify-between px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
                   onClick={() => setMinistryDropdownOpen(false)}
                 >
-                  남선교회
+                  <span>남선교회</span>
+                  {user && notifications.menNoticesCount > 0 && <NewBadge size="sm" />}
                 </Link>
                 <Link
                   href="/ministries#women"
-                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  className="flex items-center justify-between px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
                   onClick={() => setMinistryDropdownOpen(false)}
                 >
-                  여전도회
+                  <span>여전도회</span>
+                  {user && notifications.womenNoticesCount > 0 && <NewBadge size="sm" />}
                 </Link>
                 <div className="my-1 border-t border-stone-100"></div>
                 <Link
                   href="/ministries#school"
-                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  className="flex items-center justify-between px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
                   onClick={() => setMinistryDropdownOpen(false)}
                 >
-                  교회학교
+                  <span>교회학교</span>
+                  {user && notifications.schoolNoticesCount > 0 && <NewBadge size="sm" />}
                 </Link>
                 <Link
                   href="/ministries#worship"
-                  className="block px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
+                  className="flex items-center justify-between px-3.5 py-2 text-xs font-medium text-stone-700 hover:text-amber-800 hover:bg-amber-50/70 rounded-xl transition-colors"
                   onClick={() => setMinistryDropdownOpen(false)}
                 >
-                  찬양팀
+                  <span>찬양팀</span>
+                  {user && notifications.worshipNoticesCount > 0 && <NewBadge size="sm" />}
                 </Link>
               </div>
             )}
@@ -453,11 +494,11 @@ export default function Header() {
           <div className="pl-4 ml-2 border-l border-stone-200 flex items-center space-x-3">
             {user ? (
               <>
-                {notifications.hasNew && (
+                {(notifications.hasNew || notifications.hasNewMinistries) && (
                   <Link
-                    href="/news"
+                    href={notifications.hasNew ? "/news" : "/ministries"}
                     className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#F1731C] bg-orange-50 border border-orange-200/80 px-2.5 py-1.5 rounded-full hover:bg-orange-100 transition-colors shadow-2xs"
-                    title={`새로운 소식/일정이 ${notifications.totalNewCount}건 있습니다`}
+                    title={`새로운 소식/공지가 ${notifications.totalNewCount}건 있습니다`}
                   >
                     <NewBadge size="sm" />
                     <span>새 소식 {notifications.totalNewCount}</span>
@@ -589,7 +630,7 @@ export default function Header() {
             aria-label="메뉴 열기"
           >
             {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
-            {user && notifications.hasNew && !mobileMenuOpen && (
+            {user && (notifications.hasNew || notifications.hasNewMinistries) && !mobileMenuOpen && (
               <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-[#F1731C] rounded-full ring-2 ring-white animate-pulse" />
             )}
           </button>
@@ -658,37 +699,42 @@ export default function Header() {
               </div>
             </div>
             <div className="pt-2">
-              <div className="text-xs font-semibold text-amber-800 uppercase tracking-wider mb-2">
-                사역/기관
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-800 uppercase tracking-wider mb-2">
+                <span>사역/기관</span>
+                {user && notifications.hasNewMinistries && <NewBadge size="sm" />}
               </div>
               <div className="pl-3 space-y-2.5 border-l-2 border-amber-300">
                 <Link
                   href="/ministries#men"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                  className="flex items-center justify-between text-sm text-stone-700 hover:text-amber-700 font-medium"
                 >
-                  남선교회
+                  <span>남선교회</span>
+                  {user && notifications.menNoticesCount > 0 && <NewBadge size="sm" />}
                 </Link>
                 <Link
                   href="/ministries#women"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                  className="flex items-center justify-between text-sm text-stone-700 hover:text-amber-700 font-medium"
                 >
-                  여전도회
+                  <span>여전도회</span>
+                  {user && notifications.womenNoticesCount > 0 && <NewBadge size="sm" />}
                 </Link>
                 <Link
                   href="/ministries#school"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                  className="flex items-center justify-between text-sm text-stone-700 hover:text-amber-700 font-medium"
                 >
-                  교회학교
+                  <span>교회학교</span>
+                  {user && notifications.schoolNoticesCount > 0 && <NewBadge size="sm" />}
                 </Link>
                 <Link
                   href="/ministries#worship"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-sm text-stone-700 hover:text-amber-700 font-medium"
+                  className="flex items-center justify-between text-sm text-stone-700 hover:text-amber-700 font-medium"
                 >
-                  찬양팀
+                  <span>찬양팀</span>
+                  {user && notifications.worshipNoticesCount > 0 && <NewBadge size="sm" />}
                 </Link>
               </div>
             </div>
@@ -804,15 +850,21 @@ export default function Header() {
                   <p className="text-xs text-amber-900/80 leading-relaxed pl-6">
                     {getTimeGreeting(user.name, user.role).message}
                   </p>
-                  {notifications.hasNew && (
+                  {(notifications.hasNew || notifications.hasNewMinistries) && (
                     <Link
-                      href="/news"
+                      href={notifications.hasNew ? "/news" : "/ministries"}
                       onClick={() => setMobileMenuOpen(false)}
                       className="mt-2 flex items-center justify-between px-3 py-2 rounded-lg bg-white border border-orange-200 text-xs text-orange-950 font-semibold shadow-2xs hover:bg-orange-50/50 transition-colors"
                     >
                       <span className="flex items-center gap-1.5">
                         <NewBadge size="sm" />
-                        <span>새로운 교회 소식과 일정이 있습니다!</span>
+                        <span>
+                          {notifications.hasNew && notifications.hasNewMinistries
+                            ? "새로운 소식 및 사역 공지가 있습니다!"
+                            : notifications.hasNew
+                            ? "새로운 교회 소식과 일정이 있습니다!"
+                            : "새로운 사역·기관 공지가 있습니다!"}
+                        </span>
                       </span>
                       <span className="text-[11px] text-[#F1731C] font-bold">&rarr;</span>
                     </Link>
@@ -868,16 +920,24 @@ export default function Header() {
               <p className="text-sm sm:text-base font-medium text-stone-600 leading-relaxed mb-5 break-keep">
                 &ldquo;{greeting.message}&rdquo;
               </p>
-              {notifications.hasNew && (
+              {(notifications.hasNew || notifications.hasNewMinistries) && (
                 <div className="mb-5 p-3 rounded-2xl bg-orange-50 border border-orange-200 text-xs text-orange-950 flex items-center justify-between gap-2 text-left">
                   <div className="flex items-center gap-2">
                     <NewBadge size="sm" />
                     <span>
-                      최근 등록된 <strong>새로운 소식과 일정</strong>이 있습니다.
+                      최근 등록된{" "}
+                      <strong>
+                        {notifications.hasNew && notifications.hasNewMinistries
+                          ? "새로운 소식과 사역 공지"
+                          : notifications.hasNew
+                          ? "새로운 소식과 일정"
+                          : "새로운 사역·기관 공지"}
+                      </strong>
+                      가 있습니다.
                     </span>
                   </div>
                   <Link
-                    href="/news"
+                    href={notifications.hasNew ? "/news" : "/ministries"}
                     onClick={() => setWelcomeUser(null)}
                     className="font-bold text-[#F1731C] underline shrink-0 hover:text-orange-700"
                   >

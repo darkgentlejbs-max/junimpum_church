@@ -1033,6 +1033,7 @@ export async function getMinistryNotices() {
           content,
           author,
           date,
+          createdTime: page.created_time || '',
         };
       })
       .filter(Boolean) as any[];
