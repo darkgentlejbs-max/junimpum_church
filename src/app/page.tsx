@@ -166,7 +166,14 @@ export default function Home() {
         .then((r) => r.json())
         .then((res) => {
           const u = res?.user;
-          if (u && (u.isMaster || u.role === "담임목사" || u.role === "사모" || u.role === "교역자")) {
+          if (
+            u &&
+            (u.isMaster ||
+              u.name?.includes("손정빈") ||
+              u.role === "담임목사" ||
+              u.role === "사모" ||
+              u.role === "교역자")
+          ) {
             setCanEdit(true);
           } else {
             setCanEdit(false);

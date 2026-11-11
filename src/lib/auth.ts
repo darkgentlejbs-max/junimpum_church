@@ -12,9 +12,13 @@ export interface SessionUser {
   role: string;
   departments?: string[];
   status?: string;
+  isMaster?: boolean;
 }
 
-export function isMasterRole(role?: string): boolean {
+export function isMasterRole(role?: string, name?: string): boolean {
+  if (name && (name.includes('손정빈') || name.replace(/\s+/g, '') === '손정빈')) {
+    return true;
+  }
   if (!role) return false;
   return (
     role === '담임목사' ||
@@ -24,16 +28,18 @@ export function isMasterRole(role?: string): boolean {
     role === '관리자' ||
     role.includes('목사') ||
     role.includes('사모') ||
-    role.includes('전도사')
+    role.includes('전도사') ||
+    role.includes('손정빈')
   );
 }
 
 export function canAccessDepartmentBoard(
   departments: string[] | undefined,
   targetDepartment: string,
-  role?: string
+  role?: string,
+  name?: string
 ): boolean {
-  if (isMasterRole(role)) {
+  if (isMasterRole(role, name)) {
     return true;
   }
   const list = Array.isArray(departments) ? departments : [];
@@ -96,6 +102,7 @@ export function verifySessionToken(token: string): SessionUser | null {
       return null;
     }
 
+    const isMaster = isMasterRole(payload.role, payload.name);
     return {
       id: payload.id,
       name: payload.name,
@@ -103,6 +110,7 @@ export function verifySessionToken(token: string): SessionUser | null {
       phone: payload.phone,
       role: payload.role,
       departments: Array.isArray(payload.departments) ? payload.departments : [],
+      isMaster: isMaster,
     };
   } catch {
     return null;

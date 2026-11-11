@@ -36,11 +36,11 @@ export default async function GalleryPage({
     user = null;
   }
 
-  let canWrite = isMasterRole(user?.role);
+  let canWrite = isMasterRole(user?.role, user?.name);
   if (!canWrite && user?.email) {
     try {
       const liveMember = await findMemberByEmail(user.email);
-      if (liveMember && isMasterRole(liveMember.role)) {
+      if (liveMember && isMasterRole(liveMember.role, liveMember.name || user?.name)) {
         canWrite = true;
       }
     } catch {

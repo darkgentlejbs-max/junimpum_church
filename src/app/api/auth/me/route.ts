@@ -24,10 +24,11 @@ export async function GET() {
         role: resolvedRole,
         departments: liveMember.departments || user.departments || [],
       };
+      const isMaster = isMasterRole(resolvedRole, updatedUser.name);
       const response = NextResponse.json({
         user: {
           ...updatedUser,
-          isMaster: isMasterRole(resolvedRole),
+          isMaster,
         },
       });
       if (resolvedRole !== user.role || updatedUser.name !== user.name) {
@@ -51,7 +52,7 @@ export async function GET() {
     user: {
       ...user,
       role: fallbackRole,
-      isMaster: isMasterRole(fallbackRole),
+      isMaster: isMasterRole(fallbackRole, user.name),
     },
   });
 }

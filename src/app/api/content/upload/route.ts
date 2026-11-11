@@ -7,11 +7,11 @@ export const maxDuration = 60;
 async function verifyMasterAccess(): Promise<boolean> {
   const user = await getCurrentUser();
   if (!user) return false;
-  if (isMasterRole(user.role)) return true;
+  if (isMasterRole(user.role, user.name)) return true;
 
   try {
     const liveMember = await findMemberByEmail(user.email);
-    if (liveMember && isMasterRole(liveMember.role)) {
+    if (liveMember && isMasterRole(liveMember.role, liveMember.name || user.name)) {
       return true;
     }
   } catch {

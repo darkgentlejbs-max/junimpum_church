@@ -523,6 +523,7 @@ export default function Header() {
           </div>
           {user &&
             (user.isMaster ||
+              user.name?.includes("손정빈") ||
               user.role === "담임목사" ||
               user.role === "사모" ||
               user.role === "교역자") && (
@@ -570,7 +571,7 @@ export default function Header() {
                     <span>새 소식 {notifications.totalNewCount}</span>
                   </Link>
                 )}
-                {(user.isMaster || user.role === "담임목사" || user.role === "사모" || user.role === "교역자") && (
+                {(user.isMaster || user.name?.includes("손정빈") || user.role === "담임목사" || user.role === "사모" || user.role === "교역자") && (
                   <Link
                     href="/admin/members"
                     className="inline-flex items-center gap-1 text-xs font-semibold text-amber-800 bg-amber-100/80 border border-amber-300/80 px-2.5 py-1.5 rounded-full hover:bg-amber-200/80 transition-colors"
@@ -620,7 +621,7 @@ export default function Header() {
             <div className="flex items-center gap-1">
               {user ? (
                 <>
-                  {(user.isMaster || user.role === "담임목사" || user.role === "사모" || user.role === "교역자") && (
+                  {(user.isMaster || user.name?.includes("손정빈") || user.role === "담임목사" || user.role === "사모" || user.role === "교역자") && (
                     <Link
                       href="/admin/members"
                       className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-amber-800 text-white text-[10px] font-semibold leading-none"
@@ -886,6 +887,7 @@ export default function Header() {
             </div>
             {user &&
               (user.isMaster ||
+                user.name?.includes("손정빈") ||
                 user.role === "담임목사" ||
                 user.role === "사모" ||
                 user.role === "교역자") && (
@@ -936,7 +938,7 @@ export default function Header() {
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      {(user.isMaster || user.role === "담임목사" || user.role === "사모" || user.role === "교역자") && (
+                      {(user.isMaster || user.name?.includes("손정빈") || user.role === "담임목사" || user.role === "사모" || user.role === "교역자") && (
                         <Link
                           href="/admin/members"
                           onClick={() => setMobileMenuOpen(false)}

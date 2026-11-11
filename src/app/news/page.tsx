@@ -19,11 +19,11 @@ export default async function NewsPage() {
     (n: any) => !n.title?.startsWith("[사역공지:") && !n.title?.startsWith("[사이트설정:")
   );
 
-  let canWrite = isMasterRole(user?.role);
+  let canWrite = isMasterRole(user?.role, user?.name);
   if (!canWrite && user?.email) {
     try {
       const liveMember = await findMemberByEmail(user.email);
-      if (liveMember && isMasterRole(liveMember.role)) {
+      if (liveMember && isMasterRole(liveMember.role, liveMember.name || user?.name)) {
         canWrite = true;
       }
     } catch {

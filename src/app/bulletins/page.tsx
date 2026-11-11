@@ -62,13 +62,13 @@ export default async function BulletinsPage() {
   const bulletins = await getBulletins();
 
   let liveRole = user.role;
-  let canWrite = isMasterRole(user.role);
+  let canWrite = isMasterRole(user.role, user.name);
   if (user.email) {
     try {
       const liveMember = await findMemberByEmail(user.email);
       if (liveMember) {
         if (liveMember.role) liveRole = liveMember.role;
-        if (isMasterRole(liveMember.role)) {
+        if (isMasterRole(liveMember.role, liveMember.name || user.name)) {
           canWrite = true;
         }
       }

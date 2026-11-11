@@ -218,10 +218,10 @@ export default function AdminMembersPage() {
             <ShieldCheck size={28} />
           </div>
           <h1 className="text-xl font-bold text-stone-900 mb-2">
-            담임목사 · 사모 전용 메뉴입니다
+            관리자 전용 메뉴입니다
           </h1>
           <p className="text-sm text-stone-500 leading-relaxed mb-6">
-            회원 승인 및 교인 명부 관리는 담임목사님 또는 사모님 계정으로 로그인 후 이용하실 수 있습니다.
+            회원 승인 및 교인 명부 관리는 담임목사님, 사모님 또는 관리자 권한이 있는 계정으로 로그인 후 이용하실 수 있습니다.
           </p>
           <div className="flex gap-3">
             <Link

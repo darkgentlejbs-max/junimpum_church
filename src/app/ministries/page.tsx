@@ -53,7 +53,7 @@ export default async function MinistriesPage() {
     userRole = "사모";
   }
 
-  const isMaster = isMasterRole(userRole);
+  const isMaster = isMasterRole(userRole, userName);
   const currentUserInfo = user ? { name: userName, role: userRole } : null;
 
   const menPhotos = allPhotos.filter((p: any) => p.title?.includes("남선교"));

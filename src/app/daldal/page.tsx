@@ -9,11 +9,11 @@ export const dynamic = 'force-dynamic';
 export default async function DalDalPage() {
   const [daldals, user] = await Promise.all([getDalDal(), getCurrentUser()]);
 
-  let canWrite = isMasterRole(user?.role);
+  let canWrite = isMasterRole(user?.role, user?.name);
   if (!canWrite && user?.email) {
     try {
       const liveMember = await findMemberByEmail(user.email);
-      if (liveMember && isMasterRole(liveMember.role)) {
+      if (liveMember && isMasterRole(liveMember.role, liveMember.name || user?.name)) {
         canWrite = true;
       }
     } catch {
