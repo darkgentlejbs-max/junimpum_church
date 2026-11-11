@@ -10,11 +10,31 @@ export const dynamic = "force-dynamic";
 export default async function GalleryPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string }>;
+  searchParams?: Promise<{ category?: string }> | { category?: string };
 }) {
-  const params = await searchParams;
-  const activeCategory = params?.category || "all";
-  const [allPhotos, user] = await Promise.all([getGallery(), getCurrentUser()]);
+  let activeCategory = "all";
+  try {
+    const resolvedParams = searchParams ? await Promise.resolve(searchParams) : {};
+    if (resolvedParams && typeof resolvedParams === "object" && "category" in resolvedParams) {
+      activeCategory = (resolvedParams as any).category || "all";
+    }
+  } catch {
+    activeCategory = "all";
+  }
+
+  let allPhotos: any[] = [];
+  let user: any = null;
+  try {
+    const [fetchedPhotos, fetchedUser] = await Promise.all([
+      getGallery().catch(() => []),
+      getCurrentUser().catch(() => null),
+    ]);
+    allPhotos = Array.isArray(fetchedPhotos) ? fetchedPhotos : [];
+    user = fetchedUser;
+  } catch {
+    allPhotos = [];
+    user = null;
+  }
 
   let canWrite = isMasterRole(user?.role);
   if (!canWrite && user?.email) {
@@ -37,7 +57,8 @@ export default async function GalleryPage({
     { key: "worship", label: "찬양팀(부따겸 찬양단)" },
   ];
 
-  const photos = allPhotos.filter((photo: any) => {
+  const photos = (allPhotos || []).filter((photo: any) => {
+    if (!photo) return false;
     const title = photo.title || "";
     if (activeCategory === "video") {
       return (

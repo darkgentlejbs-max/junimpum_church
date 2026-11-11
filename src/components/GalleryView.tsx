@@ -26,7 +26,6 @@ import {
   getDisplayImageUrl,
   isVideoMedia,
 } from "@/lib/media";
-export { isVideoMedia };
 
 export interface GalleryPhoto {
   id: string;

@@ -58,38 +58,6 @@ const DEFAULT_HOME = {
   },
 };
 
-const NAV_SUB_ITEMS: Record<string, { label: string; href: string }[]> = {
-  "01": [
-    { label: "목회자 인사말", href: "/about#greeting" },
-    { label: "교회연혁", href: "/about#history" },
-    { label: "예배안내", href: "/about#worship-times" },
-    { label: "오시는 길", href: "/about#location" },
-  ],
-  "02": [
-    { label: "주일 설교", href: "/sermons" },
-    { label: "달달바이블", href: "/daldal" },
-  ],
-  "03": [
-    { label: "남선교회", href: "/ministries#men" },
-    { label: "여전도회", href: "/ministries#women" },
-    { label: "교회학교", href: "/ministries#school" },
-    { label: "찬양팀", href: "/ministries#worship" },
-  ],
-  "04": [
-    { label: "교회 소식", href: "/news#notices" },
-    { label: "교회 일정", href: "/news#schedule" },
-    { label: "주보", href: "/bulletins" },
-  ],
-  "05": [
-    { label: "전체 사진첩", href: "/gallery" },
-    { label: "영상", href: "/gallery?category=video" },
-    { label: "남선교회", href: "/gallery?category=men" },
-    { label: "여전도회", href: "/gallery?category=women" },
-    { label: "학생부", href: "/gallery?category=school" },
-    { label: "찬양팀", href: "/gallery?category=worship" },
-  ],
-};
-
 export default function Home() {
   const [homeData, setHomeData] = useState(DEFAULT_HOME);
   const [canEdit, setCanEdit] = useState(false);
@@ -366,61 +334,36 @@ export default function Home() {
 
               {/* Right Navigation Bar */}
               <div className="border-t border-stone-200/80 divide-y divide-stone-200/70">
-                {homeData.navItems.map((item) => {
-                  const subItems = NAV_SUB_ITEMS[item.no] || [];
-                  return (
-                    <div
-                      key={item.no}
-                      className="group py-3.5 sm:py-4 px-2 -mx-2 rounded-2xl transition-all duration-200 hover:bg-white hover:shadow-xs"
-                    >
-                      <div className="flex items-center justify-between">
-                        <Link
-                          href={item.href}
-                          className="flex items-start gap-4 flex-1 cursor-pointer"
-                        >
-                          <span className="text-xs font-mono font-semibold text-amber-700/70 pt-0.5">
-                            {item.no}
-                          </span>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <h2 className="text-base font-medium text-stone-800 group-hover:text-amber-800 transition-colors">
-                                {item.title}
-                              </h2>
-                              {item.href === "/news" && hasNewContent && (
-                                <NewBadge size="sm" />
-                              )}
-                              {item.href === "/ministries" && hasNewMinistries && (
-                                <NewBadge size="sm" />
-                              )}
-                            </div>
-                            <p className="text-xs text-stone-400 mt-0.5">{item.desc}</p>
-                          </div>
-                        </Link>
-                        <Link
-                          href={item.href}
-                          className="w-7 h-7 rounded-full flex items-center justify-center border border-stone-200 text-stone-400 group-hover:border-amber-600 group-hover:text-amber-700 group-hover:bg-amber-50/50 transition-all shrink-0 ml-3"
-                        >
-                          <ArrowUpRight size={15} />
-                        </Link>
-                      </div>
-
-                      {/* Submenu Chips underneath (교회소식/일정/주보 & 갤러리 영상/부서별) */}
-                      {subItems.length > 0 && (
-                        <div className="flex flex-wrap gap-1.5 mt-2.5 pl-7 sm:pl-8">
-                          {subItems.map((sub) => (
-                            <Link
-                              key={sub.label}
-                              href={sub.href}
-                              className="text-[11px] sm:text-xs px-2.5 py-0.5 rounded-full bg-stone-100/90 hover:bg-amber-100 text-stone-600 hover:text-amber-900 border border-stone-200/60 font-medium transition-colors"
-                            >
-                              {sub.label}
-                            </Link>
-                          ))}
+                {homeData.navItems.map((item) => (
+                  <Link
+                    key={item.no}
+                    href={item.href}
+                    className="group flex items-center justify-between py-4 px-2 -mx-2 rounded-xl transition-all duration-200 hover:bg-white hover:shadow-xs"
+                  >
+                    <div className="flex items-start gap-4">
+                      <span className="text-xs font-mono font-semibold text-amber-700/70 pt-0.5">
+                        {item.no}
+                      </span>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h2 className="text-base font-medium text-stone-800 group-hover:text-amber-800 transition-colors">
+                            {item.title}
+                          </h2>
+                          {item.href === "/news" && hasNewContent && (
+                            <NewBadge size="sm" />
+                          )}
+                          {item.href === "/ministries" && hasNewMinistries && (
+                            <NewBadge size="sm" />
+                          )}
                         </div>
-                      )}
+                        <p className="text-xs text-stone-400 mt-0.5">{item.desc}</p>
+                      </div>
                     </div>
-                  );
-                })}
+                    <div className="w-7 h-7 rounded-full flex items-center justify-center border border-stone-200 text-stone-400 group-hover:border-amber-600 group-hover:text-amber-700 group-hover:bg-amber-50/50 transition-all">
+                      <ArrowUpRight size={15} />
+                    </div>
+                  </Link>
+                ))}
               </div>
             </motion.div>
           </div>
