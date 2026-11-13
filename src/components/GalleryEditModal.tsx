@@ -54,6 +54,7 @@ export default function GalleryEditModal({
   const [category, setCategory] = useState(initialCategory);
   const [title, setTitle] = useState(initialBaseTitle);
   const [date, setDate] = useState(album.date || "");
+  const [content, setContent] = useState(album.content || "");
 
   // Existing photos state
   const [photosState, setPhotosState] = useState<ExistingPhotoItem[]>([]);
@@ -78,6 +79,7 @@ export default function GalleryEditModal({
     setCategory(cat);
     setTitle(bTitle);
     setDate(album.date || "");
+    setContent(album.content || "");
 
     const items: ExistingPhotoItem[] = album.photos.map((p, idx) => ({
       id: p.id,
@@ -297,6 +299,7 @@ export default function GalleryEditModal({
           id: pageId,
           title: finalTitle,
           date,
+          content,
           keptPhotoIndices,
           uploadedFiles: uploadedFiles.length > 0 ? uploadedFiles : undefined,
         }),
@@ -431,6 +434,20 @@ export default function GalleryEditModal({
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="예: 2026 전교인 여름수련회"
                   className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-stone-200 bg-stone-50/60 focus:bg-white focus:outline-none focus:border-amber-600"
+                />
+              </div>
+
+              {/* Content / Description */}
+              <div>
+                <label className="block text-xs font-semibold text-stone-700 mb-1">
+                  상세 내용 (사진·영상 설명)
+                </label>
+                <textarea
+                  rows={3}
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  placeholder="사진이나 영상에 대한 설명, 행사 소식, 은혜로운 나눔 내용을 입력해 주세요 (선택)"
+                  className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-stone-200 bg-stone-50/60 focus:bg-white focus:outline-none focus:border-amber-600 resize-y"
                 />
               </div>
 

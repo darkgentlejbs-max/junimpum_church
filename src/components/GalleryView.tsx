@@ -35,6 +35,7 @@ export interface GalleryPhoto {
   date: string;
   imageUrl: string;
   fileName?: string;
+  content?: string;
 }
 
 export interface GalleryAlbum {
@@ -43,6 +44,7 @@ export interface GalleryAlbum {
   coverImage: string;
   photos: GalleryPhoto[];
   pageId?: string;
+  content?: string;
 }
 
 
@@ -71,10 +73,14 @@ export default function GalleryView({
           coverImage: photo.imageUrl,
           photos: [photo],
           pageId: photo.pageId,
+          content: photo.content,
         });
       } else {
         const existing = map.get(rawTitle)!;
         existing.photos.push(photo);
+        if (!existing.content && photo.content) {
+          existing.content = photo.content;
+        }
         // 더 최신 날짜가 있으면 갱신
         if (
           photo.date &&
@@ -342,6 +348,14 @@ export default function GalleryView({
                 총 {selectedAlbum.photos.length}장의 사진
               </span>
             </p>
+
+            {selectedAlbum.content && (
+              <div className="mt-4 pt-3.5 border-t border-stone-100">
+                <div className="p-3.5 sm:p-4 rounded-2xl bg-amber-50/40 border border-amber-200/60 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap text-stone-800">
+                  {selectedAlbum.content}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -510,13 +524,20 @@ export default function GalleryView({
               className="flex items-center justify-between text-white/90 pb-3"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center gap-2 sm:gap-3">
-                <span className="px-2.5 py-1 bg-white/10 rounded-full text-xs font-medium">
-                  {lightboxIndex + 1} / {selectedAlbum.photos.length}
-                </span>
-                <h3 className="text-xs sm:text-sm font-semibold truncate max-w-[200px] sm:max-w-md text-stone-200">
-                  {currentPhoto.fileName || selectedAlbum.title}
-                </h3>
+              <div className="flex flex-col gap-0.5">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <span className="px-2.5 py-1 bg-white/10 rounded-full text-xs font-medium">
+                    {lightboxIndex + 1} / {selectedAlbum.photos.length}
+                  </span>
+                  <h3 className="text-xs sm:text-sm font-semibold truncate max-w-[200px] sm:max-w-md text-stone-200">
+                    {currentPhoto.fileName || selectedAlbum.title}
+                  </h3>
+                </div>
+                {selectedAlbum.content && (
+                  <p className="text-[11px] sm:text-xs text-stone-400 truncate max-w-[260px] sm:max-w-xl">
+                    {selectedAlbum.content}
+                  </p>
+                )}
               </div>
 
               <div className="flex items-center gap-2">
@@ -569,7 +590,13 @@ export default function GalleryView({
 
               {/* 이미지, 유튜브 영상 또는 직접 업로드된 동영상 */}
               {currentYtId ? (
-                <div className="w-full max-w-4xl aspect-video rounded-2xl overflow-hidden shadow-2xl">
+                <div
+                  className={`w-full ${
+                    currentPhoto?.imageUrl?.includes("shorts")
+                      ? "max-w-xs sm:max-w-sm aspect-[9/16] max-h-[80vh]"
+                      : "max-w-4xl aspect-video"
+                  } rounded-2xl overflow-hidden shadow-2xl bg-black`}
+                >
                   <iframe
                     src={`https://www.youtube.com/embed/${currentYtId}?autoplay=1`}
                     title={selectedAlbum.title}
@@ -727,6 +754,11 @@ export default function GalleryView({
                   <h3 className="font-bold text-base sm:text-lg text-stone-900 group-hover:text-amber-800 transition-colors line-clamp-1">
                     {album.title}
                   </h3>
+                  {album.content && (
+                    <p className="text-xs sm:text-sm text-stone-500 mt-1.5 line-clamp-2 leading-relaxed">
+                      {album.content}
+                    </p>
+                  )}
                 </div>
 
                 {/* 하단 관리자 버튼 (수정/삭제) */}

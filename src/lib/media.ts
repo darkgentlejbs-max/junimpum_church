@@ -1,8 +1,9 @@
 export function getYoutubeVideoId(url?: string): string | null {
-  if (!url || !url.includes("youtu")) return null;
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=[&]?)([^#&?]*).*/;
-  const match = url.match(regExp);
-  return match && match[2].length === 11 ? match[2] : null;
+  if (!url || (!url.includes("youtu") && !url.includes("youtube"))) return null;
+  const match = url.match(
+    /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?|live|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/i
+  );
+  return match && match[1].length === 11 ? match[1] : null;
 }
 
 export function isVideoMedia(url?: string, fileName?: string): boolean {

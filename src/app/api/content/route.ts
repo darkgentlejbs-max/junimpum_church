@@ -127,6 +127,7 @@ export async function POST(request: Request) {
       const item = await createGalleryItem({
         title: payload.title || '',
         date: payload.date || '',
+        content: payload.content || '',
         imageUrl: payload.imageUrl || '',
         fileUploadId: uploadedFile?.fileUploadId || payload.fileUploadId,
         fileName: uploadedFile?.fileName || payload.fileName,
@@ -249,6 +250,7 @@ export async function PATCH(request: Request) {
         id,
         title: payload.title || '',
         date: payload.date || '',
+        content: payload.content !== undefined ? payload.content : undefined,
         imageUrl: payload.imageUrl || '',
         fileUploadId: uploadedFile?.fileUploadId || payload.fileUploadId,
         fileName: uploadedFile?.fileName || payload.fileName,

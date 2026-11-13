@@ -132,12 +132,53 @@ export async function getGallery() {
     const allPhotos: any[] = [];
     
     await Promise.all(response.results.map(async (page: any) => {
-      const titleProp = page.properties['이름']?.title?.[0]?.plain_text || '제목 없음';
+      const titleKey =
+        Object.keys(page.properties).find((k) => page.properties[k]?.type === 'title') || '이름';
+      const titleProp =
+        page.properties[titleKey]?.title?.map((t: any) => t.plain_text).join('') ||
+        page.properties['이름']?.title?.[0]?.plain_text ||
+        '제목 없음';
       const dateVal = page.properties['날짜']?.date?.start || '날짜 없음';
+      const contentVal =
+        page.properties['내용']?.rich_text?.map((t: any) => t.plain_text).join('') ||
+        page.properties['설명']?.rich_text?.map((t: any) => t.plain_text).join('') ||
+        '';
+      let bodyParagraphs = '';
       let imageIndex = 0;
 
       // 1. '사진' 속성(칸)에 들어있는 이미지들 가져오기
       const files = page.properties['사진']?.files || [];
+
+      // 2. 노션 페이지 '본문'에 드래그해서 넣은 이미지 블록 및 단락 텍스트 가져오기
+      const bodyImageBlocks: Array<{ imageUrl: string; fileName: string }> = [];
+      try {
+        const blocksResponse = await (notion.blocks.children as any).list({
+          block_id: page.id,
+        });
+        blocksResponse.results.forEach((block: any) => {
+          if (block.type === 'paragraph') {
+            const pText = block.paragraph?.rich_text?.map((t: any) => t.plain_text).join('') || '';
+            if (pText.trim()) {
+              bodyParagraphs = bodyParagraphs ? `${bodyParagraphs}\n${pText}` : pText;
+            }
+          }
+          if (block.type === 'image') {
+            const imageUrl = block.image?.file?.url || block.image?.external?.url || '';
+            if (imageUrl) {
+              const captionText = block.image?.caption?.[0]?.plain_text || '';
+              bodyImageBlocks.push({
+                imageUrl,
+                fileName: captionText || '본문_사진.jpg',
+              });
+            }
+          }
+        });
+      } catch (blockErr) {
+        console.error('Error fetching blocks for page:', page.id, blockErr);
+      }
+
+      const finalContent = (contentVal || bodyParagraphs || '').trim();
+
       files.forEach((fileProp: any) => {
         const imageUrl = fileProp?.file?.url || fileProp?.external?.url || '';
         if (imageUrl) {
@@ -151,34 +192,22 @@ export async function getGallery() {
             date: dateVal,
             imageUrl: imageUrl,
             fileName: rawName || `사진_${currIdx + 1}.jpg`,
+            content: finalContent,
           });
         }
       });
 
-      // 2. 노션 페이지 '본문'에 드래그해서 넣은 이미지 블록들 가져오기
-      try {
-        const blocksResponse = await (notion.blocks.children as any).list({
-          block_id: page.id,
+      bodyImageBlocks.forEach((item, bIdx) => {
+        allPhotos.push({
+          id: `${page.id}-block-${bIdx}`,
+          pageId: page.id,
+          title: titleProp,
+          date: dateVal,
+          imageUrl: item.imageUrl,
+          fileName: item.fileName,
+          content: finalContent,
         });
-        blocksResponse.results.forEach((block: any) => {
-          if (block.type === 'image') {
-            const imageUrl = block.image?.file?.url || block.image?.external?.url || '';
-            if (imageUrl) {
-              const captionText = block.image?.caption?.[0]?.plain_text || '';
-              allPhotos.push({
-                id: `${block.id}`,
-                pageId: page.id,
-                title: titleProp,
-                date: dateVal,
-                imageUrl: imageUrl,
-                fileName: captionText || '본문_사진.jpg',
-              });
-            }
-          }
-        });
-      } catch (blockErr) {
-        console.error('Error fetching blocks for page:', page.id, blockErr);
-      }
+      });
     }));
     
     // 날짜 최신순으로 다시 정렬 (Promise.all 비동기 처리로 인해 순서가 섞일 수 있음)
@@ -1537,6 +1566,7 @@ export async function createGalleryItem(params: {
   fileUploadId?: string;
   fileName?: string;
   uploadedFiles?: Array<{ fileUploadId: string; fileName: string }>;
+  content?: string;
 }) {
   if (!GALLERY_DATABASE_ID) throw new Error('갤러리 데이터베이스 ID가 설정되지 않았습니다.');
   const { titlePropName, props } = await getTitlePropertyName(GALLERY_DATABASE_ID);
@@ -1550,6 +1580,39 @@ export async function createGalleryItem(params: {
 
   if (props['날짜']?.type === 'date') {
     properties['날짜'] = { date: { start: dateVal } };
+  }
+
+  // 내용 속성 지원 (DB에 없으면 자동 추가)
+  const contentPropKey =
+    Object.keys(props).find(
+      (k) =>
+        props[k]?.type === 'rich_text' &&
+        (k === '내용' || k === '설명' || k.toLowerCase().includes('content'))
+    ) || '내용';
+
+  if (!props[contentPropKey]) {
+    try {
+      await notion.databases.update({
+        database_id: GALLERY_DATABASE_ID,
+        properties: {
+          내용: { rich_text: {} },
+        },
+      });
+      props['내용'] = { type: 'rich_text' };
+      if (params.content) {
+        properties['내용'] = {
+          rich_text: [{ text: { content: params.content } }],
+        };
+      }
+    } catch (dbErr) {
+      console.error('Could not auto-add 내용 property to gallery DB:', dbErr);
+    }
+  } else if (props[contentPropKey]?.type === 'rich_text') {
+    if (params.content) {
+      properties[contentPropKey] = {
+        rich_text: [{ text: { content: params.content } }],
+      };
+    }
   }
 
   const filesPropKey =
@@ -1591,9 +1654,21 @@ export async function createGalleryItem(params: {
     }
   }
 
+  const children: any[] = [];
+  if (params.content && params.content.trim()) {
+    children.push({
+      object: 'block',
+      type: 'paragraph',
+      paragraph: {
+        rich_text: [{ type: 'text', text: { content: params.content.trim() } }],
+      },
+    });
+  }
+
   const created: any = await notion.pages.create({
     parent: { database_id: GALLERY_DATABASE_ID },
     properties,
+    children: children.length > 0 ? children : undefined,
   });
 
   return {
@@ -1966,6 +2041,7 @@ export async function updateGalleryItem(params: {
   fileName?: string;
   uploadedFiles?: Array<{ fileUploadId: string; fileName: string }>;
   keptPhotoIndices?: number[];
+  content?: string;
 }) {
   if (!GALLERY_DATABASE_ID) throw new Error('갤러리 데이터베이스 ID가 설정되지 않았습니다.');
   const targetPageId = await resolvePageId(params.id);
@@ -1980,6 +2056,37 @@ export async function updateGalleryItem(params: {
 
   if (props['날짜']?.type === 'date') {
     properties['날짜'] = { date: { start: dateVal } };
+  }
+
+  // 내용 속성 수정 지원
+  if (params.content !== undefined) {
+    const contentPropKey =
+      Object.keys(props).find(
+        (k) =>
+          props[k]?.type === 'rich_text' &&
+          (k === '내용' || k === '설명' || k.toLowerCase().includes('content'))
+      ) || '내용';
+
+    if (!props[contentPropKey]) {
+      try {
+        await notion.databases.update({
+          database_id: GALLERY_DATABASE_ID,
+          properties: {
+            내용: { rich_text: {} },
+          },
+        });
+        props['내용'] = { type: 'rich_text' };
+        properties['내용'] = {
+          rich_text: [{ text: { content: params.content } }],
+        };
+      } catch (dbErr) {
+        console.error('Could not auto-add 내용 property to gallery DB on update:', dbErr);
+      }
+    } else if (props[contentPropKey]?.type === 'rich_text') {
+      properties[contentPropKey] = {
+        rich_text: [{ text: { content: params.content } }],
+      };
+    }
   }
 
   const filesPropKey =

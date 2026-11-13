@@ -464,16 +464,20 @@ export default function MasterWriteButton({
                 </div>
               )}
 
-              {(menuType === "news" || menuType === "schedule") && (
+              {(menuType === "news" || menuType === "schedule" || menuType === "gallery") && (
                 <div>
                   <label className="block text-xs font-semibold text-stone-700 mb-1.5">
-                    상세 내용
+                    {menuType === "gallery" ? "상세 내용 (사진·영상 설명)" : "상세 내용"}
                   </label>
                   <textarea
-                    rows={4}
+                    rows={menuType === "gallery" ? 3 : 4}
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                    placeholder="내용을 입력해 주세요"
+                    placeholder={
+                      menuType === "gallery"
+                        ? "사진이나 영상에 대한 설명, 행사 소식, 은혜로운 나눔 내용을 입력해 주세요 (선택)"
+                        : "내용을 입력해 주세요"
+                    }
                     className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-stone-200 bg-stone-50/60 focus:bg-white focus:outline-none focus:border-amber-600 resize-y"
                   />
                 </div>
@@ -605,12 +609,15 @@ export default function MasterWriteButton({
                         <p className="text-stone-700">
                           • <strong>4MB 초과 고화질 영상:</strong> 스마트폰으로 촬영한 긴 영상이나 고화질 영상은 유튜브(일부공개로 설정 시 링크를 아는 성도만 시청 가능)에 올리신 후, 아래 <strong>[유튜브 영상 주소]</strong>에 링크를 입력해 주시면 용량 제한 없이 원본 고화질로 등록됩니다!
                         </p>
+                        <p className="text-stone-700">
+                          • <strong>쇼츠(Shorts) 영상 링크 지원:</strong> 유튜브 일반 동영상뿐만 아니라 <strong>유튜브 쇼츠(Shorts) 링크</strong>도 그대로 붙여넣으시면 갤러리에서 바로 감상하실 수 있습니다!
+                        </p>
                       </div>
                     )}
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-stone-700 mb-1.5">
-                      또는 외부 링크 직접 입력 {menuType === "gallery" && "(유튜브 링크 가능)"}
+                      또는 외부 링크 직접 입력 {menuType === "gallery" && "(유튜브 일반 영상 및 쇼츠 링크 가능)"}
                     </label>
                     <input
                       type="url"
@@ -618,7 +625,7 @@ export default function MasterWriteButton({
                       onChange={(e) => setExternalUrl(e.target.value)}
                       placeholder={
                         menuType === "gallery"
-                          ? "이미지 주소 또는 유튜브 영상 주소 (선택)"
+                          ? "이미지 주소 또는 유튜브 일반 영상 / 쇼츠(Shorts) 주소 (선택)"
                           : "파일/이미지 URL 주소 (선택)"
                       }
                       className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-stone-200 bg-stone-50/60 focus:bg-white focus:outline-none focus:border-amber-600"
@@ -985,16 +992,20 @@ export function MasterEditButton({ menuType, item }: EditProps) {
                 </div>
               )}
 
-              {(menuType === "news" || menuType === "schedule") && (
+              {(menuType === "news" || menuType === "schedule" || menuType === "gallery") && (
                 <div>
                   <label className="block text-xs font-semibold text-stone-700 mb-1.5">
-                    상세 내용
+                    {menuType === "gallery" ? "상세 내용 (사진·영상 설명)" : "상세 내용"}
                   </label>
                   <textarea
-                    rows={4}
+                    rows={menuType === "gallery" ? 3 : 4}
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                    placeholder="내용을 입력해 주세요"
+                    placeholder={
+                      menuType === "gallery"
+                        ? "사진이나 영상에 대한 설명, 행사 소식, 은혜로운 나눔 내용을 입력해 주세요 (선택)"
+                        : "내용을 입력해 주세요"
+                    }
                     className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-stone-200 bg-stone-50/60 focus:bg-white focus:outline-none focus:border-amber-600 resize-y"
                   />
                 </div>
@@ -1023,7 +1034,7 @@ export function MasterEditButton({ menuType, item }: EditProps) {
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-stone-700 mb-1.5">
-                      또는 외부 링크 변경 {menuType === "gallery" && "(유튜브 링크 가능)"}
+                      또는 외부 링크 변경 {menuType === "gallery" && "(유튜브 일반 영상 및 쇼츠 링크 가능)"}
                     </label>
                     <input
                       type="url"
