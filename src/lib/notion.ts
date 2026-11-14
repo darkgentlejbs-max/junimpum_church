@@ -2144,8 +2144,8 @@ export async function updateGalleryItem(params: {
 
 export const DEFAULT_SITE_CONFIG = {
   home: {
-    badgeText: '대한예수교장로회(합동) 주님품교회',
-    imageCaptionLeft: '대한예수교장로회(합동)',
+    badgeText: '대한예수교장로회 주님품교회',
+    imageCaptionLeft: '대한예수교장로회',
     imageCaptionRight: '주님품교회 본당',
     headlineLine1: '당신이 오길 기다렸습니다~',
     headlineLine2: '주님품교회가 당신에게\n위로와 소망이 되길 바랍니다',
@@ -2190,7 +2190,7 @@ export const DEFAULT_SITE_CONFIG = {
       sermonDesc: '주일 예배 설교와 은혜로운 찬양 영상을 온라인으로 나눕니다.',
       locationTitle: '오시는 길',
       locationAddress: '전남 여수시 여서동 7길 28',
-      locationSub: '대한예수교장로회(통합) 주님품교회',
+      locationSub: '대한예수교장로회 주님품교회',
     },
   },
   about: {

@@ -8,8 +8,8 @@ import { ArrowUpRight, MapPin, Video, Clock, Pencil, X, Loader2 } from "lucide-r
 import NewBadge from "@/components/NewBadge";
 
 const DEFAULT_HOME = {
-  badgeText: "대한예수교장로회(합동) 주님품교회",
-  imageCaptionLeft: "대한예수교장로회(합동)",
+  badgeText: "대한예수교장로회 주님품교회",
+  imageCaptionLeft: "대한예수교장로회",
   imageCaptionRight: "주님품교회 본당",
   headlineLine1: "당신이 오길 기다렸습니다~",
   headlineLine2: "주님품교회가 당신에게\n위로와 소망이 되길 바랍니다",
@@ -54,7 +54,7 @@ const DEFAULT_HOME = {
     sermonDesc: "주일 예배 설교와 은혜로운 찬양 영상을 온라인으로 나눕니다.",
     locationTitle: "오시는 길",
     locationAddress: "전남 여수시 여서동 7길 28",
-    locationSub: "대한예수교장로회(통합) 주님품교회",
+    locationSub: "대한예수교장로회 주님품교회",
   },
 };
 
@@ -115,6 +115,18 @@ export default function Home() {
             loadedSubtitle = "";
           }
 
+          let loadedBadgeText =
+            res.config.home.badgeText || DEFAULT_HOME.badgeText;
+          if (
+            loadedBadgeText.includes("(합동)") ||
+            loadedBadgeText.includes("(통합)")
+          ) {
+            loadedBadgeText = loadedBadgeText
+              .replace(/\(합동\)|\(통합\)/g, "")
+              .replace(/\s+/g, " ")
+              .trim();
+          }
+
           let loadedNavItems =
             Array.isArray(res.config.home.navItems) && res.config.home.navItems.length > 0
               ? res.config.home.navItems.map((item: any) => {
@@ -149,6 +161,7 @@ export default function Home() {
           const merged = {
             ...DEFAULT_HOME,
             ...res.config.home,
+            badgeText: loadedBadgeText,
             headlineLine1: loadedHeadline1,
             headlineLine2: loadedHeadline2,
             subtitle: loadedSubtitle,
@@ -238,10 +251,10 @@ export default function Home() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src="/images/pck-logo.png"
-                    alt="대한예수교장로회(통합)"
+                    alt="대한예수교장로회"
                     className="h-5 sm:h-5.5 w-auto object-contain shrink-0"
                   />
-                  <span>{homeData.badgeText || "대한예수교장로회(통합) 주님품교회"}</span>
+                  <span>{homeData.badgeText || "대한예수교장로회 주님품교회"}</span>
                 </div>
               </div>
             </motion.div>
