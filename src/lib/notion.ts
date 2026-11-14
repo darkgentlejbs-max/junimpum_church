@@ -11,7 +11,26 @@ export const BULLETIN_DATABASE_ID = process.env.NOTION_BULLETIN_DB_ID || '3ee243
 export const DALDAL_DATABASE_ID = process.env.NOTION_DALDAL_DB_ID || '3f0243467c5a80ff824eff221d7e7919';
 export const SCHEDULE_DATABASE_ID = process.env.NOTION_SCHEDULE_DB_ID || '3e3243467c5a8059af31dd5aad35473b';
 
-export async function getSchedule() {
+export async function queryAllDatabasePages(params: any): Promise<any[]> {
+  const allResults: any[] = [];
+  let hasMore = true;
+  let cursor: string | undefined = params.start_cursor;
+
+  while (hasMore) {
+    const res: any = await (notion.databases as any).query({
+      ...params,
+      start_cursor: cursor,
+      page_size: 100,
+    });
+    allResults.push(...(res.results || []));
+    hasMore = Boolean(res.has_more);
+    cursor = res.next_cursor || undefined;
+  }
+
+  return allResults;
+}
+
+export async function getSchedule(): Promise<any[]> {
   if (!SCHEDULE_DATABASE_ID) {
     return [
       { id: 'dummy-1', title: '가을 부흥사경회', date: '2026-10-20', location: '본관 2층 대예배실', type: '집회' },
@@ -22,12 +41,12 @@ export async function getSchedule() {
   }
   
   try {
-    const response = await (notion.databases as any).query({
+    const results = await queryAllDatabasePages({
       database_id: SCHEDULE_DATABASE_ID,
       sorts: [{ property: '날짜', direction: 'ascending' }],
     });
     
-    return response.results.map((page: any) => {
+    return results.map((page: any) => {
       const titleProp = page.properties['이름']?.title?.[0]?.plain_text || page.properties['행사명']?.title?.[0]?.plain_text || '일정 없음';
       const dateProp = page.properties['날짜']?.date?.start || '날짜 미정';
       const typeProp = page.properties['분류']?.select?.name || '일반';
@@ -52,11 +71,11 @@ export async function getSchedule() {
 export async function getSermons() {
   if (!SERMONS_DATABASE_ID) return [];
   try {
-    const response = await (notion.databases as any).query({
+    const results = await queryAllDatabasePages({
       database_id: SERMONS_DATABASE_ID,
       sorts: [{ property: '날짜', direction: 'descending' }],
     });
-    return response.results.map((page: any) => {
+    return results.map((page: any) => {
       // 제목 찾기: '설교 제목'(텍스트), '이름'(타이틀), '말씀 게시판'(타이틀) 중 있는 것 사용
       const titleProp = page.properties['설교 제목']?.rich_text?.[0]?.plain_text 
                      || page.properties['이름']?.title?.[0]?.plain_text 
@@ -83,14 +102,14 @@ export async function getSermons() {
   }
 }
 
-export async function getNews() {
+export async function getNews(): Promise<any[]> {
   if (!NEWS_DATABASE_ID) return [];
   try {
-    const response = await (notion.databases as any).query({
+    const results = await queryAllDatabasePages({
       database_id: NEWS_DATABASE_ID,
       sorts: [{ property: '날짜', direction: 'descending' }],
     });
-    return response.results.map((page: any) => {
+    return results.map((page: any) => {
       // 제목(Title): 노션의 기본 '이름(Aa)' 속성 또는 '제목' 텍스트
       const titleProp = page.properties['이름']?.title?.[0]?.plain_text 
                      || page.properties['제목']?.title?.[0]?.plain_text
@@ -124,14 +143,14 @@ export async function getNews() {
 export async function getGallery() {
   if (!GALLERY_DATABASE_ID) return [];
   try {
-    const response = await (notion.databases as any).query({
+    const results = await queryAllDatabasePages({
       database_id: GALLERY_DATABASE_ID,
       sorts: [{ property: '날짜', direction: 'descending' }],
     });
     
     const allPhotos: any[] = [];
     
-    await Promise.all(response.results.map(async (page: any) => {
+    await Promise.all(results.map(async (page: any) => {
       const titleKey =
         Object.keys(page.properties).find((k) => page.properties[k]?.type === 'title') || '이름';
       const titleProp =
@@ -229,7 +248,7 @@ export async function getBulletins() {
   }
 
   try {
-    const response = await notion.databases.query({
+    const results = await queryAllDatabasePages({
       database_id: BULLETIN_DATABASE_ID,
       sorts: [
         {
@@ -239,7 +258,7 @@ export async function getBulletins() {
       ],
     });
 
-    return response.results.map((page: any) => {
+    return results.map((page: any) => {
       let fileUrl = '#';
       const fileProp = page.properties['파일'];
       if (fileProp && fileProp.files && fileProp.files.length > 0) {
@@ -264,7 +283,7 @@ export async function getDalDal() {
   if (!DALDAL_DATABASE_ID) return [];
 
   try {
-    const response = await notion.databases.query({
+    const results = await queryAllDatabasePages({
       database_id: DALDAL_DATABASE_ID,
       sorts: [
         {
@@ -274,19 +293,30 @@ export async function getDalDal() {
       ],
     });
 
-    return response.results.map((page: any) => {
+    return results.map((page: any) => {
       let imageUrl = '';
-      const fileProp = page.properties['이미지'];
+      const fileProp =
+        page.properties['이미지'] ||
+        page.properties['사진'] ||
+        page.properties['파일'];
       if (fileProp && fileProp.files && fileProp.files.length > 0) {
         const fileObj = fileProp.files[0];
         imageUrl = fileObj.file ? fileObj.file.url : (fileObj.external ? fileObj.external.url : '');
       }
 
+      const titleKey =
+        Object.keys(page.properties).find((k) => page.properties[k]?.type === 'title') || '이름';
+      const title =
+        page.properties[titleKey]?.title?.map((t: any) => t.plain_text).join('') ||
+        page.properties['이름']?.title?.[0]?.plain_text ||
+        '제목 없음';
+      const date = page.properties['날짜']?.date?.start || '날짜 없음';
+
       return {
         id: page.id,
-        title: page.properties['이름']?.title[0]?.plain_text || '제목 없음',
-        date: page.properties['날짜']?.date?.start || '날짜 없음',
-        imageUrl: imageUrl,
+        title,
+        date,
+        imageUrl,
       };
     });
   } catch (error) {
