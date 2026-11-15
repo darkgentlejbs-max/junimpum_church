@@ -21,13 +21,13 @@ export default function NoticeItem({
   useEffect(() => {
     const checkRead = () => {
       if (notice.id && notice.id !== "empty") {
-        setIsRead(isNoticeReadByUser(notice.id, notice.createdTime || notice.date));
+        setIsRead(isNoticeReadByUser(notice.id));
       }
     };
     checkRead();
     window.addEventListener("news-read-state-change", checkRead);
     return () => window.removeEventListener("news-read-state-change", checkRead);
-  }, [notice.id, notice.createdTime, notice.date]);
+  }, [notice.id]);
 
   const handleClick = () => {
     if (notice.content) {
@@ -47,14 +47,14 @@ export default function NoticeItem({
       onClick={handleClick}
     >
       <div className="flex items-start sm:items-center flex-col sm:flex-row justify-between w-full">
-        <div className="flex flex-col mb-1.5 sm:mb-0 w-full sm:w-auto">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col mb-1.5 sm:mb-0 w-full sm:w-auto min-w-0">
+          <div className="flex items-center gap-2 min-w-0">
             {notice.type && (
               <span className="bg-amber-100 text-amber-800 border border-amber-200/60 text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0">
                 {notice.type}
               </span>
             )}
-            <span className="text-sm text-stone-700 font-medium group-hover:text-amber-800 transition-colors line-clamp-1">
+            <span className="text-sm text-stone-700 font-medium group-hover:text-amber-800 transition-colors line-clamp-1 break-keep">
               {notice.title}
             </span>
             {showNewBadge && <NewBadge size="sm" />}

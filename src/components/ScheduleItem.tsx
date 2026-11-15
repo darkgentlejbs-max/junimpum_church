@@ -19,13 +19,13 @@ export default function ScheduleItem({
   useEffect(() => {
     const checkRead = () => {
       if (item.id && item.id !== "empty") {
-        setIsRead(isNoticeReadByUser(item.id, item.createdTime || item.date));
+        setIsRead(isNoticeReadByUser(item.id));
       }
     };
     checkRead();
     window.addEventListener("news-read-state-change", checkRead);
     return () => window.removeEventListener("news-read-state-change", checkRead);
-  }, [item.id, item.createdTime, item.date]);
+  }, [item.id]);
 
   const handleClick = () => {
     if (item.content) {

@@ -16,10 +16,10 @@ export function isNewItem(
   const now = new Date().getTime();
   const limitMs = daysLimit * 24 * 60 * 60 * 1000;
 
-  // 1. createdTime 기준 (최근 N일 이내 생성된 경우)
+  // 1. createdTime 기준 (최근 N일 이내 생성된 경우, 서버/클라이언트 시차 5분 버퍼 허용)
   if (createdTimeStr) {
     const created = new Date(createdTimeStr).getTime();
-    if (!isNaN(created) && now - created >= 0 && now - created <= limitMs) {
+    if (!isNaN(created) && now - created >= -300000 && now - created <= limitMs) {
       return true;
     }
   }
@@ -29,8 +29,8 @@ export function isNewItem(
     const d = new Date(dateStr.slice(0, 10)).getTime();
     if (!isNaN(d)) {
       const diff = now - d;
-      // 최근 N일 이내에 등록된 글/행사이거나
-      if (diff >= 0 && diff <= limitMs) {
+      // 최근 N일 이내에 등록된 글/행사이거나 (한국 표준시 시차 고려하여 -24시간 버퍼)
+      if (diff >= -86400000 && diff <= limitMs) {
         return true;
       }
       // 앞으로 N일 이내에 있을 새 일정인 경우
@@ -57,34 +57,38 @@ export function markNoticeAsRead(noticeId: string) {
   } catch {}
 }
 
-// 회원이 소식 페이지를 방문하여 전체 확인했을 때 일괄 읽음 처리
-export function markAllNewsAsRead() {
+// 회원이 소식 페이지를 방문하여 전체 확인했을 때 일괄 읽음 처리 (필요 시 선택적 사용)
+export function markAllNewsAsRead(noticeIds?: string[]) {
   if (typeof window === "undefined") return;
   try {
+    if (Array.isArray(noticeIds) && noticeIds.length > 0) {
+      const raw = localStorage.getItem("junimpum_read_notices");
+      const list: string[] = raw ? JSON.parse(raw) : [];
+      let updated = false;
+      noticeIds.forEach((id) => {
+        if (id && id !== "empty" && !list.includes(id)) {
+          list.push(id);
+          updated = true;
+        }
+      });
+      if (updated) {
+        localStorage.setItem("junimpum_read_notices", JSON.stringify(list));
+      }
+    }
     localStorage.setItem("junimpum_last_read_news", Date.now().toString());
     window.dispatchEvent(new Event("news-read-state-change"));
   } catch {}
 }
 
 // 특정 소식이 회원이 이미 확인한 글인지 판별
-export function isNoticeReadByUser(noticeId: string, itemTimeStr?: string): boolean {
+export function isNoticeReadByUser(noticeId: string, _itemTimeStr?: string): boolean {
   if (typeof window === "undefined" || !noticeId || noticeId === "empty") return false;
   try {
-    // 1. 개별 ID로 이미 열람했는지 확인
+    // 개별 ID로 이미 열람했는지 확인
     const raw = localStorage.getItem("junimpum_read_notices");
     if (raw) {
       const list: string[] = JSON.parse(raw);
       if (list.includes(noticeId)) return true;
-    }
-
-    // 2. 일괄 확인(페이지 방문) 시각보다 이전에 등록된 글인지 확인
-    const lastReadAll = localStorage.getItem("junimpum_last_read_news");
-    if (lastReadAll && itemTimeStr) {
-      const lastReadMs = parseInt(lastReadAll, 10);
-      const itemMs = new Date(itemTimeStr).getTime();
-      if (!isNaN(lastReadMs) && !isNaN(itemMs) && lastReadMs >= itemMs) {
-        return true;
-      }
     }
   } catch {}
   return false;
