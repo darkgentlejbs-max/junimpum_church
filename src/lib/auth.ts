@@ -16,9 +16,6 @@ export interface SessionUser {
 }
 
 export function isMasterRole(role?: string, name?: string): boolean {
-  if (name && (name.includes('손정빈') || name.replace(/\s+/g, '') === '손정빈')) {
-    return true;
-  }
   if (!role) return false;
   return (
     role === '담임목사' ||
@@ -28,8 +25,7 @@ export function isMasterRole(role?: string, name?: string): boolean {
     role === '관리자' ||
     role.includes('목사') ||
     role.includes('사모') ||
-    role.includes('전도사') ||
-    role.includes('손정빈')
+    role.includes('전도사')
   );
 }
 
